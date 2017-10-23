@@ -50,6 +50,9 @@ from .utils import generate_random_password, user_is_professor, force_encoding
 import csv
 from django.http import JsonResponse
 
+@user_is_professor
+def viewstats(request):
+    return render(request, "stats/viewstats.haml")
 
 @user_is_professor
 def dashboard(request):
@@ -64,7 +67,6 @@ def dashboard(request):
             "stage"),
         "no_menu": True,
     })
-
 
 @user_is_professor
 def lesson_detail(request, pk):
@@ -122,7 +124,6 @@ def lesson_detail(request, pk):
         "skills_to_heatmap_class": skills_to_heatmap_class,
     })
 
-
 @user_is_professor
 def lesson_add(request):
     """
@@ -170,7 +171,7 @@ def lesson_update(request, pk):
 @user_is_professor
 def lesson_student_add(request, pk):
     """
-    Add one or more students to a lesson : either with an XLS file (template provided) or manually 
+    Add one or more students to a lesson : either with an XLS file (template provided) or manually
 
     :param request:
     :param pk: primary key of a Lesson
@@ -307,7 +308,7 @@ def lesson_student_detail(request, lesson_pk, pk):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param pk: primary key of a Student
-    :return: 
+    :return:
     """
     # TODO: a professor can only see one of his students
 
@@ -327,7 +328,7 @@ def lesson_student_update(request, lesson_pk, pk):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param pk: primary key of a Student
-    :return: 
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     student = get_object_or_404(Student, pk=pk)
@@ -357,7 +358,7 @@ def lesson_student_test_detail(request, pk, lesson_pk, test_pk):
     :param pk: primary key of a Student
     :param lesson_pk: primary key of a Lesson
     :param test_pk: primary key of a Test
-    :return: 
+    :return:
     """
     # TODO: a professor can only see one of his students
 
@@ -567,8 +568,8 @@ def lesson_test_list(request, pk):
     Query a Lesson to display its associated tests
 
     :param request:
-    :param pk: primary key of a Lesson 
-    :return: 
+    :param pk: primary key of a Lesson
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=pk)
 
@@ -577,7 +578,6 @@ def lesson_test_list(request, pk):
         "all_tests": lesson.basetest_set.order_by('-created_at'),
     })
 
-
 @user_is_professor
 def lesson_test_add(request, pk):
     """
@@ -585,7 +585,7 @@ def lesson_test_add(request, pk):
 
     :param request:
     :param pk: primary key of a Lesson
-    :return: 
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=pk)
 
@@ -602,7 +602,7 @@ def lesson_test_update(request, lesson_pk, pk):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param pk: primary key of a BaseTest
-    :return: 
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(BaseTest, pk=pk)
@@ -630,7 +630,7 @@ def lesson_skill_detail(request, lesson_pk, skill_code):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param skill_code: code of a Skill
-    :return: 
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     skill = get_object_or_404(Skill, code=skill_code)
@@ -659,7 +659,7 @@ def regenerate_student_password(request):
     Regenerate a password for a student
 
     :param request:
-    :return: 
+    :return:
     """
     # TODO : TO DELETE ?
     data = json.load(request)
@@ -688,10 +688,10 @@ def get_encoded_image(encoded_image=None):
 def update_pedagogical_ressources(request, type, id):
     """
     Display a form to update a Resource
-    :param request: 
+    :param request:
     :param id: id of a Skill, Section or CodeR
     :param type: string containing either "skill", "section" or "coder"
-    :return: 
+    :return:
     """
 
     if request.method == "POST" and request.POST["form_type"] == "my_resource":
@@ -1176,13 +1176,13 @@ def update_pedagogical_ressources(request, type, id):
 @user_is_professor
 def remove_pedagogical_ressources(request, type, id_type, kind, id):
     """
-    Remove a Sesamath, KhanAcademy or Resource object 
-    :param request: 
+    Remove a Sesamath, KhanAcademy or Resource object
+    :param request:
     :param type: contains "skill", "section" or "coder"
     :param id_type: id of Skill, Section or CodeR
-    :param kind: value equal either to "sesamath", "khanAcademy" or "resource" 
+    :param kind: value equal either to "sesamath", "khanAcademy" or "resource"
     :param id: id of a Resource
-    :return: 
+    :return:
     """
     if not Resource.objects.filter(id=id):
         print "The resource doesn't exist (kind : %s, id : %s)" % (kind, id)
@@ -1218,7 +1218,7 @@ def validate_student_skill(request, lesson_pk, student_skill):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param student_skill: id of a StudentSkill
-    :return: 
+    :return:
     """
     # TODO: a professor can only do this on one of his students
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
@@ -1244,7 +1244,7 @@ def unvalidate_student_skill(request, lesson_pk, student_skill):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param student_skill: id of a StudentSkill
-    :return: 
+    :return:
     """
     # TODO: a professor can only do this on one of his students
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
@@ -1270,7 +1270,7 @@ def default_student_skill(request, lesson_pk, student_skill):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param student_skill: id of a StudentSkill
-    :return: 
+    :return:
     """
     # TODO: a professor can only do this on one of his students
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
@@ -1290,10 +1290,10 @@ def default_student_skill(request, lesson_pk, student_skill):
 @user_is_professor
 def lesson_tests_and_skills(request, lesson_id):
     """
-    
-    :param request: 
-    :param lesson_id: id of a Lesson 
-    :return: 
+
+    :param request:
+    :param lesson_id: id of a Lesson
+    :return:
     """
     # TODO: a professor can only see one of his lesson
 
@@ -1333,7 +1333,7 @@ def exercice_to_approve_list(request):
 @user_is_professor
 def students_password_page(request, pk):
     """
-    Regenerate a code for every student of a lesson (to allow him/her to create a new password)    
+    Regenerate a code for every student of a lesson (to allow him/her to create a new password)
     """
     lesson = get_object_or_404(Lesson, pk=pk)
 
@@ -1356,7 +1356,7 @@ def students_password_page(request, pk):
 @user_is_professor
 def single_student_password_page(request, lesson_pk, student_pk):
     """
-    Regenerate a code for a student (to allow him/her to create a new password)    
+    Regenerate a code for a student (to allow him/her to create a new password)
     """
 
     students = []
@@ -1659,10 +1659,10 @@ def exercice_update(request, pk):
 @user_is_professor
 def exercice_update_json(request, pk):
     """
-    
-    :param request: 
-    :param pk: primary key of a Context 
-    :return: 
+
+    :param request:
+    :param pk: primary key of a Context
+    :return:
     """
     context = get_object_or_404(Context, pk=pk)
 
@@ -1705,10 +1705,10 @@ def exercice_update_json(request, pk):
 def exercice_for_test_exercice(request, exercice_pk, test_exercice_pk):
     """
     Add an exercice for a test
-    :param request: 
+    :param request:
     :param exercice_pk: primary key of an exercice
     :param test_exercice_pk: primary key of a TestExercice
-    :return: 
+    :return:
     """
     exercice = get_object_or_404(Context, pk=exercice_pk)
     test_exercice = get_object_or_404(TestExercice, pk=test_exercice_pk)
@@ -1729,10 +1729,10 @@ def exercice_for_test_exercice(request, exercice_pk, test_exercice_pk):
 @user_is_professor
 def exercice_adapt_test_exercice(request, test_exercice_pk):
     """
-    
-    :param request: 
+
+    :param request:
     :param test_exercice_pk: primary key of a TestExercice
-    :return: 
+    :return:
     """
     test_exercice = get_object_or_404(TestExercice, pk=test_exercice_pk)
     exercice = test_exercice.exercice
@@ -1789,10 +1789,10 @@ def exercice_remove_test_exercice(request, test_exercice_pk):
 @user_is_professor
 def contribute_page(request):
     """
-    Display a ResourceForm or submit it 
+    Display a ResourceForm or submit it
 
     :param request:
-    :return: 
+    :return:
     """
     data = {x.short_name: x for x in Stage.objects.all()}
 
@@ -1820,7 +1820,7 @@ def global_resources_delete(request, pk):
 
     :param request:
     :param pk: primary key of a Resource
-    :return: 
+    :return:
     """
     gr = get_object_or_404(Resource, pk=pk)
 
