@@ -1,0 +1,83 @@
+-extends "base.haml"
+
+-load bootstrap3
+
+-block content
+  .row
+    .col-md-4
+      %br/
+      %br/
+      %font{:color => "white", :size => "4"}  Periode
+      %form{:action => "#"}
+        %select{:name => "---"}
+          %option{:value => "1q2017-18"} 1q Année 2017/2018
+          %option{:value => "2q2017-18"} 2q Année 2017/2018
+          %option{:value => "1q2016-17"} 1q Année 2016/2017
+          %option{:value => "2q2016-17"} 2q Année 2016/2017
+        %font{:color => "white"}  Start Date:
+        %input{:name => "startDate", :type => "text", :value => "jj/mm/aa"}/
+        %br/
+        %font{:color => "white"}  End Date:
+        %input{:name => "endDate", :type => "text", :value => "jj/mm/aa"}/
+        %br/
+        %br/
+        %input{:type => "submit", :value => "Submit"}/
+      
+      .container
+      %br/
+      %br/
+      %font{:color => "white", :size => "4"}  Paramètres
+      %form
+        .checkbox
+          %label
+            %input{:type => "checkbox", :value => ""}>/
+            %font{:color => "white"} Niveau de connaissance
+        .checkbox
+          %label
+            %input{:type => "checkbox", :value => ""}>/
+            %font{:color => "white"} Progrès
+        .checkbox
+          %label
+            %input{:type => "checkbox", :value => ""}>/
+            %font{:color => "white"} Compétences acquises
+        .checkbox
+          %label
+            %input{:type => "checkbox", :value => ""}>/
+            %font{:color => "white"} Objectifs acuis
+      %br/
+      %br/
+      %button{:onclick => "#", :type => "button"} Données numériques
+      %br/
+      %br/
+      %button{:onclick => "#", :type => "button"} Exporter en CVS
+
+    .col-md-7
+      %ul.nav.orange.nav-tabs
+        %li.active{role: "presentation"}
+          %a{href: "#"}
+            Ma classe
+        
+
+      .ligneorange
+
+      .container-fluid.boxclassetitle
+
+        .pull-right
+          %a.icon.new-class{href: "{% url 'professor:lesson_add' %}", data-toggle: "tooltip", data-placement: "top", title: "Ajouter une classe"}
+
+      .ligneorangefine
+
+      .container-fluid.boxclasse
+        .list-group
+           %a{type: "button", class: "btn btn-default btn-circle btn-xl", href: "{% url 'professor:main-education' %}"}
+             %img{src: "http://i68.tinypic.com/332szu9.png", class: "buttonimg"}
+             .buttontxt
+               Compétences
+               %br
+               et ressources
+          %a{type: "button", class: "btn btn-default btn-circle btn-xl", href: "{% url 'professor:main-education' %}"}
+             %img{src: "http://i68.tinypic.com/332szu9.png", class: "buttonimg"}
+             .buttontxt
+               Compétences
+               %br
+               et ressources
