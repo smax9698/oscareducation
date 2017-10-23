@@ -387,6 +387,9 @@ class Criteria(models.Model):
     """
     name = models.CharField(max_length=255)
 
+    def __unicode__(self):
+        return self.name
+
 class ProfessorCriteria(models.Model):
     """
     The order to "walk" on the learning track
