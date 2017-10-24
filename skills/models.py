@@ -410,5 +410,3 @@ class ProfessorCriteria(models.Model):
 
 
 
-
-

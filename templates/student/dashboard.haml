@@ -135,7 +135,11 @@
       .col-md-6
         -if user.student.has_recommended_skills
           .container-fluid.boxclassetitle
-            %h5 Compétences recommandées
+            .col-md-11
+              %h5 Compétences recommandées
+            .col-md-1
+              %a{href: '#couscous'}
+                %img.icon.student-skill{src: "{% static 'img/icons/detailed_view.png' %}"}
 
           .ligneorangefine
 
