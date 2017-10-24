@@ -6,8 +6,12 @@ import random
 from django.db.models import Count
 from django.contrib.auth.models import User
 
+<<<<<<< 4bf56922a143eac4dd4d764b106f35acb79ac6a4
 from skills.models import StudentSkill
 from skills.models import LearningTrack
+=======
+from skills.models import LearningTrack, StudentSkill
+>>>>>>> add student methode get_learningTrack
 
 
 class AuthUserManager(models.Manager):
@@ -93,7 +97,9 @@ class Student(models.Model):
         if len(target_skills) > 3:
             raise ValueError("At most 3 target skills can be defined per student.")
 
+        #Clear all target to run the learning_track algorithm with the new targets
         self.clear_targets()
+        #recover all the student_skill for the current student
         student_skills = StudentSkill.objects.filter(student=self)
         for target_skill in target_skills:
             found = False
@@ -103,14 +109,23 @@ class Student(models.Model):
                     student_skill.save()
                     found = True
                     break
+            # If the student skill is not found create a new one
             if not found:
                 StudentSkill.objects.create(
                     student=self,
                     skill=target_skill,
                     is_target=True
                 )
+                #create a student skill for all the prerequisites of the target
                 for prerequisite in target_skill.skill.get_prerequisites_skills():
-                    if prerequisite not in student_skills:
+                    found = False
+
+                    for student_skill in student_skills:
+                        if student_skill.skill == prerequisite:
+                            found = True
+                            break
+                    # if prerequisete not found in the studentskills create a new one
+                    if not found:
                         StudentSkill.objects.create(
                             student=self,
                             skill=prerequisite,
@@ -131,3 +146,14 @@ class Student(models.Model):
                 break
 
         return list
+
+    def get_LearningTrack(self):
+        """
+        Recover the learning track of a student
+        :return: An ordered list of all the studentSkill in the learning_track
+        """
+        list_skills = []
+        student_skills = LearningTrack.objects.filter(student=self).order_by('order')
+        for s_skill in student_skills:
+            list_skills.append(s_skill)
+        return list_skills
