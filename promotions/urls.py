@@ -79,6 +79,9 @@ urlpatterns = [
     url(r'^education/enseignement-professionnel/$', views.enseign_pro, name='enseign-pro'),
     url(r'^education/enseignement-tech-art/$', views.enseign_techart, name='enseign-techart'),
     url(r'^education/enseignement-transition/$', views.enseign_trans, name='enseign-trans'),
+    url(r'^education/set-targets/$' , views.set_targets,name='set-targets'),
+    url(r'^education/launch-method/$' , views.launch_method,name='launch-method'),
+
 
     url(r'^professor_correct/$', views.professor_correct, name='professor_correct'),
     url(r'^professor_iscorrect/$', views.professor_iscorrect, name='professor_iscorrect'),

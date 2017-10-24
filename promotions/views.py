@@ -1866,6 +1866,14 @@ def global_resources_delete(request, pk):
 def main_education(request):
     return render(request, "professor/skill/main-education.haml")
 
+def set_targets(request):
+    return render(request,"professor/skill/set-targets.haml")
+
+def launch_method(request):
+    print('launch method run')
+
+    return render(request,"professor/skill/set-targets.haml")
+
 
 def socles_competence(request):
     data = {x.short_name: x for x in Stage.objects.all()}

@@ -1,0 +1,46 @@
+-extends "base.haml"
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li.active
+      Choisir les targets des étudiants
+
+-block content
+  .row
+
+    .col-md-5
+      %a{type: "button", class: "btn btn-default btn-circle btn-xl", href: "{% url 'professor:launch-method' %}" }
+        %img{src: "http://i68.tinypic.com/332szu9.png", class: "buttonimg"}
+        .buttontxt
+          Lancer
+          %br
+          une méthode
+
+    %h3 Choisir les targets des étudiants
+    %hr
+
+    %body
+      .col-md-7
+
+
+
+      .ligneorange
+
+      .container-fluid.boxclassetitle
+
+      .ligneorangefine
+
+      .container-fluid.boxclasse
+        .list-group
+          -for lesson in lessons
+            %a.list-group-item{href: "{% url 'professor:lesson_detail' lesson.pk %}"}
+              =lesson.name|capfirst
+
+          -empty
+            Vous n'avez pas encore de d'étudiants.
+
+
+    :css
+
