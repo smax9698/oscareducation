@@ -225,7 +225,7 @@ class StudentSkill(models.Model):
     """When the Skill was tested"""
     acquired = models.DateTimeField(default=None, null=True)
     """When the Skill was acquired"""
-    is_target = models.BooleanField(default=False)
+    is_target = models.NullBooleanField(null=True, default=False, blank=True)
     """Whether the Skill is targeted by this student or not"""
     # bad: doesn't support regression
 
@@ -395,11 +395,13 @@ class ProfessorCriteria(models.Model):
     The order to "walk" on the learning track
     """
 
-    professor = models.ForeignKey('users.Professor', default=None, blank=True)
+    professor = models.ForeignKey('users.Professor', null=True, default=None, blank=True)
 
     criteria = models.ForeignKey('Criteria')
 
     order = models.PositiveIntegerField()
+
+    
     
 
 
