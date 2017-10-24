@@ -29,7 +29,8 @@
     %li{role: "presentation"}
       %a.real-link{href: "{% url 'stats:viewstats' lesson.pk %}"}
         Statistiques
-
+      %a.real-link{href: "{% url 'professor:set-targets' lesson.pk %}"}
+        Compétences cibles
   .ligneorange
 
   .container-fluid.boxclassetitle

@@ -32,7 +32,7 @@
       %a.real-link{href: "{% url 'professor:lesson_test_list' lesson.pk %}"}
         Mes Tests
     %li{role: "presentation"}
-      %a{href: "#heatmap"}
+      %a.real-link{href: "{% url 'professor:lesson_detail' lesson.pk %}#heatmap"}
         Vue globale de la classe
     %li.active{role: "presentation"}
       %a.real-link{href: "{% url 'professor:set-targets' lesson.pk %}"}
