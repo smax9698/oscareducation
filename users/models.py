@@ -6,12 +6,7 @@ import random
 from django.db.models import Count
 from django.contrib.auth.models import User
 
-<<<<<<< 4bf56922a143eac4dd4d764b106f35acb79ac6a4
-from skills.models import StudentSkill
-from skills.models import LearningTrack
-=======
 from skills.models import LearningTrack, StudentSkill
->>>>>>> add student methode get_learningTrack
 
 
 class AuthUserManager(models.Manager):
@@ -147,7 +142,7 @@ class Student(models.Model):
 
         return list
 
-    def get_LearningTrack(self):
+    def get_LearningTrack(self, nonAquiredOnly=False):
         """
         Recover the learning track of a student
         :return: An ordered list of all the studentSkill in the learning_track
@@ -155,5 +150,8 @@ class Student(models.Model):
         list_skills = []
         student_skills = LearningTrack.objects.filter(student=self).order_by('order')
         for s_skill in student_skills:
-            list_skills.append(s_skill)
+            if nonAquiredOnly and not s_skill.is_aquired:
+                list_skills.append(s_skill)
+            else:
+                list_skills.append(s_skill)
         return list_skills

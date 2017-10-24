@@ -13,3 +13,4 @@ documentation/build/
 oscar-data\.sql
 
 makemigrations\.sh
+*.sql
