@@ -1,5 +1,9 @@
 -extends "base.haml"
 
+-load bootstrap3
+
+-load static
+
 -block breadcrumb
   %ol.breadcrumb
     %li
@@ -33,13 +37,15 @@
       .ligneorangefine
 
       .container-fluid.boxclasse
-        .list-group
-          -for lesson in lessons
-            %a.list-group-item{href: "{% url 'professor:lesson_detail' lesson.pk %}"}
-              =lesson.name|capfirst
+        .panel.panel-default
+          %table.table
+            -for lesson in lessons
+              -for student in lesson.students.all
+                %tr
+                  %td{width: "250px"}
+                    %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}= student
 
-          -empty
-            Vous n'avez pas encore de d'étudiants.
+
 
 
     :css

@@ -1867,7 +1867,11 @@ def main_education(request):
     return render(request, "professor/skill/main-education.haml")
 
 def set_targets(request):
-    return render(request,"professor/skill/set-targets.haml")
+    return render(request,"professor/skill/set-targets.haml",{
+        "lessons": Lesson.objects.filter(professors=request.user.professor).annotate(Count("students")).select_related(
+            "stage"),
+        "no_menu": True,
+    })
 
 def launch_method(request):
     print('launch method run')
