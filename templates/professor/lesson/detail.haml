@@ -34,6 +34,9 @@
     %li{role: "presentation"}
       %a{href: "#heatmap"}
         Vue globale de la classe
+    %li{role: "presentation"}
+      %a.real-link{href: "{% url 'professor:set-targets' lesson.pk %}"}
+        Compétences cibles
 
   .tab-content
     #students.tab-pane.active

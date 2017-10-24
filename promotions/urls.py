@@ -79,7 +79,7 @@ urlpatterns = [
     url(r'^education/enseignement-professionnel/$', views.enseign_pro, name='enseign-pro'),
     url(r'^education/enseignement-tech-art/$', views.enseign_techart, name='enseign-techart'),
     url(r'^education/enseignement-transition/$', views.enseign_trans, name='enseign-trans'),
-    url(r'^education/set-targets/$' , views.set_targets,name='set-targets'),
+    url(r'^education/(?P<pk>\d+)/set-targets/$' , views.set_targets,name='set-targets'),
     url(r'^education/launch-method/$' , views.launch_method,name='launch-method'),
 
 

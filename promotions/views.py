@@ -1866,11 +1866,17 @@ def global_resources_delete(request, pk):
 def main_education(request):
     return render(request, "professor/skill/main-education.haml")
 
-def set_targets(request):
+def set_targets(request,pk):
+
+    #{
+    #    "lessons": Lesson.objects.filter(professors=request.user.professor).annotate(Count("students")).select_related(
+    #        "stage"),
+    #    "no_menu": True,
+    #}
+    lesson = get_object_or_404(Lesson, pk=pk)
     return render(request,"professor/skill/set-targets.haml",{
-        "lessons": Lesson.objects.filter(professors=request.user.professor).annotate(Count("students")).select_related(
-            "stage"),
-        "no_menu": True,
+        "lesson": lesson,
+        "all_tests": lesson.basetest_set.order_by('-created_at'),
     })
 
 def launch_method(request):
