@@ -9,3 +9,7 @@ oscar/settings_local.py
 documentation/build/
 .DS_Store
 *.log
+
+oscar-data\.sql
+
+makemigrations\.sh

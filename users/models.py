@@ -7,6 +7,7 @@ from django.db.models import Count
 from django.contrib.auth.models import User
 
 from skills.models import StudentSkill
+from skills.models import LearningTrack
 
 
 class AuthUserManager(models.Manager):
@@ -38,7 +39,6 @@ class Student(models.Model):
     is_pending = models.BooleanField(default=True)
     code = models.IntegerField(null=True, blank=True)
     code_created_at = models.DateTimeField(auto_now=True)
-    #learning_track = models.ManyToManyField('skills.StudentSkill', through="skills.LearningTrack")
 
     def __unicode__(self):
         return ("%s %s" % (
@@ -115,3 +115,19 @@ class Student(models.Model):
                             student=self,
                             skill=prerequisite,
                         )
+    def get_threee_next(self):
+        """ Method that will get the three next skills to show to the student
+
+            Can return empty list if there is not.
+        """
+        track = LearningTrack.objects.filter(student=self).order_by('order')
+        i = 0
+        list = []
+        for item in track:
+            if not item.studentskill.acquired:
+                list.append(item.studentskill)
+                i+=1
+            if i==3:
+                break
+
+        return list
