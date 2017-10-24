@@ -408,5 +408,3 @@ class ProfessorCriteria(models.Model):
         return "all - " + str(self.order) + " : " + self.criteria.name
 
 
-
-
