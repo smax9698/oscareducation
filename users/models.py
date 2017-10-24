@@ -125,33 +125,20 @@ class Student(models.Model):
                             student=self,
                             skill=prerequisite,
                         )
+    
     def get_threee_next(self):
         """ Method that will get the three next skills to show to the student
 
-            Can return empty list if there is not.
+            Return  an empty list if there is not
         """
-        track = LearningTrack.objects.filter(student=self).order_by('order')
-        i = 0
+        lt = LearningTrack.objects.filter(student=self).order('order')
         list = []
-        for item in track:
+        i = 0
+        for item in lt:
             if not item.studentskill.acquired:
-                list.append(item.studentskill)
-                i+=1
-            if i==3:
+                list.append(item)
+                i += 1
+            if i >= 3:
                 break
-
         return list
 
-    def get_LearningTrack(self, nonAquiredOnly=False):
-        """
-        Recover the learning track of a student
-        :return: An ordered list of all the studentSkill in the learning_track
-        """
-        list_skills = []
-        student_skills = LearningTrack.objects.filter(student=self).order_by('order')
-        for s_skill in student_skills:
-            if nonAquiredOnly and not s_skill.is_aquired:
-                list_skills.append(s_skill)
-            else:
-                list_skills.append(s_skill)
-        return list_skills
