@@ -35,6 +35,6 @@ class CriteriaAdmin(admin.ModelAdmin):
 admin.site.register(Criteria, CriteriaAdmin)
 
 class ProfessorCriteriaAdmin(admin.ModelAdmin):
-    ordering = ('professor', 'order')
+    ordering = ('professor', 'order' ,'criteria')
 
 admin.site.register(ProfessorCriteria, ProfessorCriteriaAdmin)
