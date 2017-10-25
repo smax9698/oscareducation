@@ -66,4 +66,24 @@ def get_authentication_info_by_student(student):
 def get_skill_acquired_by_student(student):
     query = models.SkillStudent.objects.get(user=student)
 
-    len(query)
+    return len(query)
+
+
+def get_number_succeeded_exam_by_student(student):
+    query = models.ExamStudent.object.get(user=student,succeeded=True)
+
+    return len(query)
+
+
+def get_exam_by_student(student):
+    query = models.ExamStudent.object.get(user=student)
+    #TODO find exam_id
+
+
+def get_time_spent_on_exam(exam):
+    """exam : examination.TestStudent"""
+    return exam.finished_at - exam.started_at
+
+
+def get_skill_status(skillStudent):
+    return skillStudent.progress

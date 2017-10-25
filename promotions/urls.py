@@ -16,6 +16,8 @@ from .cbgv import LessonStudentListView, StudentDelete, LessonDelete, BaseTestDe
 urlpatterns = [
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
 
+    url(r'^$', views.viewstats, name='viewstats'),
+
     url(r'^lesson/add/$', views.lesson_add, name='lesson_add'),
     url(r'^lesson/(?P<pk>\d+)/$', views.lesson_detail, name='lesson_detail'),
     url(r'^lesson/(?P<pk>\d+)/update/$', views.lesson_update, name='lesson_update'),
