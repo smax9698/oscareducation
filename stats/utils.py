@@ -105,13 +105,13 @@ def get_skill_acquired_by_student(student):
 
 
 def get_number_succeeded_exam_by_student(student):
-    query = models.ExamStudent.object.get(user=student,succeeded=True)
+    query = models.ExamStudent.objects.get(user=student, succeeded=True)
 
     return len(query)
 
 
 def get_exam_by_student(student):
-    query = models.ExamStudent.object.get(user=student)
+    query = models.ExamStudent.objects.get(user=student)
     #TODO find exam_id
 
 
