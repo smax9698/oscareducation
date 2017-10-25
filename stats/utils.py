@@ -7,6 +7,9 @@ def user_is_superuser(function):
     return user_passes_test(lambda x: x.is_superuser)(function)
 
 
+###################
+# Access database #
+###################
 def get_resources_accessed_by_student(student):
     accessed_by_ressources = {}
 
