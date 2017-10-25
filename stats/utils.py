@@ -1,7 +1,9 @@
+import datetime
+
 from django.contrib.auth.decorators import user_passes_test
 
 import stats.models as models
-import datetime
+
 
 def user_is_superuser(function):
     return user_passes_test(lambda x: x.is_superuser)(function)
@@ -28,7 +30,7 @@ def add_exam_done_by_student(user, exam_id):
     student.save()
 
 
-def add_skill_acquired_by_student(user, skill_id, status):
+def add_skill_acquired_by_student(user, skill_id):
     """
     Each time a student acquires a skill we use this method to add the field in the table SkillStudent
 
