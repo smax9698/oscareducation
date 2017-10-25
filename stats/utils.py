@@ -16,21 +16,54 @@ def user_is_superuser(function):
 
 
 def add_exam_done_by_student(user, exam_id):
+    """
+    Each time a student is done with an exam we use this method to add the field in the table ExamStudent
+
+    Keyword arguments:
+    user -- id of the user (who's normally a student)
+    exam_id -- id of the finished exam
+
+    """
     student = models.ExamStudent(user=user, exam=exam_id)
     student.save()
 
 
-def add_skill_acquired_by_student(user, skill_id):
-    student = models.ResourceStudent(date_acquired=datetime.datetime, user=user, skill=skill_id)
+def add_skill_acquired_by_student(user, skill_id, status):
+    """
+    Each time a student acquires a skill we use this method to add the field in the table SkillStudent
+
+    Keyword arguments:
+    user -- id of the user (who's normally a student)
+    skill_id -- id of the mastered skill
+    status -- status of the mastering level of the skill (unmastered, in progress, mastered)
+
+    """
+    student = models.SkillStudent(date_acquired=datetime.datetime, user=user, skill=skill_id,)
     student.save()
 
 
 def add_authentication_by_student(user, start_date, end_date):
+    """
+    Each time a student logs in we use this method to add the field in the table AuthenticationStudent
+
+    Keyword arguments:
+    user -- id of the user (who's normally a student)
+    start_date -- date object in the same form as datetime.datetime, which times the beginning of the session
+    end_date -- date object in the same form as datetime.datetime, which times the end of the session
+
+    """
     student = models.AuthenticationStudent(user=user, date_accessed=start_date, end_of_session=end_date)
     student.save()
 
 
 def add_resource_accessed_by_student(user, resource_id):
+    """
+    Each time a student access to a particular resource we use this method to add the field in the table ResourceStudent
+
+    Keyword arguments:
+    user -- id of the user (who's normally a student)
+    resource_id -- id of the resource
+    """
     student = models.ResourceStudent(resource=resource_id, user=user, when=datetime.datetime)
     student.save()
 
