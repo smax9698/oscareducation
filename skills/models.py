@@ -378,6 +378,74 @@ class LearningTrack(models.Model):
 
     cleared = models.BooleanField(default=False)
     """Whether the LT is cleared or not"""
+	
+	    def create_track(self, student, professor):
+        """ 
+            Create the track for a student 
+        """
+
+        '''Récupère les targets'''
+        targets = StudentSkill.objects.filter(student=student, is_target=True)
+
+        '''Récupère le niveau de chaque studentskill'''
+        list_lvl, current_lvl = self.order_by_lvl(targets)
+        track = []
+        while current_lvl <= 0:
+            list_section = self.order_by_section(list_lvl[current_lvl])
+            for set in list_section:
+                for ss in set:
+                    track.append(ss)
+            current_lvl -= 1
+
+        return track
+
+    def order_by_lvl(self, targets):
+        dico = {}
+        for t in targets:
+            self.get_lvl(dico, t, 0)
+
+        '''Order des crièteres n'est pas fait'''
+        list_lvl = []
+        current_lvl = 0
+        for key, value in dico.iteritems():
+            if value > current_lvl:
+                list_lvl = value
+            if list_lvl[value] is None:
+                list_lvl[value] = set()
+                list_lvl[value].add(key)
+            else:
+                list_lvl[value].add(key)
+
+        return list_lvl, current_lvl
+
+    def order_by_section(self, set_student_skill):
+        list_section = []
+        for ss in set_student_skill:
+            skill = Skill.objects.filter(ss)
+            section = Section.objects.filter(id=skill.id)
+            if list_section[section] is None:
+                list_section[section] = set()
+                list_section[section].add(ss)
+            else:
+                list_section[section].add(ss)
+                return list_section
+
+    def get_lvl(self, dico, student_skill, lvl):
+        if student_skill is None:
+            return
+
+        if student_skill.acquired is not None:
+            return
+
+        if student_skill in dico:
+            if dico[student_skill] < lvl:
+                dico[student_skill] = lvl
+        else:
+            dico[student_skill] = lvl
+
+        for t in student_skill.get_prerequisites_skills():
+            self.get_lvl(dico, t, lvl + 1)
+        return
 
 class Criteria(models.Model):
     """[FR] Critère
