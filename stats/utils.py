@@ -17,57 +17,57 @@ def user_is_superuser(function):
 ###################
 
 
-def add_exam_done_by_student(user, exam_id):
+def add_exam_done_by_student(student, exam_id):
     """
     Each time a student is done with an exam we use this method to add the field in the table ExamStudent
 
     Keyword arguments:
-    user -- id of the user (who's normally a student)
+    student -- the student who passed the exam
     exam_id -- id of the finished exam
 
     """
-    student = models.ExamStudent(user=user, exam=exam_id)
-    student.save()
+    new_entry = models.ExamStudent(student=student, exam=exam_id)
+    new_entry.save()
 
 
-def add_skill_acquired_by_student(user, skill_id):
+def add_skill_acquired_by_student(student, skill_id):
     """
     Each time a student acquires a skill we use this method to add the field in the table SkillStudent
 
     Keyword arguments:
-    user -- id of the user (who's normally a student)
+    student -- the student who acquired the skill
     skill_id -- id of the mastered skill
     status -- status of the mastering level of the skill (unmastered, in progress, mastered)
 
     """
-    student = models.SkillStudent(date_acquired=datetime.datetime, user=user, skill=skill_id,)
-    student.save()
+    new_entry = models.SkillStudent(date_acquired=datetime.datetime, student=student, skill=skill_id)
+    new_entry.save()
 
 
-def add_authentication_by_student(user, start_date, end_date):
+def add_authentication_by_student(student, start_date, end_date):
     """
     Each time a student logs in we use this method to add the field in the table AuthenticationStudent
 
     Keyword arguments:
-    user -- id of the user (who's normally a student)
+    student -- student who logged in
     start_date -- date object in the same form as datetime.datetime, which times the beginning of the session
     end_date -- date object in the same form as datetime.datetime, which times the end of the session
 
     """
-    student = models.AuthenticationStudent(user=user, date_accessed=start_date, end_of_session=end_date)
-    student.save()
+    new_entry = models.AuthenticationStudent(student=student, date_accessed=start_date, end_of_session=end_date)
+    new_entry.save()
 
 
-def add_resource_accessed_by_student(user, resource_id):
+def add_resource_accessed_by_student(student, resource_id):
     """
     Each time a student access to a particular resource we use this method to add the field in the table ResourceStudent
 
     Keyword arguments:
-    user -- id of the user (who's normally a student)
+    student -- student who accessed the resource
     resource_id -- id of the resource
     """
-    student = models.ResourceStudent(resource=resource_id, user=user, when=datetime.datetime)
-    student.save()
+    new_entry = models.ResourceStudent(resource=resource_id, student=student, when=datetime.datetime)
+    new_entry.save()
 
 ###################
 #      Get        #
@@ -77,7 +77,7 @@ def add_resource_accessed_by_student(user, resource_id):
 def get_resources_accessed_by_student(student):
     accessed_by_ressources = {}
 
-    query = models.ResourceStudent.objects.get(user=student)
+    query = models.ResourceStudent.objects.get(student=student)
 
     for item in query:
         if item.resource in accessed_by_ressources:
@@ -89,29 +89,29 @@ def get_resources_accessed_by_student(student):
 
 
 def get_number_of_authentication_by_student(student):
-    query = models.AuthenticationStudent.objects.get(user=student)
+    query = models.AuthenticationStudent.objects.get(student=student)
 
     return len(query)
 
 
 def get_authentication_info_by_student(student):
-    return models.AuthenticationStudent.objects.get(user=student)
+    return models.AuthenticationStudent.objects.get(student=student)
 
 
 def get_skill_acquired_by_student(student):
-    query = models.SkillStudent.objects.get(user=student)
+    query = models.SkillStudent.objects.get(student=student)
 
     return len(query)
 
 
 def get_number_succeeded_exam_by_student(student):
-    query = models.ExamStudent.objects.get(user=student, succeeded=True)
+    query = models.ExamStudent.objects.get(student=student, succeeded=True)
 
     return len(query)
 
 
 def get_exam_by_student(student):
-    query = models.ExamStudent.objects.get(user=student)
+    query = models.ExamStudent.objects.get(student=student)
     #TODO find exam_id
 
 
