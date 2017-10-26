@@ -6,6 +6,8 @@ from django.db import models
 from examinations import models as model_examination
 from resources import models as model_resource
 from skills import models as model_skill
+from users.models import Student
+
 
 
 # Create your models here.
@@ -24,8 +26,13 @@ class ResourceStudent(models.Model):
     user : student id
     """
     resource = models.ForeignKey(model_resource.Resource)
-    user = models.ForeignKey(User)
+    student = models.ForeignKey(Student)
     when = models.DateTimeField(auto_now_add=True)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.resource == other.resource and self.student == other.student and self.when == other.when
 
 
 class AuthenticationStudent(models.Model):
@@ -37,9 +44,15 @@ class AuthenticationStudent(models.Model):
     date_accessed : date time when the student log in
     end_of_session : date time when the student log out
     """
-    user = models.ForeignKey(User)
+    student = models.ForeignKey(Student)
     date_accessed = models.DateTimeField(auto_now_add=True)
     end_of_session = models.DateTimeField()
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.student == other.student and self.date_accessed == other.date_accessed \
+               and self.end_of_session == other.end_of_session
 
 
 class SkillStudent(models.Model):
@@ -49,10 +62,20 @@ class SkillStudent(models.Model):
     date_acquired : date time of the acquired skill
     user :  student id (foreign key)
     skill : skill id (foreign key)
+    progress : current state of the skill
     """
     date_acquired = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User)
+    student = models.ForeignKey(Student)
     skill = models.ForeignKey(model_skill.Skill)
+    progress = models.CharField(max_length=255,
+                                choices=(('unmastered', 'non maîtrisé'), ('in progress', 'en cours'),
+                                         ('mastered', 'maîtrisé')))
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.student == other.student and self.date_acquired == other.date_acquired \
+               and self.skill == other.skill and self.progress == other.progress
 
 
 class ExamStudent(models.Model):
@@ -60,9 +83,16 @@ class ExamStudent(models.Model):
     each time a student make an exam, a record will be saved on this table
     user : student id (foreign key)
     exam : exam id (foreign key)
+    succeeded : success of the exam
     """
-    user = models.ForeignKey(User)
+    student = models.ForeignKey(Student)
     exam = models.ForeignKey(model_examination.TestStudent)
+    succeeded = models.BooleanField(default=False)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.student == other.student and self.exam == other.exam and self.succeeded == other.succeeded
 
 
 class ExamStudentSkill(models.Model):
@@ -73,3 +103,8 @@ class ExamStudentSkill(models.Model):
     """
     skill_student = models.ForeignKey(ExamStudent)
     skill = models.ForeignKey(model_skill.Skill)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.skill_student == other.skill_student and self.skill == other.skill
