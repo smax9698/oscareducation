@@ -367,27 +367,25 @@ class LearningTrack(models.Model):
     student = models.ForeignKey('users.Student')
     """The Student concerned by this LT"""
 
-    studentskill = models.ForeignKey('StudentSkill')
-
+    student_skill = models.ForeignKey('StudentSkill')
 
     order = models.PositiveIntegerField()
-    """order of the skill in the learning track"""
+    """Order of the skill in the learning track"""
 
     locked = models.BooleanField(default=False)
     """Whether the LT is locked or not"""
 
     cleared = models.BooleanField(default=False)
     """Whether the LT is cleared or not"""
-	
-	    def create_track(self, student, professor):
-        """ 
-            Create the track for a student 
+
+    def create_track(self, student, professor):
+        """
+            Create the track for a student
         """
 
-        '''Récupère les targets'''
+        # Gather targets of the student
         targets = StudentSkill.objects.filter(student=student, is_target=True)
 
-        '''Récupère le niveau de chaque studentskill'''
         list_lvl, current_lvl = self.order_by_lvl(targets)
         track = []
         while current_lvl <= 0:
@@ -396,15 +394,15 @@ class LearningTrack(models.Model):
                 for ss in set:
                     track.append(ss)
             current_lvl -= 1
-
         return track
 
     def order_by_lvl(self, targets):
+        """ Get the level of each StudentSkill """
         dico = {}
         for t in targets:
             self.get_lvl(dico, t, 0)
 
-        '''Order des crièteres n'est pas fait'''
+        # TODO Order of criterias
         list_lvl = []
         current_lvl = 0
         for key, value in dico.iteritems():
@@ -447,6 +445,7 @@ class LearningTrack(models.Model):
             self.get_lvl(dico, t, lvl + 1)
         return
 
+
 class Criteria(models.Model):
     """[FR] Critère
 
@@ -457,6 +456,7 @@ class Criteria(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class ProfessorCriteria(models.Model):
     """
