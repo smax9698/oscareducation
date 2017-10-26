@@ -2,9 +2,11 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+
 from examinations import models as model_examination
 from resources import models as model_resource
 from skills import models as model_skill
+
 
 # Create your models here.
 class LoginStats(models.Model):
@@ -25,6 +27,11 @@ class ResourceStudent(models.Model):
     user = models.ForeignKey(User)
     when = models.DateTimeField(auto_now_add=True)
 
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.resource == other.resource and self.user == other.user and self.when == other.when
+
 
 class AuthenticationStudent(models.Model):
     """
@@ -38,6 +45,12 @@ class AuthenticationStudent(models.Model):
     user = models.ForeignKey(User)
     date_accessed = models.DateTimeField(auto_now_add=True)
     end_of_session = models.DateTimeField()
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.user == other.user and self.date_accessed == other.date_accessed \
+               and self.end_of_session == other.end_of_session
 
 
 class SkillStudent(models.Model):
@@ -53,7 +66,14 @@ class SkillStudent(models.Model):
     user = models.ForeignKey(User)
     skill = models.ForeignKey(model_skill.Skill)
     progress = models.CharField(max_length=255,
-                                 choices=(('unmastered','non maîtrisé'), ('in progress','en cours'), ('mastered','maîtrisé')))
+                                choices=(('unmastered', 'non maîtrisé'), ('in progress', 'en cours'),
+                                         ('mastered', 'maîtrisé')))
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.user == other.user and self.date_acquired == other.date_acquired and self.skill == other.skill \
+               and self.progress == other.progress
 
 
 class ExamStudent(models.Model):
@@ -67,6 +87,11 @@ class ExamStudent(models.Model):
     exam = models.ForeignKey(model_examination.TestStudent)
     succeeded = models.BooleanField(default=False)
 
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.user == other.user and self.exam == other.exam and self.succeeded == other.succeeded
+
 
 class ExamStudentSkill(models.Model):
     """
@@ -76,3 +101,8 @@ class ExamStudentSkill(models.Model):
     """
     skill_student = models.ForeignKey(ExamStudent)
     skill = models.ForeignKey(model_skill.Skill)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.skill_student == other.skill_student and self.skill == other.skill
