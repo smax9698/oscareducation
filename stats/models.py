@@ -2,9 +2,11 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+
 from examinations import models as model_examination
 from resources import models as model_resource
 from skills import models as model_skill
+
 
 # Create your models here.
 class LoginStats(models.Model):
