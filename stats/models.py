@@ -25,13 +25,13 @@ class ResourceStudent(models.Model):
     user : student id
     """
     resource = models.ForeignKey(model_resource.Resource)
-    student = models.ForeignKey(Student)
+    student = models.ForeignKey(Student, default=None)
     when = models.DateTimeField(auto_now_add=True)
 
     def __eq__(self, other):
         if other is None:
             return False
-        return self.resource == other.resource and self.student == other.student and self.when == other.when
+        return self.resource == other.resource and self.student == other.student
 
 
 class AuthenticationStudent(models.Model):
@@ -43,7 +43,7 @@ class AuthenticationStudent(models.Model):
     date_accessed : date time when the student log in
     end_of_session : date time when the student log out
     """
-    student = models.ForeignKey(Student)
+    student = models.ForeignKey(Student, default=None)
     date_accessed = models.DateTimeField(auto_now_add=True)
     end_of_session = models.DateTimeField()
 
@@ -64,7 +64,7 @@ class SkillStudent(models.Model):
     progress : current state of the skill
     """
     date_acquired = models.DateTimeField(auto_now_add=True)
-    student = models.ForeignKey(Student)
+    student = models.ForeignKey(Student, default=None)
     skill = models.ForeignKey(model_skill.Skill)
     progress = models.CharField(max_length=255,
                                 choices=(('unmastered', 'non maîtrisé'), ('in progress', 'en cours'),
@@ -73,8 +73,7 @@ class SkillStudent(models.Model):
     def __eq__(self, other):
         if other is None:
             return False
-        return self.student == other.student and self.date_acquired == other.date_acquired \
-               and self.skill == other.skill and self.progress == other.progress
+        return self.student == other.student and self.skill == other.skill and self.progress == other.progress
 
 
 class ExamStudent(models.Model):
@@ -84,7 +83,7 @@ class ExamStudent(models.Model):
     exam : exam id (foreign key)
     succeeded : success of the exam
     """
-    student = models.ForeignKey(Student)
+    student = models.ForeignKey(Student, default=None)
     exam = models.ForeignKey(model_examination.TestStudent)
     succeeded = models.BooleanField(default=False)
 
