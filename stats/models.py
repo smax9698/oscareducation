@@ -9,6 +9,7 @@ from skills import models as model_skill
 from users.models import Student
 
 
+
 # Create your models here.
 class LoginStats(models.Model):
     user = models.ForeignKey(User)

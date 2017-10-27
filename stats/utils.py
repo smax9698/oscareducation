@@ -1,5 +1,8 @@
 from django.contrib.auth.decorators import user_passes_test
 
+import models
+from promotions.models import Lesson
+from users.models import Student
 import stats.models as models
 
 
@@ -120,3 +123,19 @@ def get_time_spent_on_exam(exam):
 
 def get_skill_status(skillStudent):
     return skillStudent.progress
+
+def get_students_by_professor(professor):
+    """
+    Returns all students of all classes that the professor have
+    :param professor: Professor object
+    :return: a list with all students related to a professor
+    """
+    query = Lesson.objects.filter(professors=professor)
+    students_dico = {}
+
+    for item in query:
+        students = Student.objects.filter(lesson=item)
+        for student in students:
+            if str(student) not in students_dico:
+                yield student
+                students_dico[str(student)] = True
