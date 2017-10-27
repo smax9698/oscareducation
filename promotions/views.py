@@ -36,19 +36,11 @@ from examinations.models import Test, TestStudent, BaseTest, TestExercice, Conte
 from examinations.validate import validate_exercice_yaml_structure
 from resources.models import KhanAcademy, Sesamath, Resource
 from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
-from stats.utils import get_students_by_professor
 from users.models import Student
 from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
     TestUpdateForm, SesamathForm, ResourceForm, CSVForm
 from .models import Lesson, Stage
 from .utils import generate_random_password, user_is_professor
-
-
-@user_is_professor
-def viewstats(request):
-    return render(request, "stats/viewstats.haml", {
-        "students": get_students_by_professor(request.user.professor)
-    })
 
 
 @user_is_professor

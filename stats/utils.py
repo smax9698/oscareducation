@@ -2,14 +2,14 @@ import datetime
 
 from django.contrib.auth.decorators import user_passes_test
 
-import models
+import stats.models as models
 from promotions.models import Lesson
 from users.models import Student
-import stats.models as models
 
 
 def user_is_superuser(function):
     return user_passes_test(lambda x: x.is_superuser)(function)
+
 
 ###################
 # Access database #
@@ -72,6 +72,7 @@ def add_resource_accessed_by_student(student, resource_id):
     new_entry = models.ResourceStudent(resource=resource_id, student=student, when=datetime.datetime)
     new_entry.save()
 
+
 ###################
 #      Get        #
 ###################
@@ -115,7 +116,7 @@ def get_number_succeeded_exam_by_student(student):
 
 def get_exam_by_student(student):
     query = models.ExamStudent.objects.get(student=student)
-    #TODO find exam_id
+    # TODO find exam_id
 
 
 def get_time_spent_on_exam(exam):
@@ -125,6 +126,7 @@ def get_time_spent_on_exam(exam):
 
 def get_skill_status(skillStudent):
     return skillStudent.progress
+
 
 def get_students_by_professor(professor):
     """

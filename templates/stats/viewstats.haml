@@ -2,6 +2,16 @@
 
 -load bootstrap3
 
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.pk %}"} Classe {{ lesson.name }}
+    %li.active
+      Statistiques
+
+
 -block content
   .row
     .col-md-4
@@ -57,33 +67,37 @@
           %a{href: "#"}
             Ma classe
         %li{role: "presentation"}
-          %a{href: "#"}
+          %a{href: "{% url 'stats:view_student' lesson.pk %}"}
             Mes étudiants
 
       .ligneorange
 
       .container-fluid.boxclassetitle
 
-        .pull-right
-          %a.icon.new-class{href: "{% url 'professor:lesson_add' %}", data-toggle: "tooltip", data-placement: "top", title: "Ajouter une classe"}
+        .pull-left Statistique de ma classe {{ lesson.name }}
 
       .ligneorangefine
 
       .container-fluid.boxclasse
 
-        - for student in students
-          %p {{ student }}
 
-        .list-group
-          %a{type: "button", class: "btn btn-default btn-circle btn-xl", href: "{% url 'professor:main-education' %}"}
-            %img{src: "http://i68.tinypic.com/332szu9.png", class: "buttonimg"}
-            .buttontxt
-              Compétences
-              %br
-              et ressources
-          %a{type: "button", class: "btn btn-default btn-circle btn-xl", href: "{% url 'professor:main-education' %}"}
-            %img{src: "http://i68.tinypic.com/332szu9.png", class: "buttonimg"}
-            .buttontxt
-              Compétences
-              %br
-              et ressources
+        %p
+          Nombre d'étudiants
+          %b
+            bisous
+
+        %p
+          Nombre moyen de compétences acquises
+          %b
+            LOL
+
+        %p
+          Compétence la moins maitrisée
+          %b
+            MDR
+
+        %p
+          Compétence la plus maitrisée
+          %b
+            HAHA
+
