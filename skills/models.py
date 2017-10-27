@@ -386,49 +386,54 @@ class LearningTrack(models.Model):
         # Gather targets of the student
         targets = StudentSkill.objects.filter(student=student, is_target=True)
 
-        list_lvl, current_lvl = self.order_by_lvl(targets)
+        list_lvl, biggest_lvl = self.order_by_lvl(targets)
+        current_lvl = biggest_lvl
         track = []
-        while current_lvl <= 0:
+        while current_lvl >= 0:  # for each level starting by the biggest
             list_section = self.order_by_section(list_lvl[current_lvl])
-            for set in list_section:
-                for ss in set:
-                    track.append(ss)
+            for skill_set in list_section:
+                for student_skill in skill_set:
+                    track.append(student_skill)
             current_lvl -= 1
         return track
 
     def order_by_lvl(self, targets):
-        """ Get the level of each StudentSkill """
-        dico = {}
-        for t in targets:
-            self.get_lvl(dico, t, 0)
+        """ List of sets of skills where the level is the index """
+        skills_to_level = {}
+        for target in targets:
+            self.set_level_in_dictionary(skills_to_level, target, 0)
 
         # TODO Order of criterias
+
+        # List of sets of skills, the level is the index
         list_lvl = []
-        current_lvl = 0
-        for key, value in dico.iteritems():
-            if value > current_lvl:
-                list_lvl = value
+        biggest_level = 0
+        for key, value in skills_to_level.iteritems():
+            if value > biggest_level:
+                biggest_level = value
             if list_lvl[value] is None:
                 list_lvl[value] = set()
                 list_lvl[value].add(key)
             else:
                 list_lvl[value].add(key)
 
-        return list_lvl, current_lvl
+        return list_lvl, biggest_level
 
     def order_by_section(self, set_student_skill):
+        """ List of sets of skills where the section is the index """
         list_section = []
-        for ss in set_student_skill:
-            skill = Skill.objects.filter(ss)
+        for student_skill in set_student_skill:
+            skill = Skill.objects.filter(student_skill)
             section = Section.objects.filter(id=skill.id)
             if list_section[section] is None:
                 list_section[section] = set()
-                list_section[section].add(ss)
+                list_section[section].add(student_skill)
             else:
-                list_section[section].add(ss)
+                list_section[section].add(student_skill)
                 return list_section
 
-    def get_lvl(self, dico, student_skill, lvl):
+    def set_level_in_dictionary(self, dico, student_skill, lvl):
+        """In the dictionary, set the level of a StudentSkill and all its prerequisites"""
         if student_skill is None:
             return
 
@@ -441,8 +446,8 @@ class LearningTrack(models.Model):
         else:
             dico[student_skill] = lvl
 
-        for t in student_skill.get_prerequisites_skills():
-            self.get_lvl(dico, t, lvl + 1)
+        for prerequisite in student_skill.get_prerequisites_skills():
+            self.set_level_in_dictionary(dico, prerequisite, lvl + 1)
         return
 
 
