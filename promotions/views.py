@@ -50,6 +50,32 @@ from .utils import generate_random_password, user_is_professor, force_encoding
 import csv
 from django.http import JsonResponse
 
+
+@user_is_professor
+def downloadCSV(request):
+    import csv
+    from django.http import HttpResponse
+    from io import StringIO
+
+    f = StringIO()
+    writer = csv.writer(f)
+    writer.writerow(["code", "country", "ip", "url", "count"])
+
+    f.seek(0)
+    response = HttpResponse(f, content_type='text/csv')
+    #response['Content-Disposition'] = 'attachment; filename=stat-info.csv'
+    return response
+
+@user_is_professor
+def exportCSV(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="users.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Username', 'First name', 'Last name', 'Email address'])
+
+    return response
+
 @user_is_professor
 def viewstats(request):
     return render(request, "stats/viewstats.haml")

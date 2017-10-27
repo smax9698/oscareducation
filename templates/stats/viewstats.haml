@@ -8,7 +8,7 @@
       %br/
       %br/
       %font{:color => "white", :size => "4"}  Periode
-      %form{:action => "#"}
+      %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
         %select{:name => "---"}
           %option{:value => "1q2017-18"} 1q Année 2017/2018
           %option{:value => "2q2017-18"} 2q Année 2017/2018
@@ -21,7 +21,10 @@
         %input{:name => "endDate", :type => "text", :value => "jj/mm/aa"}/
         %br/
         %br/
-        %input{:type => "submit", :value => "Submit"}/
+       
+        -csrf_token
+        %button.btn.btn-lg.btn-primary{type: "submit"}
+          Appliquer
 
       .container
       %br/
@@ -46,10 +49,18 @@
             %font{:color => "white"} Objectifs acuis
       %br/
       %br/
-      %button{:onclick => "#", :type => "button"} Données numériques
+                                          -# make new method for this
+      %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
+        -csrf_token
+        %button.btn.btn-lg.btn-primary{type: "submit"}
+          Données numériques
       %br/
       %br/
-      %button{:onclick => "#", :type => "button"} Exporter en CVS
+      -# add exportCSV to promotions/views.py and promotions/url.py ?
+      %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
+        -csrf_token
+        %button.btn.btn-lg.btn-primary{type: "submit"}
+          Exporter en CSV
 
     .col-md-7
       %ul.nav.orange.nav-tabs

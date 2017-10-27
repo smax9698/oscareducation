@@ -17,6 +17,8 @@ urlpatterns = [
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
 
     url(r'^$', views.viewstats, name='viewstats'),
+    url(r'^export/csv/$', views.exportCSV, name='exportCSV'),
+    url(r'^$', views.downloadCSV, name='downloadCSV'),
 
     url(r'^lesson/add/$', views.lesson_add, name='lesson_add'),
     url(r'^lesson/(?P<pk>\d+)/$', views.lesson_detail, name='lesson_detail'),
