@@ -2,6 +2,16 @@
 
 -load bootstrap3
 
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.pk %}"} Classe {{ lesson.name }}
+    %li.active
+      Statistiques
+
+
 -block content
   .row
     .col-md-4
@@ -14,10 +24,10 @@
           %option{:value => "2q2017-18"} 2q Année 2017/2018
           %option{:value => "1q2016-17"} 1q Année 2016/2017
           %option{:value => "2q2016-17"} 2q Année 2016/2017
-        %font{:color => "white"}  Start Date:
+        %font{:color => "white"} Start Date:
         %input{:name => "startDate", :type => "text", :value => "jj/mm/aa"}/
         %br/
-        %font{:color => "white"}  End Date:
+        %font{:color => "white"} End Date:
         %input{:name => "endDate", :type => "text", :value => "jj/mm/aa"}/
         %br/
         %br/
@@ -29,7 +39,7 @@
       .container
       %br/
       %br/
-      %font{:color => "white", :size => "4"}  Paramètres
+      %font{:color => "white", :size => "4"} Paramètres
       %form
         .checkbox
           %label
@@ -67,27 +77,38 @@
         %li.active{role: "presentation"}
           %a{href: "#"}
             Ma classe
+        %li{role: "presentation"}
+          %a{href: "{% url 'stats:view_student' lesson.pk %}"}
+            Mes étudiants
 
       .ligneorange
 
       .container-fluid.boxclassetitle
 
-        .pull-right
-          %a.icon.new-class{href: "{% url 'professor:lesson_add' %}", data-toggle: "tooltip", data-placement: "top", title: "Ajouter une classe"}
+        .pull-left Statistique de ma classe {{ lesson.name }}
 
       .ligneorangefine
 
       .container-fluid.boxclasse
-        .list-group
-           %a{type: "button", class: "btn btn-default btn-circle btn-xl", href: "{% url 'professor:main-education' %}"}
-             %img{src: "http://i68.tinypic.com/332szu9.png", class: "buttonimg"}
-             .buttontxt
-               Compétences
-               %br
-               et ressources
-          %a{type: "button", class: "btn btn-default btn-circle btn-xl", href: "{% url 'professor:main-education' %}"}
-             %img{src: "http://i68.tinypic.com/332szu9.png", class: "buttonimg"}
-             .buttontxt
-               Compétences
-               %br
-               et ressources
+
+
+        %p
+          Nombre d'étudiants
+          %b
+            bisous
+
+        %p
+          Nombre moyen de compétences acquises
+          %b
+            LOL
+
+        %p
+          Compétence la moins maitrisée
+          %b
+            MDR
+
+        %p
+          Compétence la plus maitrisée
+          %b
+            HAHA
+

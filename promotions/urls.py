@@ -1,17 +1,12 @@
 from django.conf.urls import url, include
 from django.views.generic import DetailView, ListView
 
-from skills.models import Skill
-from examinations.models import Context
-
 import views
-
-from .models import Stage
-
-from .utils import user_is_professor
-
+from examinations.models import Context
+from skills.models import Skill
 from .cbgv import LessonStudentListView, StudentDelete, LessonDelete, BaseTestDelete
-
+from .models import Stage
+from .utils import user_is_professor
 
 urlpatterns = [
     url(r'^dashboard/$', views.dashboard, name='dashboard'),

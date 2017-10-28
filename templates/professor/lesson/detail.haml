@@ -34,8 +34,8 @@
 
     -#%a.real-link{href: "{% url 'stats:viewstats' lesson.pk %}"}
     %li{role: "presentation"}
-      %a.real-link{href: "{% url 'professor:viewstats' %}"}
-        Statistique
+      %a.real-link{href: "{% url 'stats:viewstats' lesson.pk %}"}
+        Statistiques
 
 
   .tab-content
@@ -106,6 +106,40 @@
 
   -block javascript
     :javascript
+          $(function () {
+            $('[data-toggle="popover"]').popover({
+              html: true
+            });
+
+            $('#legend').each(function(index, node) {
+              node.setAttribute("data-content", node.nextSibling.nextSibling.innerHTML);
+            });
+
+            if (document.location.hash) {
+                hash = document.location.hash;
+                document.location.hash = '';
+                console.log(hash);
+                $('.nav-tabs a[href="' + hash + '"]').tab('show');
+            }
+          })
+
+          $(function () {
+            $('[data-toggle="popover"]').popover({
+              html: true
+            })
+
+            $('#legend').each(function(index, node) {
+              node.setAttribute("data-content", node.nextSibling.nextSibling.innerHTML);
+            });
+
+            if (document.location.hash) {
+                hash = document.location.hash;
+                document.location.hash = '';
+                console.log(hash);
+                $('.nav-tabs a[href="' + hash + '"]').tab('show');
+            }
+          })
+
       $(function () {
         $('[data-toggle="popover"]').popover({
           html: true
