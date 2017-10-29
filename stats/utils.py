@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 
 import stats.models as models
 from promotions.models import Lesson
+from skills.models import StudentSkill
 from users.models import Student
 
 
@@ -77,17 +78,17 @@ def add_resource_accessed_by_student(student, resource_id):
 
 
 def get_resources_accessed_by_student(student):
-    accessed_by_ressources = {}
+    accessed_by_resources = {}
 
     query = models.ResourceStudent.objects.get(student=student)
 
     for item in query:
-        if item.resource in accessed_by_ressources:
-            accessed_by_ressources[item.resource] += 1
+        if item.resource in accessed_by_resources:
+            accessed_by_resources[item.resource] += 1
         else:
-            accessed_by_ressources[item.resource] = 1
+            accessed_by_resources[item.resource] = 1
 
-    return accessed_by_ressources
+    return accessed_by_resources
 
 
 def get_number_of_authentication_by_student(student):
@@ -102,7 +103,6 @@ def get_authentication_info_by_student(student):
 
 def get_skill_acquired_by_student(student):
     query = models.SkillStudent.objects.get(student=student)
-
     return len(query)
 
 
@@ -122,8 +122,8 @@ def get_time_spent_on_exam(exam):
     return exam.finished_at - exam.started_at
 
 
-def get_skill_status(skillStudent):
-    return skillStudent.progress
+def get_skill_status(skill_student):
+    return skill_student.progress
 
 
 def get_students_by_professor(professor):
@@ -141,3 +141,160 @@ def get_students_by_professor(professor):
             if str(student) not in students_dico:
                 yield student
                 students_dico[str(student)] = True
+
+
+def get_average_skill_acquired(lesson, function):
+    """
+    Returns the average of skill acquired by students
+    :param lesson: Lesson object
+    :param function:
+    :return: Average of skill acquired by students
+    """
+    count = 0
+    students = Student.objects.filter(lesson=lesson)
+    skills = lesson.stage.skills.all()  # skills lesson
+    for i in students:
+        skills_student = StudentSkill.objects.filter(student=i)
+        for j in skills:
+            skill = skills_student.get(skill=j)
+            if skill.acquired and function(skill):
+                count += 1
+    return count / len(students)
+
+
+def get_latest_skill_acquired(student, lesson):
+    """
+    Return the last skill acquired by the student
+    :param student: Student object
+    :param lesson: Lesson object
+    :return: Return the lastest skill mastered by the student in the lesson
+    """
+    query = StudentSkill.objects.filter(student=student)
+    skills = lesson.stage.skills.all()
+    max = None
+    for i in query:
+        if i.skill in skills:
+            if i.acquired is not None:
+                if max is None:
+                    max = i
+                elif i.acquired > max.acquired:
+                    max = i
+    return max.skill if max is not None else None
+
+
+def least_mastered_skill(lesson, function):
+    """
+    Return the least_mastered_skill by the student of the lesson
+    :param lesson: Lesson object
+    :param function:
+    :return: the least mastered skill by the student of the lesson
+    """
+    students = Student.objects.filter(lesson=lesson)
+    skills = lesson.stage.skills.all()
+    min_skill = None
+    min = None
+    count = 0
+    for i in skills:
+        for j in students:
+            skill_student = StudentSkill.objects.get(student=j, skill=i)
+            if skill_student.acquired and function(skill_student):
+                count += 1
+        if min is None and count > 0:
+            min = count
+            min_skill = i
+        elif min < count and count > 0:
+            min = count
+            min_skill = i
+        count = 0
+    return min_skill
+
+
+def most_mastered_skill(lesson, function):
+    """
+    Return the most_mastered skill by the student of the lesson
+    :param lesson: Lesson object
+    :return: the most mastered skill by the student of the lesson
+    """
+    students = Student.objects.filter(lesson=lesson)
+    skills = lesson.stage.skills.all()
+    max_skill = None
+    max = None
+    count = 0
+    for i in skills:
+        for j in students:
+            skill_student = StudentSkill.objects.get(student=j, skill=i)
+            if skill_student.acquired and function(skill_student):
+                count += 1
+        if max is None and count > 0:
+            max = count
+            max_skill = i
+        elif max < count and count > 0:
+            max = count
+            max_skill = i
+        count = 0
+    return max_skill
+
+
+def time_between_two_skills(student, skill_a, skill_b):
+    """
+    Return the time between
+    :param student: Student object
+    :param skill_a:
+    :param skill_b:
+    :return: The time between by two skill mastered by the student
+    """
+    query = StudentSkill.objects.filter(student=student)
+    date_a = query.get(skill_a).acquired
+    date_b = query.get(skill_b).acquired
+    return date_a - date_b
+
+
+def get_latest_test_succeeded(student, lesson):
+    """
+    Return the latest test succeeded of a specific student
+    :param student:
+    :param lesson:
+    :return: the latest test succeeded of a specific student in lesson
+    """
+    query = models.ExamStudent.objects.filter(student=student)
+    skills = lesson.stage.skills.all()
+    latest = None
+    for i in query:
+        skill_tested = models.ExamStudentSkill.object.get(skill_student=i)
+        if i.succeeded and skill_tested.skill in skills:  # check if skill_tested.skill is ok
+            if latest is None:
+                latest = i
+            elif latest < i.exam.finished_at:
+                latest = i
+    return latest.exam.test if latest is not None else None
+
+
+def number_of_test_pass(student, lesson):
+    """
+    Return the number of test succeeded
+    :param student: Student object
+    :param lesson: Lesson object
+    :return: Number of test succeeded in lesson
+    """
+    count = 0
+    query = models.ExamStudent.objects.filter(student=student)
+    skills = lesson.stage.skills.all()
+    for i in query:
+        skill_tested = models.ExamStudentSkill.object.get(skill_student=i)
+        if i.succeeded and skill_tested.skill in skills:  # check if skill_tested.skill is ok
+            count += 1
+    return count
+
+
+def filter(date_a, date_b):
+    """
+    :param date_a:
+    :param date_b:
+    :return:
+    """
+
+    def h(element):
+        date = element.acquired
+        return date_b >= date >= date_a
+
+    return h
