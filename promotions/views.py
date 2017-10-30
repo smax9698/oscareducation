@@ -1874,7 +1874,6 @@ def list_student_target(request, lesson_pk):
     #    "no_menu": True,
     #}
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
-    Skill.objects.filter()
     return render(request, "professor/lesson/list_student_target.haml", {
         "lesson": lesson,
     })
