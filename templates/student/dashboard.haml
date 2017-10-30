@@ -148,16 +148,61 @@
               -#
                 Code for the modal dialog in bootstrap
               %div{:class =>"modal fade", :id => "myModal", :tabindex => "-1", :role => "dialog", :aria-labelledby => "myModalLabe"}
-                %div{:class => "modal-dialog", :role => "document"}
-                  %div{:class => "modal-content"}
+                %div{:class => "modal-dialog", :role => "document", :style => "width: 90%; height: 90%;"}
+                  %div{:class => "modal-content", :style => "height: auto; min-height: 100%; border-radius: 10; margin-bottom: 25px;"}
                     %div{:class => "modal-header"}
                       %button{:type => "button", :class => "close", :data-dismiss => "modal", :aria-label => "Close"}
-                        %span{:aria-hidden => "true"}&times;
+                        %span{:aria-hidden => "true"} &times;
                       %h4{:class => "modal-title", :id => "myModalLabel", :style => "color:black;"} Detailed view
                     %div{:class => "modal-body"}
-                      -#for stage in user.student.get_threee_next
-                      -for stage in lesson.stages_in_unchronological_order
-                        %div coucou
+                      <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
+                        <div class="carousel-inner" role="listbox">
+                          -# TODO change for the learning track!!
+                          -for stage in lesson.stages_in_unchronological_order
+                            -get_students_skills of user.student at stage rename "student_skills"
+                            -for student_skill in student_skills
+                              -#-if student_skill.recommended_to_learn
+                              -if forloop.first
+                                %div{:class => "item active", :style => "height:90%; min-height:150px"}
+                                  .row
+                                    .col-xs-2
+                                      -if student_skill.acquired
+                                        %img.icon.student-skill{src: "{% static 'img/icons/mastered.png' %}"}
+                                      -elif student_skill.tested
+                                        -if student_skill.recommended_to_learn
+                                          %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
+                                        -else
+                                          %img.icon.student-skill{src: "{% static 'img/icons/not-mastered.png' %}"}
+                                      -else
+                                        %img.icon.student-skill{src: "{% static 'img/icons/not-tested.png' %}"}
+                                    .col-xs-10
+                                      %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
+                                        {{ student_skill.skill.name }}
+                              -else
+                                %div{:class => "item", :style => "height:90%; min-height:150px"}
+                                  .row
+                                    .col-xs-2
+                                      -if student_skill.acquired
+                                        %img.icon.student-skill{src: "{% static 'img/icons/mastered.png' %}"}
+                                      -elif student_skill.tested
+                                        -if student_skill.recommended_to_learn
+                                          %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
+                                        -else
+                                          %img.icon.student-skill{src: "{% static 'img/icons/not-mastered.png' %}"}
+                                      -else
+                                        %img.icon.student-skill{src: "{% static 'img/icons/not-tested.png' %}"}
+                                    .col-xs-10
+                                      %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
+                                        {{ student_skill.skill.name }}
+                                  -#<img data-src="holder.js/1140x500/auto/#777:#555/text:{{ student_skill.skill.name }}" alt="{{ student_skill.skill.name }}" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTE0MCIgaGVpZ2h0PSI1MDAiIHZpZXdCb3g9IjAgMCAxMTQwIDUwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvMTE0MHg1MDAvYXV0by8jNzc3OiM1NTUvdGV4dDpGaXJzdCBzbGlkZQpDcmVhdGVkIHdpdGggSG9sZGVyLmpzIDIuNi4wLgpMZWFybiBtb3JlIGF0IGh0dHA6Ly9ob2xkZXJqcy5jb20KKGMpIDIwMTItMjAxNSBJdmFuIE1hbG9waW5za3kgLSBodHRwOi8vaW1za3kuY28KLS0+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48IVtDREFUQVsjaG9sZGVyXzE1ZjZkOTM3ZTk1IHRleHQgeyBmaWxsOiM1NTU7Zm9udC13ZWlnaHQ6Ym9sZDtmb250LWZhbWlseTpBcmlhbCwgSGVsdmV0aWNhLCBPcGVuIFNhbnMsIHNhbnMtc2VyaWYsIG1vbm9zcGFjZTtmb250LXNpemU6NTdwdCB9IF1dPjwvc3R5bGU+PC9kZWZzPjxnIGlkPSJob2xkZXJfMTVmNmQ5MzdlOTUiPjxyZWN0IHdpZHRoPSIxMTQwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iIzc3NyIvPjxnPjx0ZXh0IHg9IjM5MS41IiB5PSIyNzUuNSI+Rmlyc3Qgc2xpZGU8L3RleHQ+PC9nPjwvZz48L3N2Zz4=" data-holder-rendered="true">
+                        </div>
+                      </div>
+
+                      <ul class="pager">
+                        <li class="previous"><a href="#carousel-example-generic" role="button" data-slide="prev">&larr; Previous</a></li>
+                        <li class="next"><a href="#carousel-example-generic" role="button" data-slide="next">Next &rarr;</a></li>
+                      </ul>
+
                     %div{:class => "modal-footer"}
                       %button{:type => "button", :class => "btn btn-default", :data-dismiss => "modal"}Close
 
