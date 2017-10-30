@@ -1880,9 +1880,10 @@ def list_student_target(request, lesson_pk):
 
 def target_selection(request, lesson_pk):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
-    return render(request, "professor/skill/target_selection.haml", {
+    return render(request, "professor/lesson/skill/target_selection.haml", {
         "lesson": lesson,
     })
+
 
 def launch_method(request):
     print('launch method run')

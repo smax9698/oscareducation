@@ -92,6 +92,6 @@ urlpatterns = [
     url(r'^professor_test_add_skill/$', views.professor_test_add_skill, name='professor_test_add_skill'),
     url(r'^professor_test_delete_skill/$', views.professor_test_delete_skill, name='professor_test_delete_skill'),
 
-    url(r'^skill/(?P<lesson_pk>\d+)/target_selection/$', views.target_selection, name='skill_target_selection'),
+    url(r'^lesson/(?P<lesson_pk>\d+)/skill_target_selection/$', views.target_selection, name='lesson_target_selection'),
 
 ]

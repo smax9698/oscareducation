@@ -9,7 +9,7 @@
     %li
       %a{href: "{% url 'professor:dashboard' %}"} Oscar
     %li
-      Liste des compétences cibles des étudiants
+      %a{href: "{% url 'professor:lesson_list_student_target' lesson.pk %}"} Liste des compétences cibles des étudiants
     %li.active
       Selection des compétences cibles
 
@@ -17,8 +17,3 @@
   %h3
     =lesson.name
   %hr
-
-
-  %body
-    .col-md-7
-    .ligneorange
