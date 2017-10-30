@@ -135,11 +135,31 @@
       .col-md-6
         -if user.student.has_recommended_skills
           .container-fluid.boxclassetitle
-            .col-md-11
+            .col-md-10
               %h5 Compétences recommandées
-            .col-md-1
-              %a{href: '#couscous'}
+            .col-md-2
+              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
                 %img.icon.student-skill{src: "{% static 'img/icons/detailed_view.png' %}"}
+              </button>
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <h4 class="modal-title" id="myModalLabel" style="color:black;">Detailed view</h4>
+                    </div>
+                    <div class="modal-body">
+                      -for stage in user.student.get_threee_next
+                        <div> coucou </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
 
           .ligneorangefine
 

@@ -131,7 +131,7 @@ class Student(models.Model):
 
             Return  an empty list if there is not
         """
-        lt = LearningTrack.objects.filter(student=self).order('order')
+        lt = LearningTrack.objects.filter(student=self).order_by('order')
         list = []
         i = 0
         for item in lt:
