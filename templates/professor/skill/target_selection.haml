@@ -1,0 +1,24 @@
+-extends "base.haml"
+
+-load bootstrap3
+
+-load static
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      Liste des compétences cibles des étudiants
+    %li.active
+      Selection des compétences cibles
+
+-block content
+  %h3
+    =lesson.name
+  %hr
+
+
+  %body
+    .col-md-7
+    .ligneorange

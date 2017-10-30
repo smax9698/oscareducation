@@ -1876,13 +1876,18 @@ def list_student_target(request, lesson_pk):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     return render(request, "professor/lesson/list_student_target.haml", {
         "lesson": lesson,
-        "all_tests": lesson.basetest_set.order_by('-created_at'),
+    })
+
+def target_selection(request, lesson_pk):
+    lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    return render(request, "professor/skill/target_selection.haml", {
+        "lesson": lesson,
     })
 
 def launch_method(request):
     print('launch method run')
 
-    return render(request, "professor/skill/../templates/professor/lesson/list_student_target.haml")
+    return render(request, "professor/lesson/list_student_target.haml")
 
 
 def socles_competence(request):
