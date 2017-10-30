@@ -129,6 +129,7 @@ def get_skill_status(skill_student):
 def get_students_by_professor(professor):
     """
     Returns all students of all classes that the professor have
+
     :param professor: Professor object
     :return: a list with all students related to a professor
     """
@@ -146,6 +147,7 @@ def get_students_by_professor(professor):
 def get_average_skill_acquired(lesson, function):
     """
     Returns the average of skill acquired by students
+
     :param lesson: Lesson object
     :param function:
     :return: Average of skill acquired by students
@@ -165,6 +167,7 @@ def get_average_skill_acquired(lesson, function):
 def get_latest_skill_acquired(student, lesson):
     """
     Return the last skill acquired by the student
+
     :param student: Student object
     :param lesson: Lesson object
     :return: Return the lastest skill mastered by the student in the lesson
@@ -185,6 +188,7 @@ def get_latest_skill_acquired(student, lesson):
 def least_mastered_skill(lesson, function):
     """
     Return the least_mastered_skill by the student of the lesson
+
     :param lesson: Lesson object
     :param function:
     :return: the least mastered skill by the student of the lesson
@@ -208,6 +212,7 @@ def least_mastered_skill(lesson, function):
 def most_mastered_skill(lesson, function):
     """
     Return the most_mastered skill by the student of the lesson
+
     :param lesson: Lesson object
     :return: the most mastered skill by the student of the lesson
     """
@@ -226,10 +231,10 @@ def most_mastered_skill(lesson, function):
     return min_skill
 
 
-
 def time_between_two_skills(student, skill_a, skill_b):
     """
     Return the time between
+
     :param student: Student object
     :param skill_a:
     :param skill_b:
@@ -261,6 +266,7 @@ def time_between_two_last_skills(student):
 def get_latest_test_succeeded(student, lesson):
     """
     Return the latest test succeeded of a specific student
+
     :param student:
     :param lesson:
     :return: the latest test succeeded of a specific student in lesson
@@ -281,6 +287,7 @@ def get_latest_test_succeeded(student, lesson):
 def number_of_test_pass(student, lesson):
     """
     Return the number of test succeeded
+
     :param student: Student object
     :param lesson: Lesson object
     :return: Number of test succeeded in lesson

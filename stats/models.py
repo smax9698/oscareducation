@@ -9,7 +9,6 @@ from skills import models as model_skill
 from users.models import Student
 
 
-
 # Create your models here.
 class LoginStats(models.Model):
     user = models.ForeignKey(User)
@@ -22,7 +21,7 @@ class ResourceStudent(models.Model):
     """
     Each time a student access to a particular resource, we store
     when : accessed date
-    ressource : ressouce id
+    resource : resource id
     user : student id
     """
     resource = models.ForeignKey(model_resource.Resource)
@@ -53,28 +52,6 @@ class AuthenticationStudent(models.Model):
             return False
         return self.student == other.student and self.date_accessed == other.date_accessed \
                and self.end_of_session == other.end_of_session
-
-
-class SkillStudent(models.Model):
-    """
-    when a student master a skill. The date is recorded on this table
-
-    date_acquired : date time of the acquired skill
-    user :  student id (foreign key)
-    skill : skill id (foreign key)
-    progress : current state of the skill
-    """
-    date_acquired = models.DateTimeField(auto_now_add=True)
-    student = models.ForeignKey(Student, default=None)
-    skill = models.ForeignKey(model_skill.Skill)
-    progress = models.CharField(max_length=255,
-                                choices=(('unmastered', 'non maîtrisé'), ('in progress', 'en cours'),
-                                         ('mastered', 'maîtrisé')))
-
-    def __eq__(self, other):
-        if other is None:
-            return False
-        return self.student == other.student and self.skill == other.skill and self.progress == other.progress
 
 
 class ExamStudent(models.Model):
