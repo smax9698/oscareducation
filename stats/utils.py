@@ -92,7 +92,7 @@ def get_resources_accessed_by_student(student):
 
 
 def get_number_of_authentication_by_student(student):
-    query = models.AuthenticationStudent.objects.get(student=student)
+    query = models.AuthenticationStudent.objects.filter(student=student)
 
     return len(query)
 
@@ -152,14 +152,14 @@ def get_average_skill_acquired(lesson, function):
     """
     count = 0
     students = Student.objects.filter(lesson=lesson)
-    skills = lesson.stage.skills.all()  # skills lesson
+
     for i in students:
-        skills_student = StudentSkill.objects.filter(student=i)
-        for j in skills:
-            skill = skills_student.get(skill=j)
-            if skill.acquired and function(skill):
-                count += 1
-    return count / len(students)
+        skills_student = StudentSkill.objects.filter(student=i).exclude(acquired__isnull=True).distinct()
+        count += len(skills_student)
+
+        # TODO: filter function !!!
+
+    return (count * 1.0) / len(students)
 
 
 def get_latest_skill_acquired(student, lesson):
@@ -189,23 +189,19 @@ def least_mastered_skill(lesson, function):
     :param function:
     :return: the least mastered skill by the student of the lesson
     """
-    students = Student.objects.filter(lesson=lesson)
+
     skills = lesson.stage.skills.all()
     min_skill = None
     min = None
-    count = 0
+
     for i in skills:
-        for j in students:
-            skill_student = StudentSkill.objects.get(student=j, skill=i)
-            if skill_student.acquired and function(skill_student):
-                count += 1
-        if min is None and count > 0:
-            min = count
+
+        len_skills_student = len(StudentSkill.objects.filter(skill=i).exclude(acquired__isnull=True))
+
+        if min is None or min > len_skills_student:
+            min = len_skills_student
             min_skill = i
-        elif min < count and count > 0:
-            min = count
-            min_skill = i
-        count = 0
+
     return min_skill
 
 
@@ -215,24 +211,20 @@ def most_mastered_skill(lesson, function):
     :param lesson: Lesson object
     :return: the most mastered skill by the student of the lesson
     """
-    students = Student.objects.filter(lesson=lesson)
     skills = lesson.stage.skills.all()
-    max_skill = None
-    max = None
-    count = 0
+    min_skill = None
+    max_len = None
+
     for i in skills:
-        for j in students:
-            skill_student = StudentSkill.objects.get(student=j, skill=i)
-            if skill_student.acquired and function(skill_student):
-                count += 1
-        if max is None and count > 0:
-            max = count
-            max_skill = i
-        elif max < count and count > 0:
-            max = count
-            max_skill = i
-        count = 0
-    return max_skill
+
+        len_skills_student = len(StudentSkill.objects.filter(skill=i).exclude(acquired__isnull=True))
+
+        if max_len is None or max_len < len_skills_student:
+            max_len = len_skills_student
+            min_skill = i
+
+    return min_skill
+
 
 
 def time_between_two_skills(student, skill_a, skill_b):
@@ -247,6 +239,23 @@ def time_between_two_skills(student, skill_a, skill_b):
     date_a = query.get(skill_a).acquired
     date_b = query.get(skill_b).acquired
     return date_a - date_b
+
+
+def time_between_two_last_skills(student):
+    """
+    Return the time between the two last skill
+    :param student:
+    :return:
+    """
+
+    query = StudentSkill.objects.filter(student=student).order_by('acquired').exclude(acquired__isnull=True)
+
+    len_query = len(query)
+
+    if len_query > 2:
+        return query[1].acquired - query[0].acquired
+
+    return None
 
 
 def get_latest_test_succeeded(student, lesson):

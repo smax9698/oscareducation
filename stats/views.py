@@ -7,7 +7,9 @@ from promotions.utils import user_is_professor
 from resources.models import KhanAcademy, Sesamath
 from skills.models import Skill
 from users.models import Professor, Student
-from .utils import user_is_superuser
+from .utils import user_is_superuser, number_of_test_pass, get_latest_test_succeeded, \
+    get_number_of_authentication_by_student, get_latest_skill_acquired, time_between_two_last_skills, \
+    get_average_skill_acquired, least_mastered_skill, most_mastered_skill
 
 
 @user_is_superuser
@@ -53,7 +55,11 @@ def viewstats(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
 
     return render(request, "stats/viewstats.haml", {
-        "lesson": lesson
+        "lesson": lesson,
+        "student_number": len(Student.objects.filter(lesson=lesson)),
+        "avg_skill_acquired": get_average_skill_acquired(lesson, lambda: True),
+        "least_mastered_skill": least_mastered_skill(lesson, lambda: True),
+        "most_mastered_skill": most_mastered_skill(lesson, lambda: True)
     })
 
 
@@ -61,7 +67,17 @@ def stat_student(request, pk_lesson, pk_student):
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
     student = get_object_or_404(Student, pk=pk_student)
 
+    last_test_passed = get_latest_test_succeeded(student, lesson)
+    latest_skill = get_latest_skill_acquired(student, lesson)
+    time_spent_two_skill = time_between_two_last_skills(student)
+
     return render(request, "stats/stat_student.haml", {
         "lesson": lesson,
-        "student": student
+        "student": student,
+        "tests_passed": number_of_test_pass(student, lesson),
+        "last_passed_test": last_test_passed if last_test_passed else "Aucun test realise!",
+        "auth_number": get_number_of_authentication_by_student(student),
+        "latest_skill": latest_skill if latest_skill else "Aucun skill encore acquis!",
+        "time_spent_two_skills": time_spent_two_skill if time_spent_two_skill else "Pas assez de data pour calculer la statistique"
+
     })
