@@ -1866,15 +1866,15 @@ def global_resources_delete(request, pk):
 def main_education(request):
     return render(request, "professor/skill/main-education.haml")
 
-def set_targets(request,pk):
+def list_student_target(request, lesson_pk):
 
     #{
     #    "lessons": Lesson.objects.filter(professors=request.user.professor).annotate(Count("students")).select_related(
     #        "stage"),
     #    "no_menu": True,
     #}
-    lesson = get_object_or_404(Lesson, pk=pk)
-    return render(request,"professor/skill/set-targets.haml",{
+    lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    return render(request, "professor/lesson/list_student_target.haml", {
         "lesson": lesson,
         "all_tests": lesson.basetest_set.order_by('-created_at'),
     })
@@ -1882,7 +1882,7 @@ def set_targets(request,pk):
 def launch_method(request):
     print('launch method run')
 
-    return render(request,"professor/skill/set-targets.haml")
+    return render(request, "professor/skill/../templates/professor/lesson/list_student_target.haml")
 
 
 def socles_competence(request):

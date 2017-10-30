@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^', include('test_from_class.urls')),
 
     url(r'^lesson/(?P<lesson_pk>\d+)/skill/(?P<skill_code>.+)/$', views.lesson_skill_detail, name='lesson_skill_detail'),
+    url(r'^lesson/(?P<lesson_pk>\d+)/list_student_target/$', views.list_student_target, name='lesson_list_student_target'),
 
     url(r'^regenerate_student_password/$', views.regenerate_student_password, name='regenerate_student_password'),
     url(r'^global_resources/(?P<pk>\d+)/delete/$', views.global_resources_delete, name='global_resources_delete'),
@@ -47,6 +48,7 @@ urlpatterns = [
     url(r'^pedagogical/(?P<type>.+)/(?P<id_type>.+)/(?P<kind>.+)/resource/remove/(?P<id>\d+)/$', views.remove_pedagogical_ressources, name='remove_pedagogical_ressources'),
     url(r'^pedagogical/(?P<type>.+)/(?P<id>.+)/$', views.update_pedagogical_ressources, name='update_pedagogical_ressources'),
     url(r'^skill_tree/$', user_is_professor(ListView.as_view(model=Skill, template_name="professor/skill/tree.haml")), name='skill_tree'),
+
 
     url(r'^lesson/(?P<lesson_pk>\d+)/validate_skill/(?P<student_skill>\d+)/$', views.validate_student_skill, name='validate_student_skill'),
     url(r'^lesson/(?P<lesson_pk>\d+)/unvalidate_skill/(?P<student_skill>\d+)/$', views.unvalidate_student_skill, name='unvalidate_student_skill'),
@@ -79,7 +81,6 @@ urlpatterns = [
     url(r'^education/enseignement-professionnel/$', views.enseign_pro, name='enseign-pro'),
     url(r'^education/enseignement-tech-art/$', views.enseign_techart, name='enseign-techart'),
     url(r'^education/enseignement-transition/$', views.enseign_trans, name='enseign-trans'),
-    url(r'^education/(?P<pk>\d+)/set-targets/$' , views.set_targets,name='set-targets'),
     url(r'^education/launch-method/$' , views.launch_method,name='launch-method'),
 
 

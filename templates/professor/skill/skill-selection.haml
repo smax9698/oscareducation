@@ -1,0 +1,13 @@
+-extends "base.haml"
+
+-load bootstrap3
+
+-load static
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li.active
+      Choisir les targets des étudiants
+

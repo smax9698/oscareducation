@@ -35,7 +35,7 @@
       %a.real-link{href: "{% url 'professor:lesson_detail' lesson.pk %}#heatmap"}
         Vue globale de la classe
     %li.active{role: "presentation"}
-      %a.real-link{href: "{% url 'professor:set-targets' lesson.pk %}"}
+      %a.real-link{href: "{% url 'professor:lesson_list_student_target' lesson.pk %}"}
         Compétences cibles
 
   %body
@@ -54,11 +54,15 @@
         %table.table
           -for student in lesson.students.all
             %tr
-              %td{width: "250px"}
+              %td{width: "200px"}
                 %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}= student
-                  .pull-right
+                .pull-right
                   %a{href: "{% url 'professor:lesson_student_update' lesson.pk student.pk %}"}
-                    %img.icon{src: "{% static 'img/icons/modify.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Modifier les targets"}
+                    %img.icon{src: "{% static 'img/icons/modify.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Modifier les compétences cibles"}
+
+              %td
+                .pull-right
+
 
 
 
