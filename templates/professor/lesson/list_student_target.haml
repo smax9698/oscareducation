@@ -3,13 +3,27 @@
 -load bootstrap3
 
 -load static
+-load compress
+
+-block head
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/professor_select_skill.js' %}"}
+
+  :javascript
+    context = {
+      lessonId: {{ lesson.id }}
+    };
 
 -block breadcrumb
   %ol.breadcrumb
     %li
       %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.pk %}"}
+        Classe
+        =lesson.name
     %li.active
-      Liste des compétences cibles des étudiants
+      Compétences cibles
 
 -block content
   %h3
@@ -40,33 +54,73 @@
 
   %body
     .col-md-7
-
-
-
     .ligneorange
 
     .container-fluid.boxclassetitle
 
     .ligneorangefine
-
     .container-fluid.boxclasse
       .panel.panel-default
         %table.table
           -for student in lesson.students.all
             %tr
-              %td{width: "200px"}
+              %td{width: "250px"}
+                %input{:type => "checkbox"}
                 %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}= student
-                .pull-right
-                  %a{href: "{% url 'professor:lesson_target_selection' lesson.pk %}"}
-                    %img.icon{src: "{% static 'img/icons/modify.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Modifier les compétences cibles"}
 
-              %td
-                .pull-right
+      %div{ng-app: "oscar", ng-controller: "selectSkillController"}
+        .panel.panel-default
+          .panel-heading
+            Sélectionner les compétences cibles
 
+          .panel-body
+            %form.form
+              .row
+                .col-md-5
+                  %p
+                    %b
+                      Compétences sélectionnées :
 
+                  .well
+                    %span{ng-repeat: "skill in toTargetSkills"}
+                      %button.btn.btn-primary.selected-skill{type: "button", title: "{& skill.name &}", ng-click: "removeSkill(skill)"}
+                        {& skill &}
 
+                .col-md-6
+                  %h
+                  -for stage in lesson.stages_in_unchronological_order
+                    -if forloop.counter == 3
+                      <div class="panel panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                          <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Compétences antérieures</a>
+                            </h4>
+                          </div>
+                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                          <div class="panel-body">
 
+                    .form-group
+                      %label.control-label= stage.name
+                      .form-group
+                        %select.form-control{ng-model: "stage{{ stage.id }}SelectedSkill"}
+                          -regroup stage.skills_by_id by section as sections
+                          -for section in sections
+                            %optgroup{label: "{{ section.grouper }}"}
+                              -for skill in section.list reversed
+                                %option{value: "{{ skill.code }}", id: "{{ skill.code }}"}
+                                  {{ skill.code }} - {{ skill.name }}
 
+                    .form-group
+                      %button.btn.btn-primary{ng-click: "addSkillToTargets({{ stage.id }})", id: "addSkillToTestButtonForStage{{ stage.id }}"}
+                        Ajouter cette compétence
+
+                    -if forloop.last and forloop.counter >= 3
+                      </div>
+                      </div>
+            %div#alerts
+            %a{href: '#couscous'}
+              Définir comme compétences cibles
 
     -block javascript
     :javascript
