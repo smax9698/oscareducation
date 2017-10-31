@@ -126,7 +126,7 @@ class Student(models.Model):
                             skill=prerequisite,
                         )
     
-    def get_threee_next(self):
+    def get_three_next(self):
         """ Method that will get the three next skills to show to the student
 
             Return  an empty list if there is not
