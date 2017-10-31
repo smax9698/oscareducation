@@ -92,4 +92,6 @@ urlpatterns = [
     url(r'^professor_test_add_skill/$', views.professor_test_add_skill, name='professor_test_add_skill'),
     url(r'^professor_test_delete_skill/$', views.professor_test_delete_skill, name='professor_test_delete_skill'),
 
+    url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track/$', views.professor_set_learning_track, name='lesson_skill_learning_track'),
+
 ]

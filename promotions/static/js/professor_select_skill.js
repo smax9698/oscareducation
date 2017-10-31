@@ -1,27 +1,17 @@
 function selectSkillController($scope, $http) {
     $scope.stages = [];
 
-    // $scope.addNewTest = function() {
-    //     if ($scope.name === undefined || $scope.name.length == 0)
-    //     {
-    //         $("#alerts").html('<div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Vous devez donner un nom à votre test.</div>');
-    //         return;
-    //     }
-    //
-    //     if ($scope.toTargetSkills.length == 0) {
-    //         $("#alerts").html('<div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Vous devez sélectionner des compétences pour votre test.</div>');
-    //         return;
-    //     }
-    //
-    //     $http.post("/professor/add_test_from_class_for_lesson/", {
-    //         "name": $scope.name,
-    //         "lesson": context.lessonId,
-    //         "skills": $scope.toTargetSkills,
-    //     }).success(function(data, status, headers, config) {
-    //         // TODO: don't do that in javascript
-    //         window.location.href = "../" + data + "/fill/"
-    //     })
-    // }
+    $scope.setTemporaryTargets = function() {
+        //
+        // $http.post("/professor/add_test_from_class_for_lesson/", {
+        //     "name": context.lesson,
+        //     "lesson": context.lessonId,
+        //     "skills": $scope.toTargetSkills,
+        // }).success(function(data, status, headers, config) {
+        //     // TODO: don't do that in javascript
+        //     window.location.href = "../" + data + "/fill/"
+        // })
+    }
 
     $scope.addSkillToTargets = function(stage_id) {
         if ($scope.stages[stage_id].length == 0)
@@ -29,6 +19,7 @@ function selectSkillController($scope, $http) {
 
         if ($scope.toTargetSkills.length >= 3)
         {
+            //$("#addSkillToTestButtonForStage" + stage_id).addClass("disabled");
             $("#alerts").html('<div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Vous ne pouvez sélectionner que trois compétences cibles au maximum.</div>');
             return;
         }

@@ -1878,6 +1878,14 @@ def list_student_target(request, lesson_pk):
         "lesson": lesson,
     })
 
+def professor_set_learning_track(request, lesson_pk):
+    lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    student = lesson.students.all()[1]
+    #student.set_targets(target_skills)
+    return render(request, "professor/lesson/skill/learning_track.haml", {
+        "lesson": lesson,
+    })
+
 
 def launch_method(request):
     print('launch method run')

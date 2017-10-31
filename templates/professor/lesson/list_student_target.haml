@@ -119,7 +119,7 @@
                       </div>
                       </div>
             %div#alerts
-            %a{href: '#couscous'}
+            %a.real-link{href: "{% url 'professor:lesson_skill_learning_track' lesson.pk toTargetSkills %}"}
               Définir comme compétences cibles
 
     -block javascript
