@@ -12,7 +12,7 @@ function selectSkillController($scope, $http) {
     }
 
     $scope.addSkillToTargets = function(stage_id) {
-        if ($scope.stages[stage_id].length == 0)
+        if ($scope.stages[stage_id].length === 0)
             return;
 
         if ($scope.toTargetSkills.length >= 3)
@@ -27,7 +27,7 @@ function selectSkillController($scope, $http) {
         var toRemoveIndex;
 
         for (var index = 0; index < $scope.stages[stage_id].length; index++) {
-            if ($scope.stages[stage_id][index].code == $scope["stage" + stage_id + "SelectedSkill"]) {
+            if ($scope.stages[stage_id][index].code === $scope["stage" + stage_id + "SelectedSkill"]) {
                 toRemoveIndex = index;
             }
         }
