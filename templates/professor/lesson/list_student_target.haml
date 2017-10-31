@@ -60,15 +60,15 @@
 
     .ligneorangefine
     .container-fluid.boxclasse
-      .panel.panel-default
-        %table.table
-          -for student in lesson.students.all
-            %tr
-              %td{width: "250px"}
-                %input{:type => "checkbox"}
-                %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}= student
-
       %div{ng-app: "oscar", ng-controller: "selectSkillController"}
+        .panel.panel-default
+          %table.table
+            -for student in lesson.students.all
+              %tr
+                %td{width: "250px"}
+                  %input{:type => "checkbox", :name => "checkBox", :ng-checked => "selection.indexOf({{ student.pk }}) > -1", :ng-click => "toggleSelection({{ student.pk }})"}
+                  %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}= student
+
         .panel.panel-default
           .panel-heading
             Sélectionner les compétences cibles
@@ -119,7 +119,9 @@
                       </div>
                       </div>
             %div#alerts
-            %a.real-link{href: "{% url 'professor:lesson_skill_learning_track' lesson.pk toTargetSkills %}"}
+            %button.btn.btn-primary{ng-click: "setTemporaryTargets()", id: "setTargetButton"}
+              Salut
+            -#%a.real-link{href: "{% url 'professor:lesson_skill_learning_track' lesson.pk %}"}
               Définir comme compétences cibles
 
     -block javascript

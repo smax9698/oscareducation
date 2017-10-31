@@ -2,9 +2,8 @@ function selectSkillController($scope, $http) {
     $scope.stages = [];
 
     $scope.setTemporaryTargets = function() {
-        //
+
         // $http.post("/professor/add_test_from_class_for_lesson/", {
-        //     "name": context.lesson,
         //     "lesson": context.lessonId,
         //     "skills": $scope.toTargetSkills,
         // }).success(function(data, status, headers, config) {
@@ -57,12 +56,27 @@ function selectSkillController($scope, $http) {
             success(function(data, status, headers, config) {
                 $scope.stages = data.stages;
                 $scope.toTargetSkills = [];
+                $scope.selection = [];
 
                 for (i in $scope.stages) {
                     $scope["stage" + i + "SelectedSkill"] = $scope.stages[i][0].code;
                 }
            })
     }
+
+    $scope.toggleSelection = function toggleSelection(student) {
+
+        var idx = $scope.selection.indexOf(student);
+        // Is currently selected
+        if (idx > -1) {
+          $scope.selection.splice(idx, 1);
+        }
+        // Is newly selected
+        else {
+          $scope.selection.push(student);
+        }
+        alert($scope.selection);
+      };
 
     update_test_list();
 }

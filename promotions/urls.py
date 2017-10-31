@@ -15,6 +15,8 @@ urlpatterns = [
     # url(r'^export/csv/$', views.exportCSV, name='exportCSV'),
 
     url(r'^lesson/add/$', views.lesson_add, name='lesson_add'),
+    url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track/$', views.professor_set_learning_track, name='lesson_skill_learning_track'),
+
     url(r'^lesson/(?P<pk>\d+)/$', views.lesson_detail, name='lesson_detail'),
     url(r'^lesson/(?P<pk>\d+)/update/$', views.lesson_update, name='lesson_update'),
     url(r'^lesson/(?P<pk_lesson>\d+)/update_uaa/$', views.update_uaa, name='update_uaa'),
@@ -73,6 +75,7 @@ urlpatterns = [
     url(r'^exercices/remove_exercice/(?P<test_exercice_pk>\d+)/$', views.exercice_remove_test_exercice, name='exercice_remove_test_exercice'),
 
     url(r'^lesson/(?P<pk>\d+)/students_password_page/$', views.students_password_page, name='lesson_student_password_page'),
+
     url(r'^lesson/(?P<lesson_pk>\d+)/students_password_page/(?P<student_pk>\d+)/$', views.single_student_password_page,
         name='single_student_password_page'),
 
@@ -92,6 +95,5 @@ urlpatterns = [
     url(r'^professor_test_add_skill/$', views.professor_test_add_skill, name='professor_test_add_skill'),
     url(r'^professor_test_delete_skill/$', views.professor_test_delete_skill, name='professor_test_delete_skill'),
 
-    url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track/$', views.professor_set_learning_track, name='lesson_skill_learning_track'),
 
 ]
