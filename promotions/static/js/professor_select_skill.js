@@ -1,15 +1,14 @@
 function selectSkillController($scope, $http) {
     $scope.stages = [];
 
-    $scope.setTemporaryTargets = function() {
-
-        // $http.post("/professor/add_test_from_class_for_lesson/", {
-        //     "lesson": context.lessonId,
-        //     "skills": $scope.toTargetSkills,
-        // }).success(function(data, status, headers, config) {
-        //     // TODO: don't do that in javascript
-        //     window.location.href = "../" + data + "/fill/"
-        // })
+    $scope.setTemporaryTargets = function(lessonPk) {
+        $http.post("/professor/lesson/" + lessonPk + "/set_learning_track/", {
+            "target_skill_codes": $scope.toTargetSkills,
+            "student_pk": $scope.selection
+        }).success(function(data, status, headers, config) {
+            // TODO: don't do that in javascript
+            window.location.href = "../" + data + "/fill/"
+        })
     }
 
     $scope.addSkillToTargets = function(stage_id) {
@@ -18,7 +17,6 @@ function selectSkillController($scope, $http) {
 
         if ($scope.toTargetSkills.length >= 3)
         {
-            //$("#addSkillToTestButtonForStage" + stage_id).addClass("disabled");
             $("#alerts").html('<div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Vous ne pouvez sélectionner que trois compétences cibles au maximum.</div>');
             return;
         }
@@ -75,7 +73,6 @@ function selectSkillController($scope, $http) {
         else {
           $scope.selection.push(student);
         }
-        alert($scope.selection);
       };
 
     update_test_list();

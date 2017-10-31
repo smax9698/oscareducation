@@ -11,6 +11,7 @@
 
   :javascript
     context = {
+      //lessonPk: {{ lesson.pk }},
       lessonId: {{ lesson.id }}
     };
 
@@ -119,10 +120,8 @@
                       </div>
                       </div>
             %div#alerts
-            %button.btn.btn-primary{ng-click: "setTemporaryTargets()", id: "setTargetButton"}
-              Salut
-            -#%a.real-link{href: "{% url 'professor:lesson_skill_learning_track' lesson.pk %}"}
-              Définir comme compétences cibles
+            %button.btn.btn-primary{ng-click: "setTemporaryTargets({{ lesson.pk }})", id: "setTargetButton"}
+              Valider les compétences cibles
 
     -block javascript
     :javascript
