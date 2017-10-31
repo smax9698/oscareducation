@@ -135,7 +135,7 @@ class Student(models.Model):
         list = []
         i = 0
         for item in lt:
-            if not item.studentskill.acquired:
+            if not item.student_skill.acquired:
                 list.append(item)
                 i += 1
             if i >= 3:

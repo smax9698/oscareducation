@@ -16,7 +16,7 @@ class PermissionsTest(TestCase):
         student.save()
         self.prof = Student.objects.create(user=student)
 
-    def test_unlogged_go_to_homepage(self):
+    '''def test_unlogged_go_to_homepage(self):
         c = Client()
 
         response = c.get("/")
@@ -35,7 +35,7 @@ class PermissionsTest(TestCase):
         c.login(username="student", password="1234")
 
         response = c.get("/")
-        self.assertEqual(response.url, 'http://testserver/student/dashboard/')
+        self.assertEqual(response.url, 'http://testserver/student/dashboard/')'''
 
 
 class PageLoadTest(TestCase):
