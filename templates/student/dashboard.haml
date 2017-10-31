@@ -155,52 +155,53 @@
                         %span{:aria-hidden => "true"} &times;
                       %h4{:class => "modal-title", :id => "myModalLabel", :style => "color:black;"} Detailed view
                     %div{:class => "modal-body"}
-                      <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
-                        <div class="carousel-inner" role="listbox">
-                          -# TODO change for the learning track!!
-                          -for stage in lesson.stages_in_unchronological_order
-                            -get_students_skills of user.student at stage rename "student_skills"
-                            -for student_skill in student_skills
-                              -#-if student_skill.recommended_to_learn
-                              -if forloop.first
-                                %div{:class => "item active", :style => "height:90%; min-height:150px"}
-                                  .row
-                                    .col-xs-2
-                                      -if student_skill.acquired
-                                        %img.icon.student-skill{src: "{% static 'img/icons/mastered.png' %}"}
-                                      -elif student_skill.tested
-                                        -if student_skill.recommended_to_learn
-                                          %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
-                                        -else
-                                          %img.icon.student-skill{src: "{% static 'img/icons/not-mastered.png' %}"}
-                                      -else
-                                        %img.icon.student-skill{src: "{% static 'img/icons/not-tested.png' %}"}
-                                    .col-xs-10
-                                      %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
-                                        {{ student_skill.skill.name }}
-                              -else
-                                %div{:class => "item", :style => "height:90%; min-height:150px"}
-                                  .row
-                                    .col-xs-2
-                                      -if student_skill.acquired
-                                        %img.icon.student-skill{src: "{% static 'img/icons/mastered.png' %}"}
-                                      -elif student_skill.tested
-                                        -if student_skill.recommended_to_learn
-                                          %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
-                                        -else
-                                          %img.icon.student-skill{src: "{% static 'img/icons/not-mastered.png' %}"}
-                                      -else
-                                        %img.icon.student-skill{src: "{% static 'img/icons/not-tested.png' %}"}
-                                    .col-xs-10
-                                      %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
-                                        {{ student_skill.skill.name }}
-                                  -#<img data-src="holder.js/1140x500/auto/#777:#555/text:{{ student_skill.skill.name }}" alt="{{ student_skill.skill.name }}" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTE0MCIgaGVpZ2h0PSI1MDAiIHZpZXdCb3g9IjAgMCAxMTQwIDUwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvMTE0MHg1MDAvYXV0by8jNzc3OiM1NTUvdGV4dDpGaXJzdCBzbGlkZQpDcmVhdGVkIHdpdGggSG9sZGVyLmpzIDIuNi4wLgpMZWFybiBtb3JlIGF0IGh0dHA6Ly9ob2xkZXJqcy5jb20KKGMpIDIwMTItMjAxNSBJdmFuIE1hbG9waW5za3kgLSBodHRwOi8vaW1za3kuY28KLS0+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48IVtDREFUQVsjaG9sZGVyXzE1ZjZkOTM3ZTk1IHRleHQgeyBmaWxsOiM1NTU7Zm9udC13ZWlnaHQ6Ym9sZDtmb250LWZhbWlseTpBcmlhbCwgSGVsdmV0aWNhLCBPcGVuIFNhbnMsIHNhbnMtc2VyaWYsIG1vbm9zcGFjZTtmb250LXNpemU6NTdwdCB9IF1dPjwvc3R5bGU+PC9kZWZzPjxnIGlkPSJob2xkZXJfMTVmNmQ5MzdlOTUiPjxyZWN0IHdpZHRoPSIxMTQwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iIzc3NyIvPjxnPjx0ZXh0IHg9IjM5MS41IiB5PSIyNzUuNSI+Rmlyc3Qgc2xpZGU8L3RleHQ+PC9nPjwvZz48L3N2Zz4=" data-holder-rendered="true">
-                        </div>
-                      </div>
+                      %div{:class=>"container"}
+                        %div{:class=>"row"}
+                          %div{:class=>"col-md-12"}
+                            %div{:class=>"carousel slide multi-item-carousel", :id=>"theCarousel"}
+                              %div{:class=>"carousel-inner"}
+                                -# TODO change for the learning track!!
+                                -for stage in lesson.stages_in_unchronological_order
+                                  -get_students_skills of user.student at stage rename "student_skills"
+                                  -for student_skill in student_skills
+                                    -#-if student_skill.recommended_to_learn
+                                    -if forloop.first
+                                      %div{:class => "item active"}
+                                        %div{:class => "col-xs-4"}
+                                          %a{ :href => '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}', :title => "{{ student_skill.skill.name }}"}
+                                            -if student_skill.acquired
+                                              %img{:src => "http://placehold.it/300/8bc34a/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -elif student_skill.tested
+                                              -if student_skill.recommended_to_learn
+                                                %img{:src => "http://placehold.it/300/0066ff/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                              -else
+                                                %img{:src => "http://placehold.it/300/ff6600/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -else
+                                              %img{:src => "http://placehold.it/300/969696/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            <span class="carousel-caption">
+                                              {{ student_skill.skill.name }}
+                                            </span>
+
+                                    -else
+                                      %div{:class => "item"}
+                                        %div{:class => "col-xs-4"}
+                                          %a{ :href => '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}', :title =>"{{ student_skill.skill.name }}"}
+                                            -if student_skill.acquired
+                                              %img{:src => "http://placehold.it/300/8bc34a/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -elif student_skill.tested
+                                              -if student_skill.recommended_to_learn
+                                                %img{:src => "http://placehold.it/300/0066ff/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                              -else
+                                                %img{:src => "http://placehold.it/300/ff6600/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -else
+                                              %img{:src => "http://placehold.it/300/969696/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            <span class="carousel-caption">
+                                              {{ student_skill.skill.name }}
+                                            </span>
 
                       <ul class="pager">
-                        <li class="previous"><a href="#carousel-example-generic" role="button" data-slide="prev">&larr; Previous</a></li>
-                        <li class="next"><a href="#carousel-example-generic" role="button" data-slide="next">Next &rarr;</a></li>
+                        <li class="previous"><a href="#theCarousel" role="button" data-slide="prev">&larr; Previous</a></li>
+                        <li class="next"><a href="#theCarousel" role="button" data-slide="next">Next &rarr;</a></li>
                       </ul>
 
                     %div{:class => "modal-footer"}
