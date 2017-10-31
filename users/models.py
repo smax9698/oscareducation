@@ -142,3 +142,11 @@ class Student(models.Model):
                 break
         return list
 
+    def get_learningTrack(self):
+        lt = LearningTrack.objects.filter(student=self).order_by('order')
+        list = []
+        for item in lt:
+            list.append(item)
+
+        return list
+
