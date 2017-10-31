@@ -378,78 +378,145 @@ class LearningTrack(models.Model):
     cleared = models.BooleanField(default=False)
     """Whether the LT is cleared or not"""
 
-    def create_track(self, student, professor):
+    def new_learning_track(self,student, professor):
         """
-            Create the track for a student
+        Create a new learning track for student based on the criteria of professor
+        :param student:the student who owns the learning track
+        :param professor:the teacher who has specified the targets skills for student
+        :return: void
         """
-
-        # Gather targets of the student
         targets = StudentSkill.objects.filter(student=student, is_target=True)
+        criteria_maps, skills_list  = self.get_criteria_maps(targets)
+        ordered_criteria = ProfessorCriteria.objects.filter(professor=professor).order_by('order')
 
-        list_lvl, biggest_lvl = self.order_by_lvl(targets)
-        current_lvl = biggest_lvl
-        track = []
-        while current_lvl >= 0:  # for each level starting by the biggest
-            list_section = self.order_by_section(list_lvl[current_lvl])
-            for skill_set in list_section:
-                for student_skill in skill_set:
-                    track.append(student_skill)
-            current_lvl -= 1
-        return track
+        self.sorting(ordered_criteria,criteria_maps,skills_list)
 
-    def order_by_lvl(self, targets):
-        """ List of sets of skills where the level is the index """
-        skills_to_level = {}
+    def sorting(self, ordered_criteria, criteria_maps, skills_list):
+        """
+        Sort skills_list to return the learning track
+        :param ordered_criteria: list of criteria ordered by importance
+        :param criteria_maps:Dictionary(criteria, dictionary(skill,value based on the criteria))
+        :param skills_list:List of all the skills to be ordered
+        :return: the learning track
+        """
+
+        #Doit encore être optimiser pour ne pas être statique.
+        learning_track = []
+        map1 = criteria_maps[ordered_criteria[0].name]
+        map2 = criteria_maps[ordered_criteria[1].name]
+        map3 = criteria_maps[ordered_criteria[1].name]
+        list_c1 = list(skills_list)
+
+        sorted(list_c1, key=lambda x:  map1[x])
+        for list_c2 in self.split(skills_list,map1).values():
+            sorted(list_c2, key=lambda x: map2[x])
+            for list_c3 in self.split(list_c2,map2).values():
+                sorted(list_c3, key=lambda x: map3[x])
+                for list_c4 in self.split(list_c3,map3).values():
+                    self.add_to_learning_track(list_c4,learning_track,skills_list)
+
+        return learning_track
+
+    def add_to_learning_track(self,skills,learning_track,skills_list):
+        """
+        Add a skill to learning track and check if there are prerequisites to add before.
+        :param skills: one or several skills have the same importance
+        :param learning_track:the ordered list of skills
+        :param skills_list:the list of skill to be ordered
+        :return: void
+        """
+        lifo_queue = []
+        for skill in skills:
+            if skill not in learning_track :
+                fifo_queue = [skill]
+                lifo_queue.append(skill)
+                for prereq in fifo_queue.pop(0).get_prerequisites_skills():
+                    fifo_queue.append(prereq)
+                    if prereq in skills_list and prereq not in learning_track and prereq not in lifo_queue:
+                        lifo_queue.append(prereq)
+        while lifo_queue:
+            learning_track.append(lifo_queue.pop())
+
+
+    def split(self, skills_list, order_map):
+        """
+        Split skills list to have list of skills with the same value in order_map
+        :param skills_list: A list of skills
+        :param order_map: Dictionary(value used for the ordering, )
+        :return: Dictionary(value used for the ordering, list of skills)
+        """
+        map = {}
+        for skill in skills_list:
+            val = order_map[skill]
+            if map[val] is None:
+                map[val] = [skill]
+            else:
+                map[val].append(skill)
+        return map
+
+    def get_criteria_maps(self,targets):
+        """
+        Get all the dictionaries used for the sorting by criteria
+        :param targets:Targeted skills of a student
+        :return:Dictionary(name of a criteria, dictionary(skill,value for the criteria))
+        """
+        skills_depth_map = {}
+        skills_section_map = {}
+        skills_set = set()
+
         for target in targets:
-            self.set_level_in_dictionary(skills_to_level, target, 0)
+            self.set_criteria_maps(target, skills_depth_map, skills_section_map, skills_set)
 
-        # TODO Order of criterias
+        criteria_map = {}
+        criteria_map['level'] = skills_depth_map
+        criteria_map['section'] = skills_section_map
 
-        # List of sets of skills, the level is the index
-        list_lvl = []
-        biggest_level = 0
-        for key, value in skills_to_level.iteritems():
-            if value > biggest_level:
-                biggest_level = value
-            if list_lvl[value] is None:
-                list_lvl[value] = set()
-                list_lvl[value].add(key)
-            else:
-                list_lvl[value].add(key)
+        return criteria_map,list(skills_set)
 
-        return list_lvl, biggest_level
+    def set_criteria_maps(self, root, skills_depth_map, skills_section_map, skills_set):
+        """
+        Fill the criteria maps
+        :param root: a root node of the prerequisites tree
+        :param skills_depth_map: Map for the level criteria
+        :param skills_section_map: Map for the section criteria
+        :param skills_set: Set of skills
+        :return: void
+        """
 
-    def order_by_section(self, set_student_skill):
-        """ List of sets of skills where the section is the index """
-        list_section = []
-        for student_skill in set_student_skill:
-            skill = Skill.objects.filter(student_skill)
-            section = Section.objects.filter(id=skill.id)
-            if list_section[section] is None:
-                list_section[section] = set()
-                list_section[section].add(student_skill)
-            else:
-                list_section[section].add(student_skill)
-                return list_section
+        fifo_queue = [root]
+        self.set_skill_depth(root, 0, skills_depth_map)
+        self.add_section_skill(root, skills_section_map)
+        for prereq in fifo_queue.pop(0).get_prerequisites_skills():
+            fifo_queue.append(prereq)
+            skills_set.add(prereq)
+            self.set_skill_depth(prereq, 0, skills_depth_map)
+            self.add_section_skill(prereq, skills_section_map)
 
-    def set_level_in_dictionary(self, dico, student_skill, lvl):
-        """In the dictionary, set the level of a StudentSkill and all its prerequisites"""
-        if student_skill is None:
-            return
-
-        if student_skill.acquired is not None:
-            return
-
-        if student_skill in dico:
-            if dico[student_skill] < lvl:
-                dico[student_skill] = lvl
-        else:
-            dico[student_skill] = lvl
-
-        for prerequisite in student_skill.get_prerequisites_skills():
-            self.set_level_in_dictionary(dico, prerequisite, lvl + 1)
+    def set_skill_depth(self, student_skill, depth, skills_depth_map):
+        """
+        Method to put the max skill depth in the dictionary if there are several values
+        :param student_skill: The skill to update in the dictionary
+        :param depth: The depth of the skill
+        :param skills_depth_map:Dictionary(skill,depth)
+        :return:void
+        """
+        if skills_depth_map[student_skill] is None:
+            skills_depth_map[student_skill] = depth
+        elif skills_depth_map[student_skill] < depth:
+            skills_depth_map[student_skill] = depth
         return
 
+    def add_section_skill(self, student_skill, skills_section_map):
+        """
+        Method to put the section of a skill in the dictionary
+        :param student_skill: The skill to update in the dictionary
+        :param skills_section_map:Dictionary(skill,section)
+        :return:void
+        """
+        skill = Skill.objects.filter(student_skill)
+        section = Section.objects.filter(id=student_skill.id)
+        skills_section_map[student_skill] = section
+        return
 
 class Criteria(models.Model):
     """[FR] Critère
