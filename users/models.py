@@ -91,8 +91,15 @@ class Student(models.Model):
 
             :param target_skills A list of at most 3 Skills that should be targeted by this student.
         """
+        if target_skills is None:
+            raise ValueError("Null targets")
+
+        if len(target_skills) == 0:
+            raise ValueError("At least one target must be assigned and maximum 3.")
+
         if len(target_skills) > 3:
             raise ValueError("At most 3 target skills can be defined per student.")
+
 
         #Clear all target to run the learning_track algorithm with the new targets
         self.clear_targets()
@@ -114,7 +121,7 @@ class Student(models.Model):
                     is_target=True
                 )
                 #create a student skill for all the prerequisites of the target
-                for prerequisite in target_skill.skill.get_prerequisites_skills():
+                for prerequisite in target_skill.get_prerequisites_skills():
                     found = False
 
                     for student_skill in student_skills:
@@ -144,7 +151,7 @@ class Student(models.Model):
                 break
         return list
 
-    def get_learningTrack(self):
+    def get_learning_track(self):
         lt = LearningTrack.objects.filter(student=self).order_by('order')
         list = []
         for item in lt:
