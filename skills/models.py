@@ -360,6 +360,7 @@ class LearningTrack(models.Model):
     """[FR] Chemin d'apprentissage
 
         A learning track is an ordered sequence of skills the student should learn.
+        Skills student should learns are the targeted skills (at most 3) and all their prerequisites.
         Each object points to a student skill of the whole track.
 
     """
@@ -388,9 +389,7 @@ class LearningTrack(models.Model):
         """
         targets = StudentSkill.objects.filter(student=student, is_target=True)
 
-        # We assume all skills needed for learning track have been added beforehand.
-        # Note : we know targets&prerequisites have been added in :func:'users.models.Student.set_targets'
-        skills_list = StudentSkill.objects.filter(student=student)
+        skills_list = LearningTrack._build_student_skills_list(targets)
 
         ordered_criteria_names = ProfessorCriteria.objects.filter(professor=professor).order_by('order')
         criteria_maps = LearningTrack._get_criteria_maps(targets, skills_list)
@@ -402,6 +401,25 @@ class LearningTrack(models.Model):
                 student_skill=learning_track[i],
                 order=i
             )
+
+    @staticmethod
+    def _build_student_skills_list(targets):
+        """
+        :return a list of StudentSkill objects with targets and their prerequisites
+        We know targets&prerequisites have been added in :func:'users.models.Student.set_targets'
+        """
+        student_skills_set = set()
+
+        def add_skill(student_skill):
+            student_skills_set.add(student_skill)
+            for prerequisite_skill in student_skill.skill.get_prerequisites_skills():
+                prerequisite_student_skill = StudentSkill.objects.filter(skill=prerequisite_skill)
+                add_skill(prerequisite_student_skill)
+
+        for target in targets:
+            add_skill(target)
+
+        return list(student_skills_set)
 
     @staticmethod
     def _sorting(ordered_criteria_names, criteria_maps, student_skills_list):
@@ -416,13 +434,13 @@ class LearningTrack(models.Model):
         def _prerequisite(a, b):
             """
             Relation of requirement between two student skills
+            Defines a total order
             :param a A StudentSkill
             :param b Another StudentSkill
             """
             if a.skill == b.skill:
                 return 0
             elif b.skill in a.skill.get_prerequisites_skills():
-                # TODO Possibily we need to go deeper in a prerequisites
                 return 1
             else:
                 return -1
@@ -448,7 +466,6 @@ class LearningTrack(models.Model):
 
         for target in targets:
             LearningTrack._set_level(target, skills_depth_map, 0)
-        # TODO Level for student_skills which are neither targets or prerequisites of targets
 
         criteria_map = {'level': skills_depth_map, 'section': skills_section_map}
 
