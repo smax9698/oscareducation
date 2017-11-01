@@ -54,7 +54,7 @@ from skills.models import Skill
 from users.models import Professor, Student
 
 
-@user_is_professor
+""""@user_is_professor
 def exportCSV(request, pk):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="users.csv"'
@@ -69,9 +69,12 @@ def exportCSV(request, pk):
 
 
     return response
-@user_is_professor
+"""
+
+"""@user_is_professor
 def viewstats(request):
     return render(request, "stats/viewstats.haml")
+"""
 
 
 @user_is_professor

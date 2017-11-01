@@ -27,8 +27,8 @@
       %a.real-link{href: "{% url 'professor:lesson_detail' lesson.pk %}#heatmap"}
         Vue globale de la classe
     %li{role: "presentation"}
-      %a.real-link{href: "{% url 'professor:viewstats' %}"}
-        Statistique
+      %a.real-link{href: "{% url 'stats:viewstats' lesson.pk %}"}
+        Statistiques
 
   .ligneorange
 
