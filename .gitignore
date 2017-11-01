@@ -7,11 +7,7 @@ oscar/settings_local.py
 .idea/
 */migrations/
 documentation/build/
-.DS_Store
 *.log
 
-oscar-data\.sql
-
-makemigrations\.sh
 *.sql
 makemigrations.sh
