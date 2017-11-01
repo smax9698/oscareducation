@@ -1,6 +1,13 @@
 -extends "base.haml"
 
 -load bootstrap3
+-load static
+
+-block javascript
+  %script(src="/static/js/updateUI.js")
+
+-block head
+  %link{href: "{% static 'css/sidebar.css' %}", rel: "stylesheet"}
 
 -block breadcrumb
   %ol.breadcrumb
@@ -11,104 +18,80 @@
     %li.active
       Statistiques
 
-
 -block content
-  .row
-    .col-md-4
-      %br/
-      %br/
-      %font{:color => "white", :size => "4"}  Periode
-      %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
-        %select{:name => "---"}
-          %option{:value => "1q2017-18"} 1q Année 2017/2018
-          %option{:value => "2q2017-18"} 2q Année 2017/2018
-          %option{:value => "1q2016-17"} 1q Année 2016/2017
-          %option{:value => "2q2016-17"} 2q Année 2016/2017
-        %font{:color => "white"} Start Date:
-        %input{:name => "startDate", :type => "text", :value => "jj/mm/aa"}/
-        %br/
-        %font{:color => "white"} End Date:
-        %input{:name => "endDate", :type => "text", :value => "jj/mm/aa"}/
-        %br/
-        %br/
-       
-        -csrf_token
-        %button.btn.btn-lg.btn-primary{type: "submit"}
-          Appliquer
+  %div{:id => "wrapper"}
+    / Sidebar for customization
+    %div{:id => "sidebar-wrapper"}
+      %ul
+        %li
+          %font{:color => "white", :size => "4"} Statistique à afficher
+          %form
+            -for stat in list_stats
+              .checkbox
+                %label
+                  %input{:type => "checkbox"}
+                  %font{:color => "white"} {{stat}}
+        %li
+          %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
+          -csrf_token
+            %button.btn.btn-lg.btn-primary{type: "submit"}
+              Données numériques
+        %li
+          %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
+          -csrf_token
+            %button.btn.btn-lg.btn-primary{type: "submit"}
+              Exporter en CSV
+        %li
+          %font{:color => "white", :size => "4"} Période prédéfinie
+          %select{:id => "select_timespan"}
+            -for option, val in predefined_timespan.items
+              %option{:value => val} {{option}}
+          %div{:id => "timespan"}
+            %font{:color => "white"} Depuis :
+            %input{:id => "startDate", :type => "text", :value => "jj/mm/aa"}/
+            %font{:color => "white"} Jusque :
+            %input{:id => "endDate", :type => "text", :value => "jj/mm/aa"}
 
-      .container
-      %br/
-      %br/
-      %font{:color => "white", :size => "4"} Paramètres
-      %form
-        .checkbox
-          %label
-            %input{:type => "checkbox", :value => ""}>/
-            %font{:color => "white"} Niveau de connaissance
-        .checkbox
-          %label
-            %input{:type => "checkbox", :value => ""}>/
-            %font{:color => "white"} Progrès
-        .checkbox
-          %label
-            %input{:type => "checkbox", :value => ""}>/
-            %font{:color => "white"} Compétences acquises
-        .checkbox
-          %label
-            %input{:type => "checkbox", :value => ""}>/
-            %font{:color => "white"} Objectifs acuis
-      %br/
-      %br/
-                                          -# make new method for this
-      %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
-        -csrf_token
-        %button.btn.btn-lg.btn-primary{type: "submit"}
-          Données numériques
-      %br/
-      %br/
-      -# add exportCSV to promotions/views.py and promotions/url.py ?
-      %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
-        -csrf_token
-        %button.btn.btn-lg.btn-primary{type: "submit"}
-          Exporter en CSV
+            -csrf_token
+              %button.btn.btn-primary{type: "submit"}
+                Appliquer
 
-    .col-md-7
-      %ul.nav.orange.nav-tabs
-        %li.active{role: "presentation"}
-          %a{href: "#"}
-            Ma classe
-        %li{role: "presentation"}
-          %a{href: "{% url 'stats:view_student' lesson.pk %}"}
-            Mes étudiants
+    / Actual content of the page
+    %div{:id => "page-content-wrapper"}
+      .container-fluid
+        %a{:href => "#menu-toggle"}
+          -csrf_token
+            %button.btn.btn-secondary{id: "menu-toggle"} Paramètres
+        %ul.nav.orange.nav-tabs
+          %li.active{role: "presentation"}
+            %a{href: "#"}
+              Ma classe
+          %li{role: "presentation"}
+            %a{href: "{% url 'stats:view_student' lesson.pk %}"}
+              Mes étudiants
 
-      .ligneorange
+        .ligneorange
 
-      .container-fluid.boxclassetitle
+        .container-fluid.boxclassetitle
 
-        .pull-left Statistique de ma classe {{ lesson.name }}
+          .pull-left Statistique de ma classe {{ lesson.name }}
 
-      .ligneorangefine
+        .ligneorangefine
 
-      .container-fluid.boxclasse
-
-
-        %p
-          Nombre d'étudiants
-          %b
-            bisous
-
-        %p
-          Nombre moyen de compétences acquises
-          %b
-            LOL
-
-        %p
-          Compétence la moins maitrisée
-          %b
-            MDR
-
-        %p
-          Compétence la plus maitrisée
-          %b
-            HAHA
-
+        .container-fluid.boxclasse
+          %p
+            Nombre d'étudiants
+            %b
+              10
+          %p
+            Nombre moyen de compétences acquises
+            %b
+              2
+          %p
+            Compétence la moins maitrisée
+            %b
+              Donner des données d'exemple
+          %p
+            Compétence la plus maitrisée
+            %b
+              Géométrie

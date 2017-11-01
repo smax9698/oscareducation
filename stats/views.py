@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 
@@ -52,8 +53,22 @@ def view_student(request, pk):
 def viewstats(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
 
+    # TODO: make automatic detection of timespan instead of hard coding
+    predefined_timespan = {
+        "Septembre 2016 - Décembre 2016": "01/09/2016-31/12/2016",
+        "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
+        "Septembre 2017 - Décembre 2017": "01/09/2017-31/12/2017",
+
+    }
+
+    list_statistics = ['Nombre de connexion', 'Nombre d\'exercice éssayé', 'Temps passé sur les exercice',
+                       'Status des exercice', 'Nombre de ressource vue', 'Compétence acquise',
+                       'Compétence en progression', 'Test passé', 'Temps passé sur les examens']
+
     return render(request, "stats/viewstats.haml", {
-        "lesson": lesson
+        "lesson": lesson,
+        "predefined_timespan": predefined_timespan,
+        "list_stats": list_statistics,
     })
 
 
