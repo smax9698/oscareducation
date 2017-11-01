@@ -11,7 +11,7 @@ from django.utils import timezone
 '''
 
 
-class RecommandedSkillsTest(TestCase):
+class StudentTest(TestCase):
     ''' Setup :
             - 1 student.
             - 10 skills
@@ -28,6 +28,9 @@ class RecommandedSkillsTest(TestCase):
             tmp.save()
             self.skills.append(tmp)
 
+    ##################################
+    # Test get_three_next            #
+    ##################################
     ''' Test when the student has no learning track '''
 
     def testNoLearningTrack(self):
@@ -56,7 +59,7 @@ class RecommandedSkillsTest(TestCase):
     ''' Test when the students has exactly 3 skills'''
 
     def testLearningTrackEquals3(self):
-        list_lt=[]
+        list_lt = []
         for i in range(0, 3):
             tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[i])
             tmp_ss.save()
@@ -72,6 +75,7 @@ class RecommandedSkillsTest(TestCase):
 
     ''' Test when the student has some skills acquired, and more then 3 skills left'''
     ''' 4 acquired 5 non acquired '''
+
     def testLearningTrackMore3(self):
         for i in range(0, 4):
             tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[i], acquired=timezone.now())
@@ -80,7 +84,7 @@ class RecommandedSkillsTest(TestCase):
             tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=i)
             tmp_lt.save()
 
-        list_lt=[]
+        list_lt = []
         for i in range(4, 9):
             tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[i])
             tmp_ss.save()
@@ -97,8 +101,9 @@ class RecommandedSkillsTest(TestCase):
     ''' Test when the student has acquired some skills, but not in order : 
         Acquired, acquired, not, acquired, not not acquired, not not not ...
     '''
+
     def testBagdadTrack(self):
-        list_lt=[]
+        list_lt = []
         # acquired order = 1 2 4 7 acquired
         tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[0], acquired=timezone.now())
         tmp_ss.save()
@@ -117,7 +122,7 @@ class RecommandedSkillsTest(TestCase):
         tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=7)
         tmp_lt.save()
 
-        #Non acquired 3 5 6 8 9 10
+        # Non acquired 3 5 6 8 9 10
         tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[2])
         tmp_ss.save()
         tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=3)
@@ -159,3 +164,162 @@ class RecommandedSkillsTest(TestCase):
         self.assertEqual(self.stud.get_three_next()[1], list_lt[1])
         self.assertEqual(self.stud.get_three_next()[2], list_lt[2])
 
+    ##################################
+    # Test get_learning_track           #
+    ##################################
+    ''' 
+    This method will check that the learning track returned by the method is correct
+    '''
+
+    def testGetLearningTrack(self):
+        list_lt = []
+        # acquired order = 1 2 4 7 acquired
+        # Non acquired 3 5 6 8 9 10
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[0], acquired=timezone.now())
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=1)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[1], acquired=timezone.now())
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=2)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[2])
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=3)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[3], acquired=timezone.now())
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=4)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[4])
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=5)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[5])
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=6)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[6], acquired=timezone.now())
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=7)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[7])
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=8)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[8])
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=9)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[9])
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=10)
+        list_lt.append(tmp_lt)
+        tmp_lt.save()
+
+        tmp = self.stud.get_learning_track()
+        self.assertEqual(len(tmp), 10)
+        for i in range(1, len(tmp)):
+            self.assertEqual(tmp[i], list_lt[i])
+
+    ##################################
+    # Test set_targets               #
+    ##################################
+    '''
+        Test that the methods used by set_targets, clear_tragets actually do his job
+    '''
+
+    def testClearTargets(self):
+        tmp_ss = StudentSkill.objects.create(student=self.stud, skill=self.skills[0], is_target=True)
+        tmp_ss.save()
+        tmp_lt = LearningTrack.objects.create(student=self.stud, student_skill=tmp_ss, order=1)
+        tmp_lt.save()
+        stud_skill = StudentSkill.objects.filter(student=self.stud, skill=self.skills[0])
+        self.assertEqual(len(stud_skill),1)
+        self.assertEqual(stud_skill[0].is_target, True)
+        self.stud.clear_targets()
+        stud_skill = StudentSkill.objects.filter(student=self.stud, skill=self.skills[0])
+        self.assertEqual(stud_skill[0].is_target, False)
+
+    '''
+        Test with null args
+    '''
+
+    def testSetTargetsNull(self):
+        with self.assertRaises(ValueError) as context:
+            self.stud.set_targets(None)
+
+    '''
+        Test empty array 
+    '''
+
+    def testSetTargetsEmpty(self):
+        with self.assertRaises(ValueError) as context:
+            self.stud.set_targets([])
+
+    '''Test arg >3 '''
+
+    def testArgMoreThan3(self):
+        with self.assertRaises(ValueError) as context:
+            tmp = {self.skills[0], self.skills[1], self.skills[2], self.skills[3]}
+            self.stud.set_targets(tmp)
+
+    '''Test arg = 1 and updated on stud'''
+
+    def testArgEq1(self):
+        self.stud.set_targets([self.skills[1]])
+        tmp = StudentSkill.objects.filter(student=self.stud, is_target=True)
+        self.assertEqual(len(tmp), 1)
+        skill_tmp = Skill.objects.filter(code=self.skills[1].code, name=self.skills[1].name)
+        self.assertIn(tmp[0].skill, skill_tmp)
+
+    ''' Test arg = 3 '''
+
+    def testNormalComportement(self):
+        self.stud.set_targets([self.skills[0], self.skills[1], self.skills[2]])
+        tmp = StudentSkill.objects.filter(student=self.stud, is_target=True)
+        self.assertEqual(len(tmp), 3)
+        skill_tmp1 = Skill.objects.filter(code=self.skills[0].code, name=self.skills[0].name)
+        skill_tmp2 = Skill.objects.filter(code=self.skills[1].code, name=self.skills[1].name)
+        skill_tmp3 = Skill.objects.filter(code=self.skills[2].code, name=self.skills[2].name)
+        self.assertIn(tmp[0].skill, skill_tmp1)
+        self.assertIn(tmp[1].skill, skill_tmp2)
+        self.assertIn(tmp[2].skill, skill_tmp3)
+
+    ''' Test with old targets, and modify it '''
+    def testStudHasOldTargets(self):
+        self.stud.set_targets([self.skills[9],self.skills[8]])
+        tmp = StudentSkill.objects.filter(student=self.stud, is_target=True)
+        self.assertEqual(len(tmp), 2)
+        skill_tmp1 = Skill.objects.filter(code=self.skills[8].code, name=self.skills[8].name)
+        skill_tmp2 = Skill.objects.filter(code=self.skills[9].code, name=self.skills[9].name)
+        self.assertIn(tmp[1].skill, skill_tmp1)
+        self.assertIn(tmp[0].skill, skill_tmp2)
+
+        self.stud.set_targets([self.skills[0], self.skills[1], self.skills[2]])
+        tmp = StudentSkill.objects.filter(student=self.stud, is_target=True)
+        self.assertEqual(len(tmp), 3)
+        skill_tmp1 = Skill.objects.filter(code=self.skills[0].code, name=self.skills[0].name)
+        skill_tmp2 = Skill.objects.filter(code=self.skills[1].code, name=self.skills[1].name)
+        skill_tmp3 = Skill.objects.filter(code=self.skills[2].code, name=self.skills[2].name)
+        self.assertIn(tmp[0].skill, skill_tmp1)
+        self.assertIn(tmp[1].skill, skill_tmp2)
+        self.assertIn(tmp[2].skill, skill_tmp3)
