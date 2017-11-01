@@ -1905,9 +1905,9 @@ def professor_set_learning_track_redirect(request, lesson_pk):
 
     for student in students:
         student.set_targets(target_skills)
-        LearningTrack.new_learning_track(student,professor)
+        #LearningTrack.new_learning_track(student,professor)
 
-    return HttpResponseRedirect(reverse('professor_set_learning_track', args=(lesson_pk)))
+    return HttpResponse(str(lesson_pk))
 
 
 def professor_set_learning_track(request, lesson_pk):

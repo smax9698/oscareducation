@@ -7,10 +7,9 @@ function selectSkillController($scope, $http) {
             "student_pk": $scope.selection,
             "professor_pk": professorPk
         }).success(function(data, status, headers, config) {
-            // TODO: don't do that in javascript
-            window.location.href = "../" + data + "/fill/"
+            window.location.href = "../set_learning_track"
         })
-    }
+    };
 
     $scope.addSkillToTargets = function(stage_id) {
         if ($scope.stages[stage_id].length === 0)
@@ -42,7 +41,7 @@ function selectSkillController($scope, $http) {
         }
 
         $("#" + skill).hide();
-    }
+    };
 
     $scope.removeSkill = function(skill) {
         $("#alerts").html('<div />');
@@ -61,7 +60,7 @@ function selectSkillController($scope, $http) {
                     $scope["stage" + i + "SelectedSkill"] = $scope.stages[i][0].code;
                 }
            })
-    }
+    };
 
     $scope.toggleSelection = function toggleSelection(student) {
 
