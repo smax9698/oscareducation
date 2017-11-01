@@ -11,6 +11,10 @@ from .utils import user_is_superuser, number_of_test_pass, get_latest_test_succe
     get_number_of_authentication_by_student, get_latest_skill_acquired, time_between_two_last_skills, \
     get_average_skill_acquired, least_mastered_skill, most_mastered_skill
 
+class DataFormat:
+    def __init__(self, text, size):
+        self.text = text
+        self.size = size
 
 @user_is_superuser
 def dashboard(request):
@@ -53,7 +57,19 @@ def view_student(request, pk):
 @user_is_professor
 def viewstats(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
-    data = [0.7, 0.8, 0.9]
+    data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
+    name = [1, 2, 3]#["Jean", "Marc", "Georges"]
+    size = [18, 2, 42]
+    """
+    pData1 = DataFormat("Jean", 18)
+    pData2 = DataFormat("Marc", 2)
+    pData3 = DataFormat("Georges", 42)
+    pData = []
+    pData.append(pData1)
+    pData.append(pData2)
+    pData.append(pData3)
+    """
+
 
     return render(request, "stats/viewstats.haml", {
         "lesson": lesson,
@@ -61,7 +77,9 @@ def viewstats(request, pk):
         "avg_skill_acquired": get_average_skill_acquired(lesson, lambda: True),
         "least_mastered_skill": least_mastered_skill(lesson, lambda: True),
         "most_mastered_skill": most_mastered_skill(lesson, lambda: True),
-        "data": data
+        "data": data,
+        "name": name,
+        "size": size
     })
 
 

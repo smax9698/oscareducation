@@ -2,12 +2,6 @@
 
 -load bootstrap3
 
--block javascript
-  %script#barchart(src="/static/js/barchart.js")
-  :javascript
-      BARCHART.init([{{ data }}]);
-      BARCHART.graph();
-
 -block breadcrumb
   %ol.breadcrumb
     %li
@@ -107,7 +101,7 @@
           %b
             {{ most_mastered_skill }}
 
--block content2
+-block content-barchart
     !!!
     %html
       %head
@@ -123,3 +117,28 @@
           }
         %svg{:height => "500", :width => "480"}
         %script{:src => "https://d3js.org/d3.v4.min.js"}
+        %script(src="/static/js/barchart.js")
+        :javascript
+              BARCHART.init([{{ data }}]);
+              BARCHART.graph();
+
+-block content-piechart
+    !!!
+    %html
+      %head
+        %meta{:charset => "utf-8"}/
+        :css
+          .arc text {
+            font: 10px sans-serif;
+            text-anchor: middle;
+          }
+
+          .arc path {
+            stroke: #fff;
+          }
+        %svg{:height => "500", :width => "480"}
+        %script{:src => "https://d3js.org/d3.v4.min.js"}
+        %script(src="/static/js/piechart.js")
+        :javascript
+          PIECHART.init([{{ name }}, {{ size }}]);
+          PIECHART.graph();

@@ -72,7 +72,12 @@
 
     .container.centralcontainer
       -block content
-      -block content2
+
+    .container.chart
+      %div
+        -block content-barchart
+      %div
+        -block content-piechart
 
     .container.centralcontainer-student
       -block content-student
