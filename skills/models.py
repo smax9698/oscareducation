@@ -517,6 +517,6 @@ class ProfessorCriteria(models.Model):
         if self.professor:
             return str(self.professor) + " - " + str(self.order) + " : " + self.criteria.name
 
-        return "all - " + str(self.order) + " : " + self.criteria.name
+        return "All - " + str(self.order) + " : " + self.criteria.name
 
 
