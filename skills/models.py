@@ -413,7 +413,7 @@ class LearningTrack(models.Model):
         def add_skill(student_skill):
             student_skills_set.add(student_skill)
             for prerequisite_skill in student_skill.skill.get_prerequisites_skills():
-                prerequisite_student_skill = StudentSkill.objects.filter(skill=prerequisite_skill)
+                prerequisite_student_skill = StudentSkill.objects.filter(skill=prerequisite_skill)[0]
                 add_skill(prerequisite_student_skill)
 
         for target in targets:
@@ -497,7 +497,7 @@ class LearningTrack(models.Model):
         :param skills_depth_map:Dictionary(skill,depth)
         :return:void
         """
-        if skills_depth_map[student_skill] is None:
+        if student_skill not in skills_depth_map:
             skills_depth_map[student_skill] = depth
         elif skills_depth_map[student_skill] < depth:
             skills_depth_map[student_skill] = depth
