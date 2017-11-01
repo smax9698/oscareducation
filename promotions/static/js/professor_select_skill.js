@@ -1,10 +1,11 @@
 function selectSkillController($scope, $http) {
     $scope.stages = [];
 
-    $scope.setTemporaryTargets = function(lessonPk) {
+    $scope.setTemporaryTargets = function(lessonPk,professorPk) {
         $http.post("/professor/lesson/" + lessonPk + "/set_learning_track/", {
             "target_skill_codes": $scope.toTargetSkills,
-            "student_pk": $scope.selection
+            "student_pk": $scope.selection,
+            "professor_pk": professorPk
         }).success(function(data, status, headers, config) {
             // TODO: don't do that in javascript
             window.location.href = "../" + data + "/fill/"
