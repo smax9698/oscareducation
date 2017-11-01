@@ -14,3 +14,4 @@ oscar-data\.sql
 
 makemigrations\.sh
 *.sql
+makemigrations.sh
