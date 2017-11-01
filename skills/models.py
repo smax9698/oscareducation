@@ -360,6 +360,7 @@ class LearningTrack(models.Model):
     """[FR] Chemin d'apprentissage
 
         A learning track is an ordered sequence of skills the student should learn.
+        Each object points to a student skill of the whole track.
 
     """
 
@@ -377,7 +378,8 @@ class LearningTrack(models.Model):
     cleared = models.BooleanField(default=False)
     """Whether the LT is cleared or not"""
 
-    def new_learning_track(self, student, professor):
+    @staticmethod
+    def new_learning_track(student, professor):
         """
         Create a new learning track for student based on the criteria of professor
         :param student:the student who owns the learning track
@@ -385,32 +387,43 @@ class LearningTrack(models.Model):
         :return: void
         """
         targets = StudentSkill.objects.filter(student=student, is_target=True)
-        criteria_maps, skills_list = self.get_criteria_maps(targets)
+
+        criteria_maps = LearningTrack._get_criteria_maps(targets)
+
+        # We assume all skills needed for learning track have been added beforehand.
+        # Note : we know targets&prerequisites have been added in :func:'users.models.Student.set_targets'
+        skills_list = StudentSkill.objects.filter(student=student)
+
         ordered_criteria_names = ProfessorCriteria.objects.filter(professor=professor).order_by('order')
 
-        self._sorting(ordered_criteria_names, criteria_maps, skills_list)
+        learning_track = LearningTrack._sorting(ordered_criteria_names, criteria_maps, skills_list)
+        for i in range(0, len(learning_track)):
+            LearningTrack.objects.create(
+                student=student,
+                student_skill=learning_track[i],
+                order=i
+            )
 
     @staticmethod
-    def _sorting(ordered_criteria_names, criteria_maps, skills_list):
+    def _sorting(ordered_criteria_names, criteria_maps, student_skills_list):
         """
-        Sort skills_list to return the learning track
+        Sort skills list to return the learning track
         :param ordered_criteria_names: list of criteria names ordered by importance
         :param criteria_maps:Dictionary(criteria name, dictionary(skill,value based on the criteria))
-        :param skills_list:List of all the skills to be ordered
-        :return: the learning track
+        :param student_skills_list:List of all the skills to be ordered
+        :return: the list of the learning track
         """
 
         def _prerequisite(a, b):
             """
-            Relation of requirement between two skills
-            :param a A skill
-            :param b Another skill
+            Relation of requirement between two student skills
+            :param a A StudentSkill
+            :param b Another StudentSkill
             """
-            skill_a = Skill.objects.filter(a)
-            skill_b = Skill.objects.filter(b)
-            if skill_a == skill_b:
+            # TODO Possibily we need to go deeper in a prerequisites
+            if a.skill == b.skill:
                 return 0
-            elif skill_b in skill_a.get_prerequisites_skills():
+            elif b.skill in a.skill.get_prerequisites_skills():
                 return 1
             else:
                 return -1
@@ -421,46 +434,49 @@ class LearningTrack(models.Model):
         map3 = criteria_maps[ordered_criteria_names[2].name]
 
         # Multiple passes stable sorting
-        skills_list.sort(key=lambda x: map3[x])
-        skills_list.sort(key=lambda x: map2[x])
-        skills_list.sort(key=lambda x: map1[x])
-        skills_list.sort(_prerequisite)
-        return skills_list
+        student_skills_list.sort(key=lambda x: map3[x])
+        student_skills_list.sort(key=lambda x: map2[x])
+        student_skills_list.sort(key=lambda x: map1[x])
+        student_skills_list.sort(_prerequisite)
+        return student_skills_list
 
-    def get_criteria_maps(self, targets):
+    @staticmethod
+    def _get_criteria_maps(targets, student_skills):
         """
         Get all the dictionaries used for the sorting by criteria
-        :param targets:Targeted skills of a student
-        :return:Dictionary(criteria name, dictionary(skill,value for the criteria))
+        :param student_skills:List of all the StudentSkills of the student
+        :param targets:Targeted student skills of the student
+        :return ( Dictionary(criteria name, dictionary(skill,value for the criteria)), A list of student skills)
         """
         skills_depth_map = {}
         skills_section_map = {}
-        skills_set = set()
+        for student_skill in student_skills:
+            LearningTrack._add_section_skill(student_skill, skills_section_map)
 
         for target in targets:
-            self.set_criteria_maps(target, skills_depth_map, skills_section_map, skills_set)
+            LearningTrack._set_level(target, skills_depth_map, 0)
+        # TODO Level for student_skills which are neither targets or prerequisites of targets
 
         criteria_map = {'level': skills_depth_map, 'section': skills_section_map}
 
-        return criteria_map, list(skills_set)
+        return criteria_map
 
-    def set_criteria_maps(self, root, skills_depth_map, skills_section_map, skills_set):
+    @staticmethod
+    def _set_level(student_skill, skills_depth_map, level):
         """
-        Fill recursively the criteria maps with values for student skill root and its prerequisites.
-        Also fill the student skill set with root and its prerequisites.
+        Fill recursively the skill levels map with values for the student skill and its prerequisites.
+        The level of a prerequisite is the level of the skill plus one.
+        If the level of the skill is already superior to the level parameter, this function will not have any effect.
 
-        :param root: a root node of the prerequisites tree
+        :param student_skill: a StudentSkill
         :param skills_depth_map: Map for the level criteria
-        :param skills_section_map: Map for the section criteria
-        :param skills_set: Set of skills
+        :param level: The level of student_skill
         :return: void
         """
 
-        skills_set.add(root)
-        self._set_skill_depth(root, 0, skills_depth_map)
-        self.add_section_skill(root, skills_section_map)
-        for prereq in root.get_prerequisites_skills():
-            self.set_criteria_maps(prereq, skills_depth_map, skills_section_map, skills_set)
+        LearningTrack._set_skill_depth(student_skill, level, skills_depth_map)
+        for prerequisite in student_skill.skill.get_prerequisites_skills():
+            LearningTrack._set_level(prerequisite, skills_depth_map, level + 1)
 
     @staticmethod
     def _set_skill_depth(student_skill, depth, skills_depth_map):
@@ -475,10 +491,9 @@ class LearningTrack(models.Model):
             skills_depth_map[student_skill] = depth
         elif skills_depth_map[student_skill] < depth:
             skills_depth_map[student_skill] = depth
-        return
 
     @staticmethod
-    def add_section_skill(student_skill, skills_section_map):
+    def _add_section_skill(student_skill, skills_section_map):
         """
         Method to put the section of a skill in the dictionary
         :param student_skill: The skill to update in the dictionary
@@ -487,7 +502,6 @@ class LearningTrack(models.Model):
         """
         section = Section.objects.filter(id=student_skill.id)
         skills_section_map[student_skill] = section
-        return
 
 
 class Criteria(models.Model):

@@ -88,6 +88,8 @@ class Student(models.Model):
 
             Set the is_target flag on matching student skills.
             If there is none, then a student skill is created for the target and for each prerequisite skill.
+
+            :param target_skills A list of at most 3 Skills that should be targeted by this student.
         """
         if len(target_skills) > 3:
             raise ValueError("At most 3 target skills can be defined per student.")
@@ -119,7 +121,7 @@ class Student(models.Model):
                         if student_skill.skill == prerequisite:
                             found = True
                             break
-                    # if prerequisete not found in the studentskills create a new one
+                    # if prerequisite not found in the studentskills create a new one
                     if not found:
                         StudentSkill.objects.create(
                             student=self,
