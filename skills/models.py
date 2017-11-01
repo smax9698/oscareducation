@@ -387,15 +387,13 @@ class LearningTrack(models.Model):
         :return: void
         """
         targets = StudentSkill.objects.filter(student=student, is_target=True)
-        student_skills = StudentSkill.objects.filter(student=student)
-
-        criteria_maps = LearningTrack._get_criteria_maps(targets, student_skills)
 
         # We assume all skills needed for learning track have been added beforehand.
         # Note : we know targets&prerequisites have been added in :func:'users.models.Student.set_targets'
         skills_list = StudentSkill.objects.filter(student=student)
 
         ordered_criteria_names = ProfessorCriteria.objects.filter(professor=professor).order_by('order')
+        criteria_maps = LearningTrack._get_criteria_maps(targets, skills_list)
 
         learning_track = LearningTrack._sorting(ordered_criteria_names, criteria_maps, skills_list)
         for i in range(0, len(learning_track)):
@@ -421,29 +419,19 @@ class LearningTrack(models.Model):
             :param a A StudentSkill
             :param b Another StudentSkill
             """
-            # TODO Possibily we need to go deeper in a prerequisites
             if a.skill == b.skill:
                 return 0
             elif b.skill in a.skill.get_prerequisites_skills():
+                # TODO Possibily we need to go deeper in a prerequisites
                 return 1
             else:
                 return -1
 
-        for skill_map in criteria_maps:
-            student_skills_list.sort(key=lambda x: skill_map[x])
+        for criteria_name in reversed(ordered_criteria_names):
+            criteria_map = criteria_maps[criteria_name]
+            student_skills_list.sort(key=lambda x: criteria_map[x])
         student_skills_list.sort(_prerequisite)
         return student_skills_list
-
-        # map1 = criteria_maps[ordered_criteria_names[0].name]
-        # map2 = criteria_maps[ordered_criteria_names[1].name]
-        # map3 = criteria_maps[ordered_criteria_names[2].name]
-        #
-        # # Multiple passes stable sorting
-        # student_skills_list.sort(key=lambda x: map3[x])
-        # student_skills_list.sort(key=lambda x: map2[x])
-        # student_skills_list.sort(key=lambda x: map1[x])
-        # student_skills_list.sort(_prerequisite)
-        # return student_skills_list
 
     @staticmethod
     def _get_criteria_maps(targets, student_skills):
