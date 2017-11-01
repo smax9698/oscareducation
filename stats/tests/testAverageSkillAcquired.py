@@ -77,7 +77,7 @@ class AverageSkillTest(TestCase):
     def test_when_acquired_skills(self):
         self.assertAlmostEqual(get_average_skill_acquired(self.lesson), self.avg_acquired_skills, delta=0.001)
 
-    def test_when_no_skill_in_lesson(self):
+    def test_when_no_skill_in_stage(self):
         self.assertEquals(get_average_skill_acquired(self.lesson_empty_skill), 0)
 
     def test_when_no_student_mastered_skills(self):
