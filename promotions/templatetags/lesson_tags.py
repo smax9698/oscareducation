@@ -10,6 +10,12 @@ def get_students_skills(context, of_keyword, student, at_keyword, stage, as_keyw
     context[target_name] = StudentSkill.objects.filter(skill__in=stage.skills.all(), student=student).select_related("skill").order_by("skill__section", "skill__code")
     return ""
 
+@register.simple_tag(takes_context=True)
+def get_depth_sorted_students_skills(context, of_keyword, student, at_keyword, stage, as_keyword, target_name):
+    set = StudentSkill.objects.filter(skill__in=stage.skills.all(), student=student)
+    remove = set.exclude(is_objective = None)
+    context[target_name] = StudentSkill.__depth_sort_skills__(remove)
+    return ""
 
 @register.simple_tag
 def get_skill_heatmap_class(skills_to_heatmap_class, skill):

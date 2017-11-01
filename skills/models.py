@@ -78,6 +78,8 @@ class Skill(models.Model):
         return self.related_to.filter(
             from_skill__relation_type="depend_on"
         )
+    def __eq__(self, other):
+        return self.code == other.code
 
 
 class Relations(models.Model):
@@ -333,6 +335,56 @@ class StudentSkill(models.Model):
         self.tested = None
         self.save()
 
+    def set_objective(self, who, reason, reason_object):
+        """"Reset" a Skill (change its status to "unknown")"""
+        def recommend_student_skill(student_skill):
+            SkillHistory.objects.create(
+                skill=self.skill,
+                student=self.student,
+                value="recommended",
+                by_who=who,
+                reason=reason if student_skill == self else "Déterminé depuis une réponse précédente.",
+                reason_object=reason_object,
+            )
+
+            if(not student_skill.acquired):
+                student_skill.is_recommended = datetime.now()
+                student_skill.save()
+
+        self.is_objective = datetime.now()
+        self.is_recommended = datetime.now()
+        self.save()
+        self.go_down_visitor(recommend_student_skill)
+
+    def remove_objective(self, who, reason, reason_object):
+        """"Reset" a Skill (change its status to "unknown")"""
+        def not_recommend_student_skill(student_skill):
+            SkillHistory.objects.create(
+                skill=self.skill,
+                student=self.student,
+                value="not recommended",
+                by_who=who,
+                reason=reason if student_skill == self else "Déterminé depuis une réponse précédente.",
+                reason_object=reason_object,
+            )
+
+            if(not student_skill.acquired):
+                student_skill.is_recommended = None
+                student_skill.save()
+
+        self.is_objective = None
+        self.is_recommended = None
+        self.save()
+        self.go_down_visitor(not_recommend_student_skill)
+
+    def cant_add_objective(self):
+        req = StudentSkill.objects.filter(student=self.student)
+        list_objectives = req.exclude(is_objective = None)
+        print(list_objectives.count())
+        if list_objectives.count() >= 3:
+            return True
+        return False
+
     def recommended_to_learn(self):
         """
         Determines if the Skill is to recommend to the Student.
@@ -353,3 +405,34 @@ class StudentSkill(models.Model):
         indexes = [
             models.Index(fields=['student', 'skill'])
         ]
+
+        return False
+
+    @staticmethod
+    def __depth_sort_skills__(list_obj):
+
+        list_level = [[]]
+
+        def recursive(std_skill):
+            q_set = StudentSkill.objects.filter(skill__in=std_skill.skill.get_prerequisites_skills(), student=std_skill.student, acquired = None)  # Set of StudentSkill children not yet acquired
+            if q_set.count() == 0:
+                if std_skill.skill not in list_level[0]:
+                    list_level[0].append(std_skill.skill)
+                return 1
+            else:
+                result = 0
+                for e in q_set:
+                    a = recursive(e)
+                    if a > result:
+                        result = a
+                if len(list_level) <= result:
+                    list_level.append([])
+                if std_skill.skill not in list_level[result]:
+                    list_level[result].append(std_skill.skill)
+                return result+1
+
+        for std_skill_objective in list_obj:
+            recursive(std_skill_objective)
+
+        print(list_level)
+        return list_level
