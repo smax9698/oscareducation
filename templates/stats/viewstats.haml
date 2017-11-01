@@ -142,3 +142,14 @@
         :javascript
           PIECHART.init([{{ name }}, {{ size }}]);
           PIECHART.graph();
+
+-block content-linechart
+    !!!
+    %html
+      %body
+        %svg{:height => "500", :width => "480"}
+        %script{:src => "https://d3js.org/d3.v4.min.js"}
+        %script(src="/static/js/linechart.js")
+        :javascript
+          LINECHART.init([{{ name }}, {{ size }}]);
+          LINECHART.graph();

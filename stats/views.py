@@ -16,6 +16,12 @@ class DataFormat:
         self.text = text
         self.size = size
 
+class DataFormat:
+    def __init__(self, text, size):
+        self.text = text
+        self.size = size
+
+
 @user_is_superuser
 def dashboard(request):
     questions_per_stage = []
