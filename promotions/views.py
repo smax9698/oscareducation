@@ -36,6 +36,11 @@ from ruamel.yaml.comments import CommentedMap
 from examinations.models import Context as Question
 from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
     TestFromClass
+from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations, LearningTrack
+from resources.models import KhanAcademy, Sesamath, Resource
+from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
+    TestFromClass
+from users.models import Student, Professor
 from examinations.validate import validate_exercice_yaml_structure
 from promotions.models import Lesson, Stage
 from promotions.utils import user_is_professor
@@ -1868,14 +1873,17 @@ def main_education(request):
 
 def list_student_target(request, lesson_pk):
 
+
     #{
     #    "lessons": Lesson.objects.filter(professors=request.user.professor).annotate(Count("students")).select_related(
     #        "stage"),
     #    "no_menu": True,
     #}
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    professor = request.user.professor
     return render(request, "professor/lesson/list_student_target.haml", {
         "lesson": lesson,
+        "professor": professor
     })
 
 @require_POST
@@ -1885,6 +1893,7 @@ def professor_set_learning_track(request, lesson_pk):
     data = json.load(request)
     target_skill_codes = data["target_skill_codes"]
     students_pk = data["student_pk"]
+    professor_pk = data["professor_pk"]
     students = []
     for sPk in students_pk:
         students.append(get_object_or_404(Student, pk=sPk))
@@ -1892,8 +1901,13 @@ def professor_set_learning_track(request, lesson_pk):
     for tPk in target_skill_codes:
         target_skills.append(get_object_or_404(Skill, code=tPk))
 
+    professor = get_object_or_404(Professor, pk=professor_pk)
+
     for student in students:
         student.set_targets(target_skills)
+        LearningTrack.new_learning_track(student,professor)
+
+
     return render(request, "professor/lesson/skill/learning_track.haml", {
         "lesson": lesson,
     })
