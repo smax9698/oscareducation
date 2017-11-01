@@ -1907,10 +1907,10 @@ def professor_set_learning_track_redirect(request, lesson_pk):
         student.set_targets(target_skills)
         LearningTrack.new_learning_track(student, professor)
 
-    return HttpResponse(str(lesson_pk))
+    return HttpResponse("Done")#HttpResponseRedirect(reverse("professor:lesson_skill_learning_track", args = str(lesson_pk)))#HttpResponse(str(lesson_pk))
 
 
-def professor_set_learning_track(request, lesson_pk):
+def professor_set_learning_track(request, lesson_pk, list_students):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
 
     return render(request, "professor/lesson/skill/learning_track.haml", {

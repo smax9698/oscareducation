@@ -7,7 +7,11 @@ function selectSkillController($scope, $http) {
             "student_pk": $scope.selection,
             "professor_pk": professorPk
         }).success(function(data, status, headers, config) {
-            window.location.href = "../set_learning_track"
+            new_url = "../set_learning_track/";
+            $scope.selection.forEach(function(entry) {
+                new_url += entry + "_";
+            });
+            window.location.href = new_url.substr(0, new_url.length - 1);
         })
     };
 
