@@ -53,6 +53,9 @@ class Skill(models.Model):
     relations = models.ManyToManyField("self", through="Relations", related_name="related_to", symmetrical=False)
     """ Make relation between skills through a relation Model with a strict options : depended_on , similar_to  and identic_to """
 
+    estimated_time_to_master = models.PositiveIntegerField(null=False, default=250)
+    """ The time an average student would take to finish this Skill """
+
     def __unicode__(self):
         return self.code + " : " + self.name
 
@@ -383,15 +386,19 @@ class LearningTrack(models.Model):
     def new_learning_track(student, professor):
         """
         Create a new learning track for student based on the criteria of professor
+        Any previously existing learning track will be overridden
+
         :param student:the student who owns the learning track
         :param professor:the teacher who has specified the targets skills for student
-        :return: void
         """
+
+        LearningTrack.objects.filter(student=student).delete()  # Clear previous learning track, if any
+
         targets = StudentSkill.objects.filter(student=student, is_target=True)
 
         skills_list = LearningTrack._build_student_skills_list(targets)
 
-        ordered_criteria_names = ProfessorCriteria.objects.filter(professor=professor).order_by('order')
+        ordered_criteria_names = LearningTrack._get_ordered_criteria_names(professor)
         criteria_maps = LearningTrack._get_criteria_maps(targets, skills_list)
 
         learning_track = LearningTrack._sorting(ordered_criteria_names, criteria_maps, skills_list)
@@ -401,6 +408,11 @@ class LearningTrack(models.Model):
                 student_skill=learning_track[i],
                 order=i
             )
+
+    @staticmethod
+    def _get_ordered_criteria_names(professor):
+        return list(
+            map(lambda x: x.criteria.name, ProfessorCriteria.objects.filter(professor=professor).order_by('order')))
 
     @staticmethod
     def _build_student_skills_list(targets):
@@ -446,6 +458,8 @@ class LearningTrack(models.Model):
                 return -1
 
         for criteria_name in reversed(ordered_criteria_names):
+            if criteria_name not in criteria_maps:
+                raise ValueError("Unknown criteria : " + criteria_name)
             criteria_map = criteria_maps[criteria_name]
             student_skills_list.sort(key=lambda x: criteria_map[x])
         student_skills_list.sort(_prerequisite)
@@ -457,19 +471,21 @@ class LearningTrack(models.Model):
         Get all the dictionaries used for the sorting by criteria
         :param student_skills:List of all the StudentSkills of the student
         :param targets:Targeted student skills of the student
-        :return ( Dictionary(criteria name, dictionary(skill,value for the criteria)), A list of student skills)
+        :return ( Dictionary(criteria name, dictionary(skill,value for the criteria)), A list of student skills )
         """
         skills_depth_map = {}
         skills_section_map = {}
+        skills_time_map = {}
         for student_skill in student_skills:
             LearningTrack._set_skill_section(student_skill, skills_section_map)
+            skills_time_map[student_skill] = student_skill.skill.estimated_time_to_master
 
         for target in targets:
             LearningTrack._set_level(target, skills_depth_map, 0)
 
-        criteria_map = {'level': skills_depth_map, 'section': skills_section_map}
+        criteria_maps = {'Level': skills_depth_map, 'Group': skills_section_map, 'Time': skills_time_map}
 
-        return criteria_map
+        return criteria_maps
 
     @staticmethod
     def _set_level(student_skill, skills_depth_map, level):
@@ -485,8 +501,9 @@ class LearningTrack(models.Model):
         """
 
         LearningTrack._set_skill_depth(student_skill, level, skills_depth_map)
-        for prerequisite in student_skill.skill.get_prerequisites_skills():
-            LearningTrack._set_level(prerequisite, skills_depth_map, level + 1)
+        for prerequisite_skill in student_skill.skill.get_prerequisites_skills():
+            prerequisite_student_skill = StudentSkill.objects.filter(skill=prerequisite_skill)[0]
+            LearningTrack._set_level(prerequisite_student_skill, skills_depth_map, level + 1)
 
     @staticmethod
     def _set_skill_depth(student_skill, depth, skills_depth_map):
