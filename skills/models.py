@@ -429,17 +429,21 @@ class LearningTrack(models.Model):
             else:
                 return -1
 
-        # TODO/FIXME Add third criteria or this will crash, see get_criteria_maps
-        map1 = criteria_maps[ordered_criteria_names[0].name]
-        map2 = criteria_maps[ordered_criteria_names[1].name]
-        map3 = criteria_maps[ordered_criteria_names[2].name]
-
-        # Multiple passes stable sorting
-        student_skills_list.sort(key=lambda x: map3[x])
-        student_skills_list.sort(key=lambda x: map2[x])
-        student_skills_list.sort(key=lambda x: map1[x])
+        for map in criteria_maps:
+            student_skills_list.sort(key=lambda x: map[x])
         student_skills_list.sort(_prerequisite)
         return student_skills_list
+
+        # map1 = criteria_maps[ordered_criteria_names[0].name]
+        # map2 = criteria_maps[ordered_criteria_names[1].name]
+        # map3 = criteria_maps[ordered_criteria_names[2].name]
+        #
+        # # Multiple passes stable sorting
+        # student_skills_list.sort(key=lambda x: map3[x])
+        # student_skills_list.sort(key=lambda x: map2[x])
+        # student_skills_list.sort(key=lambda x: map1[x])
+        # student_skills_list.sort(_prerequisite)
+        # return student_skills_list
 
     @staticmethod
     def _get_criteria_maps(targets, student_skills):
