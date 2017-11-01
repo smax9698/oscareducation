@@ -429,8 +429,8 @@ class LearningTrack(models.Model):
             else:
                 return -1
 
-        for map in criteria_maps:
-            student_skills_list.sort(key=lambda x: map[x])
+        for skill_map in criteria_maps:
+            student_skills_list.sort(key=lambda x: skill_map[x])
         student_skills_list.sort(_prerequisite)
         return student_skills_list
 
