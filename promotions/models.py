@@ -4,9 +4,10 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db.models import Count
 
+
 # Create your models here.
 
-#stage
+# stage
 class Stage(models.Model):
     """[FR] Niveau/Degré/Année
 

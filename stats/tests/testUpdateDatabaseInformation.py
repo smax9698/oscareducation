@@ -1,12 +1,9 @@
-import datetime
-
 from django.test import TestCase
 
 from examinations.models import TestStudent, Test
 from promotions.models import Stage
 from resources.models import Resource
-from skills.models import Skill
-from stats.models import ExamStudent, SkillStudent, AuthenticationStudent, ResourceStudent
+from stats.models import ExamStudent, AuthenticationStudent, ResourceStudent
 from stats.utils import *
 from users.models import User, Student
 
@@ -75,16 +72,16 @@ class UpdateSkillAcquiredByStudent(TestCase):
 
     def test_when_no_row_insert_one(self):
         add_skill_acquired_by_student(self.student, self.skill_one)
-        result_query = SkillStudent.objects.filter(student=self.student)
+        result_query = StudentSkill.objects.filter(student=self.student)
         self.assertEqual(len(result_query), 1)
 
     def test_when_already_one_not_deleted(self):
         add_skill_acquired_by_student(self.student, self.skill_one)
         add_skill_acquired_by_student(self.student, self.skill_two)
-        result_query = SkillStudent.objects.filter(student=self.student)
+        result_query = StudentSkill.objects.filter(student=self.student)
 
-        skill_expected_one = SkillStudent(student=self.student, skill=self.skill_one, progress="mastered")
-        skill_expected_two = SkillStudent(student=self.student, skill=self.skill_two, progress="mastered")
+        skill_expected_one = StudentSkill.objects.create(student=self.student, skill=self.skill_one)
+        skill_expected_two = StudentSkill.objects.create(student=self.student, skill=self.skill_two)
 
         self.assertIn(skill_expected_one, result_query)
         self.assertIn(skill_expected_two, result_query)

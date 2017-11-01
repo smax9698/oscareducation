@@ -1,8 +1,11 @@
+import datetime
+
+import pytz
 from django.contrib.auth.decorators import user_passes_test
 
 import stats.models as models
 from promotions.models import Lesson
-from skills.models import StudentSkill
+from skills.models import StudentSkill, Skill
 from users.models import Student
 
 
@@ -42,7 +45,7 @@ def add_skill_acquired_by_student(student, skill_id):
     status -- status of the mastering level of the skill (unmastered, in progress, mastered)
 
     """
-    new_entry = models.SkillStudent(student=student, skill=skill_id, progress="mastered")
+    new_entry = StudentSkill(student=student, skill=skill_id, acquired=datetime.datetime.now(tz=pytz.utc))
     new_entry.save()
 
 
@@ -80,13 +83,13 @@ def add_resource_accessed_by_student(student, resource_id):
 def get_resources_accessed_by_student(student):
     accessed_by_resources = {}
 
-    query = models.ResourceStudent.objects.get(student=student)
+    query = models.ResourceStudent.objects.filter(student=student)
 
     for item in query:
         if item.resource in accessed_by_resources:
-            accessed_by_resources[item.resource] += 1
+            accessed_by_resources[str(item.resource)] += 1
         else:
-            accessed_by_resources[item.resource] = 1
+            accessed_by_resources[str(item.resource)] = 1
 
     return accessed_by_resources
 
@@ -98,11 +101,11 @@ def get_number_of_authentication_by_student(student):
 
 
 def get_authentication_info_by_student(student):
-    return models.AuthenticationStudent.objects.get(student=student)
+    return models.AuthenticationStudent.objects.filter(student=student)
 
 
 def get_skill_acquired_by_student(student):
-    query = models.SkillStudent.objects.get(student=student)
+    query = StudentSkill.objects.filter(student=student).exclude(acquired__isnull=True)
     return len(query)
 
 
@@ -144,7 +147,7 @@ def get_students_by_professor(professor):
                 students_dico[str(student)] = True
 
 
-def get_average_skill_acquired(lesson, function):
+def get_average_skill_acquired(lesson, fct=None):
     """
     Returns the average of skill acquired by students
 
@@ -153,10 +156,13 @@ def get_average_skill_acquired(lesson, function):
     :return: Average of skill acquired by students
     """
     count = 0
-    students = Student.objects.filter(lesson=lesson)
+
+    skills = Skill.objects.filter(stage=lesson.stage)
+    students = Student.objects.filter(lesson=lesson).distinct()
 
     for i in students:
-        skills_student = StudentSkill.objects.filter(student=i).exclude(acquired__isnull=True).distinct()
+        skills_student = StudentSkill.objects.filter(student=i, skill__in=skills).exclude(
+            acquired__isnull=True).distinct()
         count += len(skills_student)
 
         # TODO: filter function !!!

@@ -25,7 +25,7 @@ class ResourceStudent(models.Model):
     user : student id
     """
     resource = models.ForeignKey(model_resource.Resource)
-    student = models.ForeignKey(Student, default=None)
+    student = models.ForeignKey(Student)
     when = models.DateTimeField(auto_now_add=True)
 
     def __eq__(self, other):
@@ -45,7 +45,7 @@ class AuthenticationStudent(models.Model):
     """
     student = models.ForeignKey(Student, default=None)
     date_accessed = models.DateTimeField(auto_now_add=True)
-    end_of_session = models.DateTimeField()
+    end_of_session = models.DateTimeField(default=None, null=True)
 
     def __eq__(self, other):
         if other is None:
