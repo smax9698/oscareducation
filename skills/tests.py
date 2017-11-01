@@ -59,9 +59,11 @@ class LearningTrackTests(TestCase):
     def test_set_skill_depth_correct_update_with_override(self):
         zero = 0
         old_value = 3
+        new_value =  4
+
         self.skills_depth_map[self.student_skill] = old_value
-        LearningTrack._set_skill_depth(self.student_skill, zero,self.skills_depth_map)
+        LearningTrack._set_skill_depth(self.student_skill, zero, self.skills_depth_map)
         self.assertEquals(self.skills_depth_map[self.student_skill], old_value)
-        new_value = 4
+
         LearningTrack._set_skill_depth(self.student_skill, new_value, self.skills_depth_map)
         self.assertEquals(self.skills_depth_map[self.student_skill], new_value)

@@ -456,7 +456,7 @@ class LearningTrack(models.Model):
         skills_depth_map = {}
         skills_section_map = {}
         for student_skill in student_skills:
-            LearningTrack._add_section_skill(student_skill, skills_section_map)
+            LearningTrack._set_section_skill(student_skill, skills_section_map)
 
         for target in targets:
             LearningTrack._set_level(target, skills_depth_map, 0)
@@ -498,7 +498,7 @@ class LearningTrack(models.Model):
             skills_depth_map[student_skill] = depth
 
     @staticmethod
-    def _add_section_skill(student_skill, skills_section_map):
+    def _set_skill_section(student_skill, skills_section_map):
         """
         Method to put the section of a skill in the dictionary
         :param student_skill: The skill to update in the dictionary
