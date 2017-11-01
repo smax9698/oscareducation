@@ -1,6 +1,13 @@
 -extends "base.haml"
 -load static
 -load bootstrap3
+-load static
+
+-block javascript
+  %script(src="/static/js/updateUI.js")
+
+-block head
+  %link{href: "{% static 'css/sidebar.css' %}", rel: "stylesheet"}
 
 -block breadcrumb
   %ol.breadcrumb
@@ -11,8 +18,8 @@
     %li.active
       Statistiques
 
-
 -block content
+
   .row
     .col-md-4
       %br/
@@ -187,3 +194,81 @@
 
 
       
+
+  %div{:id => "wrapper"}
+    / Sidebar for customization
+    %div{:id => "sidebar-wrapper"}
+      %ul
+        %li
+          %font{:color => "white", :size => "4"} Statistique à afficher
+          %form
+            -for stat in list_stats
+              .checkbox
+                %label
+                  %input{:type => "checkbox"}
+                  %font{:color => "white"} {{stat}}
+        %li
+          %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
+          -csrf_token
+            %button.btn.btn-lg.btn-primary{type: "submit"}
+              Données numériques
+        %li
+          %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
+          -csrf_token
+            %button.btn.btn-lg.btn-primary{type: "submit"}
+              Exporter en CSV
+        %li
+          %font{:color => "white", :size => "4"} Période prédéfinie
+          %select{:id => "select_timespan"}
+            -for option, val in predefined_timespan.items
+              %option{:value => val} {{option}}
+          %div{:id => "timespan"}
+            %font{:color => "white"} Depuis :
+            %input{:id => "startDate", :type => "text", :value => "jj/mm/aa"}/
+            %font{:color => "white"} Jusque :
+            %input{:id => "endDate", :type => "text", :value => "jj/mm/aa"}
+
+            -csrf_token
+              %button.btn.btn-primary{type: "submit"}
+                Appliquer
+
+    / Actual content of the page
+    %div{:id => "page-content-wrapper"}
+      .container-fluid
+        %a{:href => "#menu-toggle"}
+          -csrf_token
+            %button.btn.btn-secondary{id: "menu-toggle"} Paramètres
+        %ul.nav.orange.nav-tabs
+          %li.active{role: "presentation"}
+            %a{href: "#"}
+              Ma classe
+          %li{role: "presentation"}
+            %a{href: "{% url 'stats:view_student' lesson.pk %}"}
+              Mes étudiants
+
+        .ligneorange
+
+        .container-fluid.boxclassetitle
+
+          .pull-left Statistique de ma classe {{ lesson.name }}
+
+        .ligneorangefine
+
+        .container-fluid.boxclasse
+          %p
+            Nombre d'étudiants
+            %b
+              10
+          %p
+            Nombre moyen de compétences acquises
+            %b
+              2
+          %p
+            Compétence la moins maitrisée
+            %b
+              Donner des données d'exemple
+          %p
+            Compétence la plus maitrisée
+            %b
+              Géométrie
+
