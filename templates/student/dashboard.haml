@@ -162,7 +162,7 @@
                             %div{:class=>"carousel slide multi-item-carousel", :id=>"theCarousel"}
                               %div{:class=>"carousel-inner"}
                                 -# TODO change for the learning track!!
-                                -for item in user.student.
+                                -for item in user.student.get_learningTrack
                                   -#-if student_skill.recommended_to_learn
                                   -if forloop.first
                                     %div{:class => "item active"}
