@@ -456,7 +456,7 @@ class LearningTrack(models.Model):
         skills_depth_map = {}
         skills_section_map = {}
         for student_skill in student_skills:
-            LearningTrack._set_section_skill(student_skill, skills_section_map)
+            LearningTrack._set_skill_section(student_skill, skills_section_map)
 
         for target in targets:
             LearningTrack._set_level(target, skills_depth_map, 0)

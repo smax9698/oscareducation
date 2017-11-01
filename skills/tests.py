@@ -67,3 +67,5 @@ class LearningTrackTests(TestCase):
 
         LearningTrack._set_skill_depth(self.student_skill, new_value, self.skills_depth_map)
         self.assertEquals(self.skills_depth_map[self.student_skill], new_value)
+
+    def test_set_level_with_incorrect_params(self):
