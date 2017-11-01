@@ -1888,7 +1888,7 @@ def list_student_target(request, lesson_pk):
 
 @require_POST
 @user_is_professor
-def professor_set_learning_track(request, lesson_pk):
+def professor_set_learning_track_redirect(request, lesson_pk):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     data = json.load(request)
     target_skill_codes = data["target_skill_codes"]
@@ -1907,6 +1907,11 @@ def professor_set_learning_track(request, lesson_pk):
         student.set_targets(target_skills)
         LearningTrack.new_learning_track(student,professor)
 
+    return HttpResponseRedirect(reverse('professor_set_learning_track', args=(lesson_pk)))
+
+
+def professor_set_learning_track(request, lesson_pk):
+    lesson = get_object_or_404(Lesson, pk=lesson_pk)
 
     return render(request, "professor/lesson/skill/learning_track.haml", {
         "lesson": lesson,

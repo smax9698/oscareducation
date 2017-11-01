@@ -2,7 +2,7 @@ function selectSkillController($scope, $http) {
     $scope.stages = [];
 
     $scope.setTemporaryTargets = function(lessonPk,professorPk) {
-        $http.post("/professor/lesson/" + lessonPk + "/set_learning_track/", {
+        $http.post("/professor/lesson/" + lessonPk + "/set_learning_track_redirect/", {
             "target_skill_codes": $scope.toTargetSkills,
             "student_pk": $scope.selection,
             "professor_pk": professorPk

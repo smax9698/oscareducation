@@ -387,8 +387,9 @@ class LearningTrack(models.Model):
         :return: void
         """
         targets = StudentSkill.objects.filter(student=student, is_target=True)
+        student_skills = StudentSkill.objects.filter(student=student)
 
-        criteria_maps = LearningTrack._get_criteria_maps(targets)
+        criteria_maps = LearningTrack._get_criteria_maps(targets, student_skills)
 
         # We assume all skills needed for learning track have been added beforehand.
         # Note : we know targets&prerequisites have been added in :func:'users.models.Student.set_targets'
