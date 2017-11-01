@@ -53,13 +53,15 @@ def view_student(request, pk):
 @user_is_professor
 def viewstats(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
+    data = [0.7, 0.8, 0.9]
 
     return render(request, "stats/viewstats.haml", {
         "lesson": lesson,
         "student_number": len(Student.objects.filter(lesson=lesson)),
         "avg_skill_acquired": get_average_skill_acquired(lesson, lambda: True),
         "least_mastered_skill": least_mastered_skill(lesson, lambda: True),
-        "most_mastered_skill": most_mastered_skill(lesson, lambda: True)
+        "most_mastered_skill": most_mastered_skill(lesson, lambda: True),
+        "data": data
     })
 
 

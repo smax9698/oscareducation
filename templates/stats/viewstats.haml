@@ -2,6 +2,12 @@
 
 -load bootstrap3
 
+-block javascript
+  %script#barchart(src="/static/js/barchart.js")
+  :javascript
+      BARCHART.init([{{ data }}]);
+      BARCHART.graph();
+
 -block breadcrumb
   %ol.breadcrumb
     %li
@@ -101,3 +107,19 @@
           %b
             {{ most_mastered_skill }}
 
+-block content2
+    !!!
+    %html
+      %head
+        %meta{:charset => "utf-8"}/
+        :css
+          .bar rect {
+            fill: steelblue;
+          }
+
+          .bar text {
+            fill: #fff;
+            font: 10px sans-serif;
+          }
+        %svg{:height => "500", :width => "480"}
+        %script{:src => "https://d3js.org/d3.v4.min.js"}
