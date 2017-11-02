@@ -18,20 +18,27 @@ from .utils import user_is_superuser, number_of_test_pass, get_latest_test_succe
 
 @user_is_professor
 def exportCSV(request, pk):
+    """Downloads a CSV file of the displayed data"""
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="users.csv"'
+    response['Content-Disposition'] = 'attachment; filename="students.csv"'
 
     lesson = get_object_or_404(Lesson, pk=pk)
     students = Student.objects.filter(lesson=lesson)
+    #stats.ExamsPassed.
+    
 
-    writer = csv.writer(response)
-    writer.writerow(['Username', 'First name', 'Last name', 'Email address'])
+
+    display_type = request.POST.get("csv_type", None)
+
+    if display_type == "euro":
+        writer = csv.writer(response, delimiter=";")
+    else:
+        writer = csv.writer(response)
+    writer.writerow([display_type])
+
     for student in students:
-        writer.writerow([student])
+        writer.writerow([student, lesson.name])
     # already prints student names, figure what the method is to get the data which is displayed into the CSV
-
-
-
     return response
 
 @user_is_superuser
