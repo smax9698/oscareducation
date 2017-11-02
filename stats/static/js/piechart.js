@@ -15,11 +15,7 @@ var PIECHART = PIECHART || (function () {
                 data.push({text: name[i], size: size[i]})
             }
 
-            console.log(name);
-            console.log(size);
-            console.log(data);
-
-            var svg = d3.select("svg"),
+            var svg = d3.select("svg#pie"),
                 width = +svg.attr("width"),
                 height = +svg.attr("height"),
                 radius = Math.min(width, height) / 2,
