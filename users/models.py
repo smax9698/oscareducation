@@ -153,9 +153,9 @@ class Student(models.Model):
 
     def get_learning_track(self):
         lt = LearningTrack.objects.filter(student=self).order_by('order')
-        list = []
+        list_return = []
         for item in lt:
-            list.append(item)
+            list_return.append(item)
 
-        return list
+        return list_return
 
