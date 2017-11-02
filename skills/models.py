@@ -447,7 +447,7 @@ class StudentSkill(models.Model):
 
         print(list_level)
         list_level.insert(0, list_acquired)
-        if len(list_level[0]) == 0:
+        if len(list_level) == 1 and len(list_level[0]) == 0:  # Empty list
             return []
         else:
             return list_level
