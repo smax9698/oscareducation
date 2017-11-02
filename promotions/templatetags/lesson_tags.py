@@ -14,6 +14,10 @@ def get_students_skills(context, of_keyword, student, at_keyword, stage, as_keyw
 def go_next_line(context, as_keyword, target_name):
     context[target_name] = StudentSkill.__next_line__()
     return ""
+@register.simple_tag(takes_context=True)
+def reset_counter_line(context):
+    StudentSkill.__reset_counter_line__()
+    return ""
 
 
 @register.simple_tag(takes_context=True)

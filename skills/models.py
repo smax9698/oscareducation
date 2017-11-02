@@ -417,9 +417,15 @@ class StudentSkill(models.Model):
     def __depth_sort_skills__(list_obj):
 
         list_level = [[]]
-
+        list_acquired = []
         def recursive(std_skill):
-            q_set = StudentSkill.objects.filter(skill__in=std_skill.skill.get_prerequisites_skills(), student=std_skill.student) #, acquired = None)  # Set of StudentSkill children not yet acquired
+            q_set_r = StudentSkill.objects.filter(skill__in=std_skill.skill.get_prerequisites_skills(), student=std_skill.student)# acquired = None)  # Set of StudentSkill children not yet acquired
+            q_set = q_set_r.filter(acquired = None)
+            q_set_acq = q_set_r.exclude(acquired = None)
+            for elem in q_set_acq:
+                if elem not in list_acquired:
+                    list_acquired.append(elem)
+
             if q_set.count() == 0:
                 if std_skill not in list_level[0]:
                     list_level[0].append(std_skill)
@@ -440,17 +446,26 @@ class StudentSkill(models.Model):
             recursive(std_skill_objective)
 
         print(list_level)
-        return list_level
+        list_level.insert(0, list_acquired)
+        if len(list_level[0]) == 0:
+            return []
+        else:
+            return list_level
 
     global var
     var = 3
 
     @staticmethod
     def __next_line__():
-        global var
-        var = var-1
         if var == 0:
             global  var
-            var = random.randint(3,3)
+            var = random.randint(2,3)
             return True
+        global var
+        var = var - 1
         return False
+
+    @staticmethod
+    def __reset_counter_line__():
+        global var
+        var = random.randint(2,3)
