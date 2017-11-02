@@ -170,6 +170,9 @@ def get_average_skill_acquired(lesson, fct=None):
 
         # TODO: filter function !!!
 
+    if len(students) <= 0:
+        return None
+
     return (count * 1.0) / len(students)
 
 
@@ -253,10 +256,12 @@ def time_between_two_skills(student, skill_a, skill_b):
     :param skill_b:
     :return: The time between by two skill mastered by the student
     """
-    query = StudentSkill.objects.filter(student=student)
-    date_a = query.get(skill_a).acquired
-    date_b = query.get(skill_b).acquired
-    return date_a - date_b
+    query = StudentSkill.objects.filter(student=student).order_by('acquired').exclude(acquired__isnull=True)
+
+    date_a = query.get(skill=skill_a)
+    date_b = query.get(skill=skill_b)
+
+    return date_a.acquired - date_b.acquired if date_a is not None and date_b is not None else None
 
 
 def time_between_two_last_skills(student):
@@ -266,12 +271,12 @@ def time_between_two_last_skills(student):
     :return:
     """
 
-    query = StudentSkill.objects.filter(student=student).order_by('acquired').exclude(acquired__isnull=True)
+    query = StudentSkill.objects.filter(student=student).order_by('-acquired').exclude(acquired__isnull=True)
 
     len_query = len(query)
 
     if len_query > 2:
-        return query[1].acquired - query[0].acquired
+        return query[0].acquired - query[1].acquired
 
     return None
 
@@ -288,7 +293,7 @@ def get_latest_test_succeeded(student, lesson):
     skills = lesson.stage.skills.all()
     latest = None
     for i in query:
-        skill_tested = models.ExamStudentSkill.object.get(skill_student=i)
+        skill_tested = models.ExamStudentSkill.objects.get(skill_student=i)
         if i.succeeded and skill_tested.skill in skills:  # check if skill_tested.skill is ok
             if latest is None:
                 latest = i
@@ -309,7 +314,7 @@ def number_of_test_pass(student, lesson):
     query = models.ExamStudent.objects.filter(student=student)
     skills = lesson.stage.skills.all()
     for i in query:
-        skill_tested = models.ExamStudentSkill.object.get(skill_student=i)
+        skill_tested = models.ExamStudentSkill.objects.get(skill_student=i)
         if i.succeeded and skill_tested.skill in skills:  # check if skill_tested.skill is ok
             count += 1
     return count
