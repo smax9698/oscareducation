@@ -79,56 +79,6 @@ def add_resource_accessed_by_student(student, resource_id):
 #      Get        #
 ###################
 
-
-def get_resources_accessed_by_student(student):
-    accessed_by_resources = {}
-
-    query = models.ResourceStudent.objects.filter(student=student)
-
-    for item in query:
-        if item.resource in accessed_by_resources:
-            accessed_by_resources[str(item.resource)] += 1
-        else:
-            accessed_by_resources[str(item.resource)] = 1
-
-    return accessed_by_resources
-
-
-def get_number_of_authentication_by_student(student):
-    query = models.AuthenticationStudent.objects.filter(student=student)
-
-    return len(query)
-
-
-def get_authentication_info_by_student(student):
-    return models.AuthenticationStudent.objects.filter(student=student)
-
-
-def get_skill_acquired_by_student(student):
-    query = StudentSkill.objects.filter(student=student).exclude(acquired__isnull=True)
-    return len(query)
-
-
-def get_number_succeeded_exam_by_student(student):
-    query = models.ExamStudent.objects.get(student=student, succeeded=True)
-
-    return len(query)
-
-
-def get_exam_by_student(student):
-    query = models.ExamStudent.objects.get(student=student)
-    # TODO find exam_id
-
-
-def get_time_spent_on_exam(exam):
-    """exam : examination.TestStudent"""
-    return exam.finished_at - exam.started_at
-
-
-def get_skill_status(skill_student):
-    return skill_student.progress
-
-
 def get_students_by_professor(professor):
     """
     Returns all students of all classes that the professor have
@@ -147,27 +97,7 @@ def get_students_by_professor(professor):
                 students_dico[str(student)] = True
 
 
-def get_average_skill_acquired(lesson, fct=None):
-    """
-    Returns the average of skill acquired by students
 
-    :param lesson: Lesson object
-    :param function:
-    :return: Average of skill acquired by students
-    """
-    count = 0
-
-    skills = Skill.objects.filter(stage=lesson.stage)
-    students = Student.objects.filter(lesson=lesson).distinct()
-
-    for i in students:
-        skills_student = StudentSkill.objects.filter(student=i, skill__in=skills).exclude(
-            acquired__isnull=True).distinct()
-        count += len(skills_student)
-
-        # TODO: filter function !!!
-
-    return (count * 1.0) / len(students)
 
 
 def get_latest_skill_acquired(student, lesson):
