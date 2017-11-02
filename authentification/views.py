@@ -1,30 +1,28 @@
 # encoding: utf-8
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-from django.template.response import TemplateResponse
-from django.utils.http import is_safe_url
-from django.shortcuts import resolve_url, redirect, render, get_object_or_404
-from django.views.decorators.debug import sensitive_post_parameters
-from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect
-
-from stats.models import LoginStats
-
+from django.contrib import messages
 # Avoid shadowing the login() and logout() views below.
 from django.contrib.auth import (REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout)
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.models import User
-from users.models import Professor
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.contrib import messages
-
+from django.http import HttpResponseRedirect
+from django.shortcuts import resolve_url, render, get_object_or_404
+from django.template.response import TemplateResponse
+from django.utils.http import is_safe_url
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
 
 from forms import UsernameLoginForm, CodeForm, CreatePasswordForm, SubscribeTeacherForm
-from django.core.mail import send_mail
+from stats.models import LoginStats
+from stats.utils import add_authentication_by_student
 from users.models import Student, Professor
+
 
 @sensitive_post_parameters()
 @csrf_protect
@@ -171,6 +169,7 @@ def password(request, template_name='registration/login_password.haml',
                 return HttpResponseRedirect(reverse("professor:dashboard"))
             elif hasattr(request.user, "student"):
                 LoginStats.objects.create(user=request.user, user_kind="student")
+                add_authentication_by_student(student=request.user, end_date=None)
                 return HttpResponseRedirect(reverse("student_dashboard"))
             else:
                 raise Exception("Unknown user kind, can't login")

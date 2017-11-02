@@ -1,3 +1,4 @@
+pytz
 django
 django-bootstrap3
 django-extensions
