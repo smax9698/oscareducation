@@ -505,20 +505,3 @@ def skill_pedagogic_ressources(request, type, slug):
         "sori_coder_lesson_resource_khanacademy": sori_coder_lesson_resource_khanacademy,
         "sori_coder_exercice_resource_sesamath": sori_coder_exercice_resource_sesamath,
     })
-
-
-def get_tab_recommended_skill(student_skills):
-    tab = []
-    current_tab =[]
-    count = 0
-    for student_skill in student_skills:
-        if student_skill.recommended_to_learn():
-            if count< 3:
-                current_tab.append(student_skill)
-                count = count +1
-            else:
-                tab.append(current_tab)
-                current_tab = [student_skill]
-                count = 1
-
-    return tab
