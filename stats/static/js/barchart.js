@@ -4,7 +4,6 @@ var BARCHART = BARCHART || (function () {
     return {
         init: function (Args) {
             _args = Args;
-            console.log("hello")
             // some other initialising
         },
         graph: function () {
@@ -12,9 +11,8 @@ var BARCHART = BARCHART || (function () {
 
             var formatCount = d3.format(",.0f");
 
-            console.log(data);
 
-            var svg = d3.select("svg"),
+            var svg = d3.select("svg#bar"),
                 margin = {top: 10, right: 30, bottom: 30, left: 30},
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom,
