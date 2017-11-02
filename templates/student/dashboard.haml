@@ -24,7 +24,6 @@
         <img class='icon student-skill' src='/static/img/icons/recommended.png' /> = compétence recommandée non maîtrisée.
 
   %br
-
   -with lesson=user.student.lesson_set.first
     .row
       .col-md-6
@@ -140,27 +139,27 @@
           .ligneorangefine
 
           .container-fluid.boxclasse
+           %button#comp_up_btn.compnavigation.glyphicon.glyphicon-menu-up{:style => "font-size: 30px; float:right; appearance: none; -webkit-appearance: none; -moz-appearance: none; outline: none; border: 0; background: transparent;"}
+           %br
 
-            %table.table.align-center
+            #skillsList{:style => "height:210px;overflow: hidden"}
               -for stage in lesson.stages_in_unchronological_order
                 -get_depth_sorted_students_skills of user.student at stage rename "student_skills"
-                -for student_skill in student_skills
-                  -if student_skill.recommended_to_learn
-                    %tr.legend-list
-                      %td.legend
-                        %i.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}
-                      %td.legend
-                        %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
-                      %td
-                        %table.table{:border => "0"}
-                          %tr
-                            %td
-                              %i.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}
-                            %td
-                              %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
-                          %td
-                            %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
-                              {{ student_skill.skill.code }}
+                -for level in student_skills
+                    -for student_skill in level
+                      %span
+                        %button.btn.btn-success{:type => "button", :style => "width: 180px; height: 180px; padding: 10px 0px 10px 0px; margin: 25px 5px 25px 0px; font-size: 24px; line-height: 1.33; border-radius: 100px;"}
+                          %i.glyphicon.glyphicon-thumbs-up
+                            {{ student_skill.code }}
+           %br
+           %button#comp_down_btn.compnavigation.glyphicon.glyphicon-menu-down{:style => "font-size: 30px; float:right; appearance: none; -webkit-appearance: none; -moz-appearance: none; outline: none; border: 0; background: transparent;"}
+           :javascript
+              $(document).ready(function(){
+                var skillsList = document.getElementById("skillsList");
+                $(".compnavigation").on('click', function(){
+                     skillsList.scrollTop += this.id === 'comp_down_btn' ? 30 : -30;
+                });
+              });
 
         -if user.student.teststudent_set.all|keep_unfinished_tests|remove_closed_tests
           -if user.student.has_recommended_skills
