@@ -181,7 +181,7 @@ def get_latest_skill_acquired(student, lesson):
     :param lesson: Lesson object
     :return: Return the lastest skill mastered by the student in the lesson
     """
-    query = StudentSkill.objects.filter(student=student)
+    query = StudentSkill.objects.filter(student=student, skill__in=lesson.stage.skills.all())
     skills = lesson.stage.skills.all()
     max = None
     for i in query:
@@ -204,12 +204,14 @@ def least_mastered_skill(lesson, function):
     """
 
     skills = lesson.stage.skills.all()
+    students = lesson.students.all()
     min_skill = None
     min = None
 
     for i in skills:
 
-        len_skills_student = len(StudentSkill.objects.filter(skill=i).exclude(acquired__isnull=True))
+        len_skills_student = len(
+            StudentSkill.objects.filter(skill=i, student__in=students).exclude(acquired__isnull=True))
 
         if len_skills_student > 0 and (min is None or min > len_skills_student):
             min = len_skills_student
@@ -226,12 +228,14 @@ def most_mastered_skill(lesson, function):
     :return: the most mastered skill by the student of the lesson
     """
     skills = lesson.stage.skills.all()
+    students = lesson.students.all()
     min_skill = None
     max_len = None
 
     for i in skills:
 
-        len_skills_student = len(StudentSkill.objects.filter(skill=i).exclude(acquired__isnull=True))
+        len_skills_student = len(
+            StudentSkill.objects.filter(skill=i, student__in=students).exclude(acquired__isnull=True))
 
         if len_skills_student > 0 and (max_len is None or max_len < len_skills_student):
             max_len = len_skills_student
