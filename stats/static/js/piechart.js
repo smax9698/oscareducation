@@ -1,23 +1,23 @@
-var PIECHART = PIECHART || (function(){
+var PIECHART = PIECHART || (function () {
     var _args = {}; // private
 
     return {
-        init : function(Args) {
+        init: function (Args) {
             _args = Args;
             // some other initialising
         },
-        graph : function() {
+        graph: function () {
             var name = _args[0];
             var size = _args[1];
             var data = [];
             var i;
-            for(i=0; i<name.length; i++){
-                data.push({text:name[i], size:size[i]})
+            for (i = 0; i < name.length; i++) {
+                data.push({text: name[i], size: size[i]})
             }
 
-            console.log(name)
-            console.log(size)
-            console.log(data)
+            console.log(name);
+            console.log(size);
+            console.log(data);
 
             var svg = d3.select("svg"),
                 width = +svg.attr("width"),
@@ -29,7 +29,9 @@ var PIECHART = PIECHART || (function(){
 
             var pie = d3.pie()
                 .sort(null)
-                .value(function(d) { return d.size; });
+                .value(function (d) {
+                    return d.size;
+                });
 
             var path = d3.arc()
                 .outerRadius(radius - 10)
@@ -46,12 +48,18 @@ var PIECHART = PIECHART || (function(){
 
             arc.append("path")
                 .attr("d", path)
-                .attr("fill", function(d) { return color(d.data.text); });
+                .attr("fill", function (d) {
+                    return color(d.data.text);
+                });
 
             arc.append("text")
-                .attr("transform", function(d) { return "translate(" + label.centroid(d) + ")"; })
+                .attr("transform", function (d) {
+                    return "translate(" + label.centroid(d) + ")";
+                })
                 .attr("dy", "0.35em")
-                .text(function(d) { return d.data.text; });
-                    }
+                .text(function (d) {
+                    return d.data.text;
+                });
+        }
     };
 }());

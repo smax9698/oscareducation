@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import csv
+
 from django.db.models import Count
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 
 from examinations.models import Context as Question
 from promotions.models import Lesson, Stage
@@ -9,12 +11,9 @@ from promotions.utils import user_is_professor
 from resources.models import KhanAcademy, Sesamath
 from skills.models import Skill
 from users.models import Professor, Student
-from .utils import user_is_superuser
-import csv
 from .utils import user_is_superuser, number_of_test_pass, get_latest_test_succeeded, \
     get_number_of_authentication_by_student, get_latest_skill_acquired, time_between_two_last_skills, \
     get_average_skill_acquired, least_mastered_skill, most_mastered_skill
-
 
 
 @user_is_professor
@@ -91,7 +90,7 @@ def viewstats(request, pk):
                        'Status des exercice', 'Nombre de ressource vue', 'Compétence acquise',
                        'Compétence en progression', 'Test passé', 'Temps passé sur les examens']
     data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
-    name = [1, 2, 3]#["Jean", "Marc", "Georges"]
+    name = [1, 2, 3]  # ["Jean", "Marc", "Georges"]
     size = [18, 2, 42]
 
     return render(request, "stats/viewstats.haml", {
@@ -102,7 +101,7 @@ def viewstats(request, pk):
         "most_mastered_skill": most_mastered_skill(lesson, lambda: True),
         "data": data,
         "name": name,
-        "size": size
+        "size": size,
         "most_mastered_skill": most_mastered_skill(lesson, lambda: True),
         "students": students,
         "predefined_timespan": predefined_timespan,
