@@ -363,15 +363,17 @@ class LearningTrack(models.Model):
     """[FR] Chemin d'apprentissage
 
         A learning track is an ordered sequence of skills the student should learn.
-        Skills student should learns are the targeted skills (at most 3) and all their prerequisites.
-        Each object points to a student skill of the whole track.
+        Skills student should learns are the targeted skills (at most 3) and all their non-acquired prerequisites.
+        Each object points to a StudentSkill of the whole track.
 
     """
 
+    # TODO Remove as we can already get it from student_skill
     student = models.ForeignKey('users.Student')
     """The Student concerned by this LT"""
 
     student_skill = models.ForeignKey('StudentSkill')
+    """This StudentSkill objects links with the Student and the Skill as well as its acquired status."""
 
     order = models.PositiveIntegerField()
     """Order of the skill in the learning track"""
@@ -434,15 +436,18 @@ class LearningTrack(models.Model):
     @staticmethod
     def _prerequisite_list(student_skill):
         """
-        List to iterate through a student skill and all its prerequisites
+        List to iterate through a student skill and all its prerequisites if they are not acquired
         NOTE : THE STUDENT SKILL IN PARAMETER IS INCLUDED
         """
         # TODO Avoid always recomputing the prerequisites ?
-        student_skills = [student_skill]
-        for prerequisite in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
-                                                        student=student_skill.student):
-            student_skills.extend(LearningTrack._prerequisite_list(prerequisite))
-        return student_skills
+        if student_skill.acquired is None:
+            student_skills = [student_skill]
+            for prerequisite in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
+                                                            student=student_skill.student):
+                student_skills.extend(LearningTrack._prerequisite_list(prerequisite))
+            return student_skills
+        else:
+            return []
 
     @staticmethod
     def _higher_in_prerequisites_tree(a, b):
@@ -534,7 +539,6 @@ class LearningTrack(models.Model):
             skills_depth_map[student_skill] = depth
         elif skills_depth_map[student_skill] < depth:
             skills_depth_map[student_skill] = depth
-
 
 
 class Criteria(models.Model):
