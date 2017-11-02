@@ -35,7 +35,7 @@
             -for stat in list_stats
               .checkbox
                 %label
-                  %input{:type => "checkbox"}
+                  %input{:type => "checkbox", :checked => "checked"}
                   %font{:color => "white"} {{stat}}
         %li
           %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
