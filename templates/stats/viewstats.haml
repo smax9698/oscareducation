@@ -1,6 +1,17 @@
 -extends "base.haml"
 
 -load bootstrap3
+-load static
+
+-block javascript
+  %script{:src => "https://d3js.org/d3.v4.min.js"}
+  %script(src="/static/js/barchart.js")
+  %script(src="/static/js/linechart.js")
+  %script(src="/static/js/piechart.js")
+
+-block head
+  %link{href: "{% static 'css/bartchart.css' %}", rel: "stylesheet"}
+  %link{href: "{% static 'css/piechart.css' %}", rel: "stylesheet"}
 
 -block breadcrumb
   %ol.breadcrumb
@@ -79,77 +90,13 @@
       .ligneorangefine
 
       .container-fluid.boxclasse
-
-
-        %p
-          Nombre d'étudiants
-          %b
-            {{ student_number }}
-
-        %p
-          Nombre moyen de compétences acquises
-          %b
-            {{ avg_skill_acquired }}
-
-        %p
-          Compétence la moins maitrisée
-          %b
-            {{ least_mastered_skill }}
-
-        %p
-          Compétence la plus maitrisée
-          %b
-            {{ most_mastered_skill }}
-
--block content-barchart
-    !!!
-    %html
-      %head
-        %meta{:charset => "utf-8"}/
-        :css
-          .bar rect {
-            fill: steelblue;
-          }
-
-          .bar text {
-            fill: #fff;
-            font: 10px sans-serif;
-          }
         %svg{:height => "500", :width => "480"}
-        %script{:src => "https://d3js.org/d3.v4.min.js"}
-        %script(src="/static/js/barchart.js")
-        :javascript
-              BARCHART.init([{{ data }}]);
-              BARCHART.graph();
+            BARCHART.init([{{ data }}]);
+            BARCHART.graph();
 
--block content-piechart
-    !!!
-    %html
-      %head
-        %meta{:charset => "utf-8"}/
-        :css
-          .arc text {
-            font: 10px sans-serif;
-            text-anchor: middle;
-          }
 
-          .arc path {
-            stroke: #fff;
-          }
-        %svg{:height => "500", :width => "480"}
-        %script{:src => "https://d3js.org/d3.v4.min.js"}
-        %script(src="/static/js/piechart.js")
-        :javascript
-          PIECHART.init([{{ name }}, {{ size }}]);
-          PIECHART.graph();
 
--block content-linechart
-    !!!
-    %html
-      %body
-        %svg{:height => "500", :width => "480"}
-        %script{:src => "https://d3js.org/d3.v4.min.js"}
-        %script(src="/static/js/linechart.js")
-        :javascript
-          LINECHART.init([{{ name }}, {{ size }}]);
-          LINECHART.graph();
+
+
+
+

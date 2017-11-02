@@ -4,12 +4,15 @@ var BARCHART = BARCHART || (function(){
     return {
         init : function(Args) {
             _args = Args;
+            console.log("hello")
             // some other initialising
         },
         graph : function() {
             var data = _args[0];
 
             var formatCount = d3.format(",.0f");
+
+            console.log(data)
 
             var svg = d3.select("svg"),
               margin = {top: 10, right: 30, bottom: 30, left: 30},
