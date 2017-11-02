@@ -150,6 +150,20 @@
                 -for level in student_skills_tab
                   %tr.borderless
                     -for student_skill in level
+                      %span
+                        %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
+                          %button.btn.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}{:type => "button",:style => "width: 180px; height: 180px; padding: 10px 0px 10px 0px; margin: 25px 5px 25px 0px; font-size: 24px; line-height: 1.33; border-radius: 100px;"}
+
+                            {{ student_skill.skill.code }}
+           %br
+           %button#comp_down_btn.compnavigation.glyphicon.glyphicon-menu-down{:style => "font-size: 30px; float:right; appearance: none; -webkit-appearance: none; -moz-appearance: none; outline: none; border: 0; background: transparent;"}
+           :javascript
+              $(document).ready(function(){
+                var skillsList = document.getElementById("skillsList");
+                $(".compnavigation").on('click', function(){
+                     skillsList.scrollTop += this.id === 'comp_down_btn' ? 30 : -30;
+                });
+              });
 
                       %td
                         %table.table{:border => "0"}
