@@ -91,9 +91,7 @@ def viewstats(request, pk):
 
     return render(request, "stats/viewstats.haml", {
         "lesson": lesson,
-
-        "students": students
-
+        "students": students,
         "predefined_timespan": predefined_timespan,
         "list_stats": list_statistics,
 
