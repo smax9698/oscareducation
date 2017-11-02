@@ -399,9 +399,9 @@ class LearningTrack(models.Model):
         student_skills_list = LearningTrack._build_student_skills_list(targets)
 
         ordered_criteria_names = LearningTrack._get_ordered_criteria_names(professor)
-        criteria_maps = LearningTrack._get_criteria_maps(targets, student_skills_list)
+        criteria_functions = LearningTrack._get_criteria_functions(targets)
 
-        learning_track = LearningTrack._sorting(ordered_criteria_names, criteria_maps, student_skills_list)
+        learning_track = LearningTrack._sorting(ordered_criteria_names, criteria_functions, student_skills_list)
         for i in range(0, len(learning_track)):
             LearningTrack.objects.create(
                 student=student,
@@ -411,6 +411,10 @@ class LearningTrack(models.Model):
 
     @staticmethod
     def _get_ordered_criteria_names(professor):
+        """
+        :param professor: A professor
+        :return: The ordered criteria names defined by hand by the professor
+        """
         return list(
             map(lambda x: x.criteria.name, ProfessorCriteria.objects.filter(professor=professor).order_by('order')))
 
@@ -459,44 +463,45 @@ class LearningTrack(models.Model):
             return 0
 
     @staticmethod
-    def _sorting(ordered_criteria_names, criteria_maps, student_skills_list):
+    def _sorting(ordered_criteria_names, criteria_functions, student_skills_list):
         """
         Sort skills list to return the learning track
         :param ordered_criteria_names: list of criteria names ordered by importance
-        :param criteria_maps:Dictionary(criteria name, dictionary(skill,value based on the criteria))
+        :param criteria_functions:Dictionary(criteria name, dictionary(skill,value based on the criteria))
         :param student_skills_list:List of all the skills to be ordered
         :return: the list of the learning track
         """
 
         for criteria_name in reversed(ordered_criteria_names):
-            if criteria_name not in criteria_maps:
+            if criteria_name not in criteria_functions:
                 raise ValueError("Unknown criteria : " + criteria_name)
-            criteria_map = criteria_maps[criteria_name]
-            student_skills_list.sort(key=lambda x: criteria_map[x])
+            criteria_function = criteria_functions[criteria_name]
+            student_skills_list.sort(key=criteria_function)
         student_skills_list.sort(LearningTrack._higher_in_prerequisites_tree)
         return student_skills_list
 
     @staticmethod
-    def _get_criteria_maps(targets, student_skills):
+    def _get_criteria_functions(targets):
         """
-        Get all the dictionaries used for the sorting by criteria
-        :param student_skills:List of all the StudentSkills of the student
+        Get the key functions of each criteria used for the sorting
         :param targets:Targeted student skills of the student
-        :return ( Dictionary(criteria name, dictionary(skill,value for the criteria)), A list of student skills )
+        :return Dictionary mapping from the criteria name in database to its key function used for sorting
         """
-        skills_depth_map = {}
-        skills_section_map = {}
-        skills_time_map = {}
-        for student_skill in student_skills:
-            LearningTrack._set_skill_section(student_skill, skills_section_map)
-            skills_time_map[student_skill] = student_skill.skill.estimated_time_to_master
 
+        def get_section(student_skill):
+            return student_skill.skill.section.name
+
+        def get_time(student_skill):
+            return student_skill.skill.estimated_time_to_master
+
+        skills_depth_map = {}
         for target in targets:
             LearningTrack._set_level(target, skills_depth_map, 0)
 
-        criteria_maps = {'Level': skills_depth_map, 'Group': skills_section_map, 'Time': skills_time_map}
+        def get_level(student_skill):
+            return skills_depth_map[student_skill]
 
-        return criteria_maps
+        return {'Level': get_level, 'Group': get_section, 'Time': get_time}
 
     @staticmethod
     def _set_level(student_skill, skills_depth_map, level):
@@ -530,16 +535,6 @@ class LearningTrack(models.Model):
         elif skills_depth_map[student_skill] < depth:
             skills_depth_map[student_skill] = depth
 
-    @staticmethod
-    def _set_skill_section(student_skill, skills_section_map):
-        """
-        Method to put the section of a skill in the dictionary
-        :param student_skill: The skill to update in the dictionary
-        :param skills_section_map:Dictionary(skill,section)
-        :return:void
-        """
-        section = Section.objects.filter(id=student_skill.id)
-        skills_section_map[student_skill] = section
 
 
 class Criteria(models.Model):
