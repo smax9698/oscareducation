@@ -2,6 +2,7 @@ import datetime
 
 import pytz
 from django.test import TestCase
+from django.utils import timezone
 
 from promotions.models import Stage, Lesson
 from skills.models import Skill, StudentSkill
@@ -93,6 +94,19 @@ class TestLatestSkillAcquired(TestCase):
 
         self.expected_latest_skill_student1 = skill2
         self.expected_latest_skill_student2 = skill1
+
+        old_stage_student = Stage.object.create(name="old_stage", short_name="os", level=1)
+
+        for i in range(0, 20):
+            skill = Skill.objects.create(code="code" + str(i), name="name" + str(i))
+            skill.save()
+            old_stage_student.skills.add(skill)
+            skill_student = StudentSkill.objects.create(student=self.student1, skill=skill,
+                                                        acquired=timezone.now())
+            skill_student2 = StudentSkill.objects.create(student=self.student2, skill=skill,
+                                                         acquired=timezone.now())
+            skill_student.save()
+            skill_student2.save()
 
     def test_correct_skill_queried(self):
         latest_student1 = LatestSkillAcquired(self.student1, self.lesson1).data

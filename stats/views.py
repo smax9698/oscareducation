@@ -18,18 +18,27 @@ from stats.StatsObject import get_class_stat, get_student_stat
 
 @user_is_professor
 def exportCSV(request, pk):
+    """Downloads a CSV file of the displayed data"""
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="users.csv"'
+    response['Content-Disposition'] = 'attachment; filename="students.csv"'
 
     lesson = get_object_or_404(Lesson, pk=pk)
     students = Student.objects.filter(lesson=lesson)
+    #stats.ExamsPassed.
 
-    writer = csv.writer(response)
-    writer.writerow(['Username', 'First name', 'Last name', 'Email address'])
+
+
+    display_type = request.POST.get("csv_type", None)
+
+    if display_type == "euro":
+        writer = csv.writer(response, delimiter=";")
+    else:
+        writer = csv.writer(response)
+    writer.writerow([display_type])
+
     for student in students:
-        writer.writerow([student])
+        writer.writerow([student, lesson.name])
     # already prints student names, figure what the method is to get the data which is displayed into the CSV
-
     return response
 
 
@@ -89,10 +98,9 @@ def viewstats(request, pk):
                        'Status des exercice', 'Nombre de ressource vue', 'Compétence acquise',
                        'Compétence en progression', 'Test passé', 'Temps passé sur les examens']
     data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
-    name = [1, 2, 3]  # ["Jean", "Marc", "Georges"]
+    name = ["Jean", "Marc", "Georges"]
     size = [18, 2, 42]
 
-    stats = get_class_stat(lesson)
     return render(request, "stats/viewstats.haml", {
         "stats": stats,
         "lesson": lesson,
