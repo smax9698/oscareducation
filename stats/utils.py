@@ -160,6 +160,9 @@ def get_average_skill_acquired(lesson, fct=None):
     skills = Skill.objects.filter(stage=lesson.stage)
     students = Student.objects.filter(lesson=lesson).distinct()
 
+    if len(students) <= 0:
+        return None
+
     for i in students:
         skills_student = StudentSkill.objects.filter(student=i, skill__in=skills).exclude(
             acquired__isnull=True).distinct()
@@ -208,7 +211,7 @@ def least_mastered_skill(lesson, function):
 
         len_skills_student = len(StudentSkill.objects.filter(skill=i).exclude(acquired__isnull=True))
 
-        if min is None or min > len_skills_student:
+        if len_skills_student > 0 and (min is None or min > len_skills_student):
             min = len_skills_student
             min_skill = i
 
@@ -230,7 +233,7 @@ def most_mastered_skill(lesson, function):
 
         len_skills_student = len(StudentSkill.objects.filter(skill=i).exclude(acquired__isnull=True))
 
-        if max_len is None or max_len < len_skills_student:
+        if len_skills_student > 0 and (max_len is None or max_len < len_skills_student):
             max_len = len_skills_student
             min_skill = i
 

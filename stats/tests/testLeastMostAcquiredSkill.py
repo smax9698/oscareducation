@@ -18,10 +18,14 @@ class TestLeastSkillAcquired(TestCase):
         skills_list = []
 
         stage = Stage.objects.create(name="stage", short_name="s", level=1)
+        stage_no_student_acquired_skills = Stage.objects.create(name="stage_nas", short_name="snas", level=1)
+        stage_no_student_acquired_skills.save()
         stage.save()
 
         lesson = Lesson.objects.create(name="lesson", stage=stage)
+        lesson_no_acquired_skill = Lesson.objects.create(name="lesson2", stage=stage_no_student_acquired_skills)
         lesson.save()
+        lesson_no_acquired_skill.save()
 
         for i in range(0, number_of_student):
             user = User.objects.create(username="username" + str(i))
@@ -32,9 +36,13 @@ class TestLeastSkillAcquired(TestCase):
 
         for i in range(0, number_of_skills):
             gen_name = "skill" + str(i)
+            gen_name2 = gen_name + "v2"
             skill = Skill.objects.create(code=gen_name, name=gen_name)
+            skill2 = Skill.objects.create(code=gen_name2, name=gen_name2)
             skill.save()
+            skill2.save()
             stage.skills.add(skill)
+            stage_no_student_acquired_skills.skills.add(skill2)
             skills_list.append(skill)
 
         random.seed()
@@ -60,9 +68,14 @@ class TestLeastSkillAcquired(TestCase):
         self.expected_min_skill = skill_obj_min
         self.expected_max_skill = skill_obj_max
         self.lesson = lesson
+        self.lesson_no_acquired_skill = lesson_no_acquired_skill
 
     def test_least_skill_acquired(self):
         self.assertEquals(least_mastered_skill(self.lesson, lambda: True), self.expected_min_skill)
 
     def test_most_skill_acquired(self):
         self.assertEquals(most_mastered_skill(self.lesson, lambda: True), self.expected_max_skill)
+
+    def test_when_no_skill_is_acquired_in_stage(self):
+        self.assertEquals(most_mastered_skill(self.lesson_no_acquired_skill, lambda: True), None)
+        self.assertEquals(least_mastered_skill(self.lesson_no_acquired_skill, lambda: True), None)

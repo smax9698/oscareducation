@@ -37,6 +37,8 @@ class AverageSkillTest(TestCase):
         self.lesson_no_student_mastered = Lesson.objects.create(name="hardLesson", stage=stage_no_mastered)
         self.lesson_no_student_mastered.save()
 
+        self.lesson_no_student = Lesson.objects.create(name="LessonNoStudent", stage=stage_no_mastered)
+
         user = User.objects.create(username="prof")
         professor = Professor.objects.create(user=user)
         professor.save()
@@ -82,3 +84,6 @@ class AverageSkillTest(TestCase):
 
     def test_when_no_student_mastered_skills(self):
         self.assertEquals(get_average_skill_acquired(self.lesson_no_student_mastered), 0)
+
+    def test_when_no_student_in_lesson(self):
+        self.assertEquals(get_average_skill_acquired(self.lesson_no_student), None)
