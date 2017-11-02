@@ -45,7 +45,10 @@
           %font{:color => "white", :size => "4"} Période prédéfinie
           %select{:id => "select_timespan"}
             -for option, val in predefined_timespan.items
-              %option{:value => val} {{option}}
+              -if val == None
+                %option{:value => val, :selected => "selected"} {{option}}
+              -else
+                %option{:value => val} {{option}}
           %div{:id => "timespan"}
             %font{:color => "white"} Depuis :
             %input{:id => "startDate", :type => "text", :value => "jj/mm/aa"}/
