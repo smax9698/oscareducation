@@ -11,9 +11,9 @@ from promotions.utils import user_is_professor
 from resources.models import KhanAcademy, Sesamath
 from skills.models import Skill
 from users.models import Professor, Student
-from .utils import user_is_superuser, number_of_test_pass, get_latest_test_succeeded, \
-    get_number_of_authentication_by_student, get_latest_skill_acquired, time_between_two_last_skills, \
-    get_average_skill_acquired, least_mastered_skill, most_mastered_skill
+from .utils import user_is_superuser
+
+from stats.StatsObject import get_class_stat, get_student_stat
 
 
 @user_is_professor
@@ -30,9 +30,8 @@ def exportCSV(request, pk):
         writer.writerow([student])
     # already prints student names, figure what the method is to get the data which is displayed into the CSV
 
-
-
     return response
+
 
 @user_is_superuser
 def dashboard(request):
@@ -93,16 +92,14 @@ def viewstats(request, pk):
     name = [1, 2, 3]  # ["Jean", "Marc", "Georges"]
     size = [18, 2, 42]
 
+    stats = get_class_stat(lesson)
     return render(request, "stats/viewstats.haml", {
+        "stats": stats,
         "lesson": lesson,
         "student_number": len(Student.objects.filter(lesson=lesson)),
-        "avg_skill_acquired": get_average_skill_acquired(lesson, lambda: True),
-        "least_mastered_skill": least_mastered_skill(lesson, lambda: True),
-        "most_mastered_skill": most_mastered_skill(lesson, lambda: True),
         "data": data,
         "name": name,
         "size": size,
-        "most_mastered_skill": most_mastered_skill(lesson, lambda: True),
         "students": students,
         "predefined_timespan": predefined_timespan,
         "list_stats": list_statistics,
@@ -113,7 +110,7 @@ def viewstats(request, pk):
 def stat_student(request, pk_lesson, pk_student):
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
     student = get_object_or_404(Student, pk=pk_student)
-
+    """
     last_test_passed = get_latest_test_succeeded(student, lesson)
     latest_skill = get_latest_skill_acquired(student, lesson)
     time_spent_two_skill = time_between_two_last_skills(student)
@@ -128,6 +125,7 @@ def stat_student(request, pk_lesson, pk_student):
         "time_spent_two_skills": time_spent_two_skill if time_spent_two_skill else "Pas assez de data pour calculer la statistique"
 
     })
+    """
 
 
 def stat_student_tab(request, pk_lesson, pk_student):

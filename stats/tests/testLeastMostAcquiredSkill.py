@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from promotions.models import Stage, Lesson
 from skills.models import Skill, StudentSkill
-from stats.utils import least_mastered_skill, most_mastered_skill
+from stats.StatsObject import LeastMasteredSkill, MostMasteredSkill
 from users.models import User, Student
 
 
@@ -99,13 +99,19 @@ class TestLeastSkillAcquired(TestCase):
         self.lesson_no_acquired_skill = lesson_no_acquired_skill
 
     def test_least_skill_acquired(self):
-        self.assertEquals(least_mastered_skill(self.lesson, lambda: True), self.expected_min_skill)
-        self.assertEquals(least_mastered_skill(self.lesson2, lambda: True), self.expected_min_skill_lesson2)
+        least_lesson1 = LeastMasteredSkill(self.lesson).data
+        least_lesson2 = LeastMasteredSkill(self.lesson2).data
+        self.assertEquals(least_lesson1, self.expected_min_skill)
+        self.assertEquals(least_lesson2, self.expected_min_skill_lesson2)
 
     def test_most_skill_acquired(self):
-        self.assertEquals(most_mastered_skill(self.lesson, lambda: True), self.expected_max_skill)
-        self.assertEquals(most_mastered_skill(self.lesson2, lambda: True), self.expected_max_skill_lesson2)
+        most_lesson1 = MostMasteredSkill(self.lesson).data
+        most_lesson2 = MostMasteredSkill(self.lesson2).data
+        self.assertEquals(most_lesson1, self.expected_max_skill)
+        self.assertEquals(most_lesson2, self.expected_max_skill_lesson2)
 
     def test_when_no_skill_is_acquired_in_stage(self):
-        self.assertEquals(most_mastered_skill(self.lesson_no_acquired_skill, lambda: True), None)
-        self.assertEquals(least_mastered_skill(self.lesson_no_acquired_skill, lambda: True), None)
+        most_none = MostMasteredSkill(self.lesson_no_acquired_skill).data
+        least_none = LeastMasteredSkill(self.lesson_no_acquired_skill).data
+        self.assertEquals(most_none, None)
+        self.assertEquals(least_none, None)

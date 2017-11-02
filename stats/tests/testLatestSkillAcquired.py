@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from promotions.models import Stage, Lesson
 from skills.models import Skill, StudentSkill
-from stats.utils import get_latest_skill_acquired
+from stats.StatsObject import LatestSkillAcquired
 from users.models import User, Student
 
 
@@ -95,9 +95,13 @@ class TestLatestSkillAcquired(TestCase):
         self.expected_latest_skill_student2 = skill1
 
     def test_correct_skill_queried(self):
-        self.assertEquals(get_latest_skill_acquired(self.student1, self.lesson1), self.expected_latest_skill_student1)
-        self.assertEquals(get_latest_skill_acquired(self.student2, self.lesson2), self.expected_latest_skill_student2)
+        latest_student1 = LatestSkillAcquired(self.student1, self.lesson1).data
+        latest_student2 = LatestSkillAcquired(self.student2, self.lesson2).data
+        self.assertEquals(latest_student1, self.expected_latest_skill_student1)
+        self.assertEquals(latest_student2, self.expected_latest_skill_student2)
 
     def test_when_no_skills_acquired(self):
-        self.assertEquals(get_latest_skill_acquired(self.student3, self.lesson2), None)
-        self.assertEquals(get_latest_skill_acquired(self.student3, self.lesson1), None)
+        latest_student3 = LatestSkillAcquired(self.student3, self.lesson2).data
+        latest_student3bis = LatestSkillAcquired(self.student3, self.lesson1).data
+        self.assertEquals(latest_student3, None)
+        self.assertEquals(latest_student3bis, None)

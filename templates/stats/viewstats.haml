@@ -32,7 +32,7 @@
         %li
           %font{:color => "white", :size => "4"} Statistique à afficher
           %form
-            -for stat in list_stats
+            -for stat in stats
               .checkbox
                 %label
                   %input{:type => "checkbox", :checked => "checked"}

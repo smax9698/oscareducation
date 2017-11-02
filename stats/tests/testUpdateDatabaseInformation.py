@@ -6,6 +6,7 @@ from resources.models import Resource
 from stats.models import ExamStudent, AuthenticationStudent, ResourceStudent
 from stats.utils import *
 from users.models import User, Student
+from skills.models import Skill
 
 
 # Create your tests here.

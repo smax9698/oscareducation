@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from resources.models import Resource
 from stats.models import ResourceStudent
-from stats.utils import get_resources_accessed_by_student
+from stats.StatsObject import ResourcesViewed
 from users.models import User, Student
 
 
@@ -48,7 +48,7 @@ class RetrieveResourcesAccessedByStudent(TestCase):
 
     def test_when_student_access_resource(self):
 
-        response = get_resources_accessed_by_student(self.student)
+        response = ResourcesViewed(self.student).data
 
         for key, value in self.expected_resource_accessed.items():
             self.assertIn(key, response)
@@ -56,4 +56,4 @@ class RetrieveResourcesAccessedByStudent(TestCase):
 
     def test_when_student_access_no_resources(self):
 
-        self.assertEqual(len(get_resources_accessed_by_student(self.student_no_resources)), 0)
+        self.assertEqual(len(ResourcesViewed(self.student_no_resources).data), 0)
