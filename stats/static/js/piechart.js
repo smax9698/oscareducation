@@ -16,10 +16,22 @@ var PIECHART = PIECHART || (function () {
             }
 
             var svg = d3.select("svg#pie"),
-                width = +svg.attr("width"),
-                height = +svg.attr("height"),
+                margin = {top: 100, right: 30, bottom: 30, left: 30},
+                width = +svg.attr("width") - margin.left - margin.right,
+                height = +svg.attr("height") - margin.top - margin.bottom,
                 radius = Math.min(width, height) / 2,
-                g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+                nml = -margin.left,
+                nmt = -margin.top,
+                g = svg.append("g").attr("transform", "translate(" + (width+margin.left) / 2 + "," + (height+margin.top) / 2 + ")")
+
+            svg.append("text")
+                .attr("x", margin.left + (width / 2))
+                .attr("y", (margin.top / 2))
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("My Wonderful Title");
+
 
             var color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 

@@ -1,4 +1,3 @@
-var BARCHART = BARCHART || (function(){
 var BARCHART = BARCHART || (function () {
     var _args = {}; // private
 
@@ -12,12 +11,21 @@ var BARCHART = BARCHART || (function () {
 
             var formatCount = d3.format(",.0f");
 
-
             var svg = d3.select("svg#bar"),
-                margin = {top: 10, right: 30, bottom: 30, left: 30},
+                margin = {top: 50, right: 30, bottom: 30, left: 30},
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom,
-                g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                g = svg.append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+
+            svg.append("text")
+                .attr("x", margin.left + (width / 2))
+                .attr("y", 0 + (margin.top / 2))
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("My Wonderful Title");
 
             var x = d3.scaleLinear()
                 .rangeRound([0, width]);
@@ -60,7 +68,25 @@ var BARCHART = BARCHART || (function () {
             g.append("g")
                 .attr("class", "axis axis--x")
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
+                .call(d3.axisBottom(x))
+                .append("text")
+                .attr("fill", "#000")
+                .attr("x", width/2)
+                .attr("dx", "0.71em")
+                .attr("y", 30)
+                .text("X-axis");
+
+            g.append("g")
+                .call(d3.axisLeft(y))
+                .append("text")
+                .attr("fill", "#000")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", "0.71em")
+                .attr("text-anchor", "end")
+                .text("Y-axis");
+
+
         }
     };
 }());
