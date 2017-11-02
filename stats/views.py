@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 
 from examinations.models import Context as Question
 from promotions.models import Lesson, Stage
@@ -9,7 +10,27 @@ from resources.models import KhanAcademy, Sesamath
 from skills.models import Skill
 from users.models import Professor, Student
 from .utils import user_is_superuser
+import csv
 
+
+
+@user_is_professor
+def exportCSV(request, pk):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="users.csv"'
+
+    lesson = get_object_or_404(Lesson, pk=pk)
+    students = Student.objects.filter(lesson=lesson)
+    
+    writer = csv.writer(response)
+    writer.writerow(['Username', 'First name', 'Last name', 'Email address'])
+    for student in students:
+        writer.writerow([student])
+    # already prints student names, figure what the method is to get the data which is displayed into the CSV
+
+
+
+    return response
 
 @user_is_superuser
 def dashboard(request):
@@ -39,6 +60,7 @@ def dashboard(request):
     })
 
 
+
 def view_student(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
     students = Student.objects.filter(lesson=lesson)
@@ -52,6 +74,7 @@ def view_student(request, pk):
 @user_is_professor
 def viewstats(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
+    students = Student.objects.filter(lesson=lesson)
 
     # TODO: make automatic detection of timespan instead of hard coding
     predefined_timespan = {
@@ -68,8 +91,12 @@ def viewstats(request, pk):
 
     return render(request, "stats/viewstats.haml", {
         "lesson": lesson,
+
+        "students": students
+
         "predefined_timespan": predefined_timespan,
         "list_stats": list_statistics,
+
     })
 
 
@@ -81,3 +108,13 @@ def stat_student(request, pk_lesson, pk_student):
         "lesson": lesson,
         "student": student
     })
+
+def stat_student_tab(request, pk_lesson, pk_student):
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+    student = get_object_or_404(Student, pk=pk_student)
+
+    return render(request, "stats/stat_student.haml", {
+        "lesson": lesson,
+        "student": student
+    })
+

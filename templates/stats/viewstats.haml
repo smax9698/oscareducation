@@ -1,5 +1,5 @@
 -extends "base.haml"
-
+-load static
 -load bootstrap3
 -load static
 
@@ -18,7 +18,8 @@
     %li.active
       Statistiques
 
--block content
+-block content      
+
   %div{:id => "wrapper"}
     / Sidebar for customization
     %div{:id => "sidebar-wrapper"}
@@ -32,12 +33,12 @@
                   %input{:type => "checkbox"}
                   %font{:color => "white"} {{stat}}
         %li
-          %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
+          %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
           -csrf_token
             %button.btn.btn-lg.btn-primary{type: "submit"}
               Données numériques
         %li
-          %form{method: "POST", action: "{% url 'professor:exportCSV' %}"}
+          %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
           -csrf_token
             %button.btn.btn-lg.btn-primary{type: "submit"}
               Exporter en CSV
@@ -62,39 +63,119 @@
     / Actual content of the page
     %div{:id => "page-content-wrapper"}
       .container-fluid
-        %a{:href => "#menu-toggle"}
-          -csrf_token
+        
+        .col-sm-2
+          %a{:href => "#menu-toggle"}
+            -csrf_token
             %button.btn.btn-secondary{id: "menu-toggle"} Paramètres
-        %ul.nav.orange.nav-tabs
-          %li.active{role: "presentation"}
-            %a{href: "#"}
-              Ma classe
-          %li{role: "presentation"}
-            %a{href: "{% url 'stats:view_student' lesson.pk %}"}
-              Mes étudiants
+        .col-md-10
+          -#%ul.nav.orange.nav-tabs
+          -#  %li.active{role: "presentation"}
+          -#    %a{href: "#class"}
+          -#      {{ lesson.name }}
+          -#  %li{role: "presentation"}
+              -# %a{href: "{% url 'stats:view_student' lesson.pk %}"}
+          -#    %a{href: "#students"}
+          -#      Mes étudiants
+          %ul.nav.nav-tabs
+            %li.active
+              %a{"data-toggle": "tab", href: "#class"} {{ lesson.name }}
+            %li.dropdown
+              %a.dropdown-toggle{"data-toggle": "dropdown"}
+                Mes étudiants
+                %span.caret
+              %ul.dropdown-menu
+                %li
+                  %a{"data-toggle": "tab",href: "#student1"} student 1
+                %li
+                  %a{"data-toggle": "tab",href: "#student2"} student 2
+              -#  -for student in students
+              -#    %li
+              -#      %a{"data-toggle": "tab", href: "#menu2"} {{ student }}
+                
 
-        .ligneorange
 
-        .container-fluid.boxclassetitle
+          .tab-content
+            #class.tab-pane.fade.in.active
+              .ligneorange
 
-          .pull-left Statistique de ma classe {{ lesson.name }}
+              .container-fluid.boxclassetitle
 
-        .ligneorangefine
+                .pull-left Statistique de ma classe {{ lesson.name }}
 
-        .container-fluid.boxclasse
-          %p
-            Nombre d'étudiants
-            %b
-              10
-          %p
-            Nombre moyen de compétences acquises
-            %b
-              2
-          %p
-            Compétence la moins maitrisée
-            %b
-              Donner des données d'exemple
-          %p
-            Compétence la plus maitrisée
-            %b
-              Géométrie
+              .ligneorangefine
+
+              .container-fluid.boxclasse
+
+
+                %p
+                  Nombre d'étudiants
+                  %b
+                    bisous
+
+                %p
+                  Nombre moyen de compétences acquises
+                  %b
+                    LOL
+
+                %p
+                  Compétence la moins maitrisée
+                  %b
+                    MDR
+
+                %p
+                  Compétence la plus maitrisée
+                  %b
+                    HAHA
+
+            -# temporary until I get this sorted 
+            #student2.tab-pane.fade
+              .ligneorange
+
+              .container-fluid.boxclassetitle
+
+                .pull-left Statistique de student2
+
+              .ligneorangefine
+
+              .container-fluid.boxclasse
+
+                %p
+                  Nombre de tests réussi
+
+                %p
+                  Dernier test réussi
+
+                %p
+                  Nombre d'authentification sur le site
+
+                %p
+                  Dernière compétence acquise
+
+                %p
+                  Temps passé entre deux compétences
+            #student1.tab-pane.fade
+              .ligneorange
+
+              .container-fluid.boxclassetitle
+
+                .pull-left Statistique de student1
+
+              .ligneorangefine
+
+              .container-fluid.boxclasse
+
+                %p
+                  Nombre de tests réussi
+
+                %p
+                  Dernier test réussi
+
+                %p
+                  Nombre d'authentification sur le site
+
+                %p
+                  Dernière compétence acquise
+
+                %p
+                  Temps passé entre deux compétences
