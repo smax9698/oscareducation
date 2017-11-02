@@ -478,10 +478,10 @@ class LearningTrack(models.Model):
         :return: the list of the learning track
         """
 
-        if ordered_criteria_names is None or type(ordered_criteria_names) is not list \
-                or criteria_functions is None or type(criteria_functions) is not dict \
-                or student_skills_list is None or type(student_skills_list) is not list:
-            raise TypeError
+        # if ordered_criteria_names is None or type(ordered_criteria_names) is not list \
+        #         or criteria_functions is None or type(criteria_functions) is not dict \
+        #         or student_skills_list is None or type(student_skills_list) is not list:
+        #     raise TypeError
 
         for criteria_name in reversed(ordered_criteria_names):
             if criteria_name not in criteria_functions:
@@ -527,12 +527,12 @@ class LearningTrack(models.Model):
         :return: void
         """
 
-        if student_skill is None or type(student_skill) is not StudentSkill \
-                or skills_depth_map is None or type(skills_depth_map) is not dict \
-                or level is None  or type(level) is not numbers.Number:
-            raise TypeError
-        if level < 0:
-            raise ValueError
+        # if student_skill is None or type(student_skill) is not StudentSkill \
+        #         or skills_depth_map is None or type(skills_depth_map) is not dict \
+        #         or level is None  or type(level) is not numbers.Number:
+        #     raise TypeError
+        # if level < 0:
+        #     raise ValueError
 
         LearningTrack._set_skill_depth(student_skill, level, skills_depth_map)
         for prerequisite_skill in student_skill.skill.get_prerequisites_skills():
@@ -548,12 +548,12 @@ class LearningTrack(models.Model):
         :param skills_depth_map:Dictionary(skill,depth)
         :return:void
         """
-        if student_skill is None or type(student_skill) is not StudentSkill \
-                or skills_depth_map is None or type(skills_depth_map) is not dict \
-                or depth is None  or type(depth) is not numbers.Number:
-            raise TypeError
-        if depth < 0:
-            raise ValueError
+        # if student_skill is None or type(student_skill) is not StudentSkill \
+        #         or skills_depth_map is None or type(skills_depth_map) is not dict \
+        #         or depth is None  or type(depth) is not numbers.Number:
+        #     raise TypeError
+        # if depth < 0:
+        #     raise ValueError
 
         if student_skill not in skills_depth_map:
             skills_depth_map[student_skill] = depth
