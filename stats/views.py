@@ -90,12 +90,19 @@ def viewstats(request, pk):
     list_statistics = ['Nombre de connexion', 'Nombre d\'exercice éssayé', 'Temps passé sur les exercice',
                        'Status des exercice', 'Nombre de ressource vue', 'Compétence acquise',
                        'Compétence en progression', 'Test passé', 'Temps passé sur les examens']
+    data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
+    name = [1, 2, 3]#["Jean", "Marc", "Georges"]
+    size = [18, 2, 42]
 
     return render(request, "stats/viewstats.haml", {
         "lesson": lesson,
         "student_number": len(Student.objects.filter(lesson=lesson)),
         "avg_skill_acquired": get_average_skill_acquired(lesson, lambda: True),
         "least_mastered_skill": least_mastered_skill(lesson, lambda: True),
+        "most_mastered_skill": most_mastered_skill(lesson, lambda: True),
+        "data": data,
+        "name": name,
+        "size": size
         "most_mastered_skill": most_mastered_skill(lesson, lambda: True),
         "students": students,
         "predefined_timespan": predefined_timespan,

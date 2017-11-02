@@ -4,6 +4,17 @@
 -load static
 
 -block javascript
+  %script{:src => "https://d3js.org/d3.v4.min.js"}
+  %script(src="/static/js/barchart.js")
+  %script(src="/static/js/linechart.js")
+  %script(src="/static/js/piechart.js")
+
+-block head
+  %link{href: "{% static 'css/bartchart.css' %}", rel: "stylesheet"}
+  %link{href: "{% static 'css/piechart.css' %}", rel: "stylesheet"}
+-load static
+
+-block javascript
   %script(src="/static/js/updateUI.js")
 
 -block head
@@ -19,6 +30,25 @@
       Statistiques
 
 -block content
+  .row
+    .col-md-4
+      %br/
+      %br/
+      %font{:color => "white", :size => "4"} Periode
+      %form{:action => "#"}
+        %select{:name => "---"}
+          %option{:value => "1q2017-18"} 1q Année 2017/2018
+          %option{:value => "2q2017-18"} 2q Année 2017/2018
+          %option{:value => "1q2016-17"} 1q Année 2016/2017
+          %option{:value => "2q2016-17"} 2q Année 2016/2017
+        %font{:color => "white"} Start Date:
+        %input{:name => "startDate", :type => "text", :value => "jj/mm/aa"}/
+        %br/
+        %font{:color => "white"} End Date:
+        %input{:name => "endDate", :type => "text", :value => "jj/mm/aa"}/
+        %br/
+        %br/
+        %input{:type => "submit", :value => "Submit"}/
 
   %div{:id => "wrapper"}
     / Sidebar for customization
@@ -134,7 +164,12 @@
 
               .ligneorangefine
 
+      .container-fluid.boxclasse
+        %svg{:height => "500", :width => "480"}
+            BARCHART.init([{{ data }}]);
+            BARCHART.graph();
               .container-fluid.boxclasse
+
 
                 %p
                   Nombre d'étudiants
@@ -150,6 +185,9 @@
                   Compétence la moins maitrisée
                   %b
                     {{ least_mastered_skill }}
+
+
+
 
                 %p
                   Compétence la plus maitrisée
