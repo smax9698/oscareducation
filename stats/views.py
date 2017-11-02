@@ -90,7 +90,7 @@ def viewstats(request, pk):
                        'Status des exercice', 'Nombre de ressource vue', 'Compétence acquise',
                        'Compétence en progression', 'Test passé', 'Temps passé sur les examens']
     data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
-    name = [1, 2, 3]  # ["Jean", "Marc", "Georges"]
+    name = ["Jean", "Marc", "Georges"]
     size = [18, 2, 42]
 
     return render(request, "stats/viewstats.haml", {
