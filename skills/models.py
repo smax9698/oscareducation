@@ -396,12 +396,12 @@ class LearningTrack(models.Model):
 
         targets = StudentSkill.objects.filter(student=student, is_target=True)
 
-        skills_list = LearningTrack._build_student_skills_list(targets)
+        student_skills_list = LearningTrack._build_student_skills_list(targets)
 
         ordered_criteria_names = LearningTrack._get_ordered_criteria_names(professor)
-        criteria_maps = LearningTrack._get_criteria_maps(targets, skills_list)
+        criteria_maps = LearningTrack._get_criteria_maps(targets, student_skills_list)
 
-        learning_track = LearningTrack._sorting(ordered_criteria_names, criteria_maps, skills_list)
+        learning_track = LearningTrack._sorting(ordered_criteria_names, criteria_maps, student_skills_list)
         for i in range(0, len(learning_track)):
             LearningTrack.objects.create(
                 student=student,
@@ -420,18 +420,43 @@ class LearningTrack(models.Model):
         :return a list of StudentSkill objects with targets and their prerequisites
         We know targets&prerequisites have been added in :func:'users.models.Student.set_targets'
         """
-        student_skills_set = set()
-
-        def add_skill(student_skill):
-            student_skills_set.add(student_skill)
-            for prerequisite_skill in student_skill.skill.get_prerequisites_skills():
-                prerequisite_student_skill = StudentSkill.objects.filter(skill=prerequisite_skill)[0]
-                add_skill(prerequisite_student_skill)
+        student_skills = set()
 
         for target in targets:
-            add_skill(target)
+            student_skills.update(LearningTrack._prerequisite_list(target))
 
-        return list(student_skills_set)
+        return list(student_skills)
+
+    @staticmethod
+    def _prerequisite_list(student_skill):
+        """
+        List to iterate through a student skill and all its prerequisites
+        NOTE : THE STUDENT SKILL IN PARAMETER IS INCLUDED
+        """
+        # TODO Avoid always recomputing the prerequisites ?
+        student_skills = [student_skill]
+        for prerequisite in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
+                                                        student=student_skill.student):
+            student_skills.extend(LearningTrack._prerequisite_list(prerequisite))
+        return student_skills
+
+    @staticmethod
+    def _higher_in_prerequisites_tree(a, b):
+        """
+        Relation of requirement between two student skills
+        Check whether b is direct or indirect prerequisite (even through a long chain) of a
+        :param a A StudentSkill
+        :param b Another StudentSkill
+        :return 0 if equal or unrelated; 1 if b prerequisite of a, -1 if a prerequisite of b
+        """
+        if a.skill == b.skill:
+            return 0
+        elif b in LearningTrack._prerequisite_list(a):
+            return 1
+        elif a in LearningTrack._prerequisite_list(b):
+            return -1
+        else:  # not related
+            return 0
 
     @staticmethod
     def _sorting(ordered_criteria_names, criteria_maps, student_skills_list):
@@ -443,26 +468,12 @@ class LearningTrack(models.Model):
         :return: the list of the learning track
         """
 
-        def _prerequisite(a, b):
-            """
-            Relation of requirement between two student skills
-            Defines a total order
-            :param a A StudentSkill
-            :param b Another StudentSkill
-            """
-            if a.skill == b.skill:
-                return 0
-            elif b.skill in a.skill.get_prerequisites_skills():
-                return 1
-            else:
-                return -1
-
         for criteria_name in reversed(ordered_criteria_names):
             if criteria_name not in criteria_maps:
                 raise ValueError("Unknown criteria : " + criteria_name)
             criteria_map = criteria_maps[criteria_name]
             student_skills_list.sort(key=lambda x: criteria_map[x])
-        student_skills_list.sort(_prerequisite)
+        student_skills_list.sort(LearningTrack._higher_in_prerequisites_tree)
         return student_skills_list
 
     @staticmethod
