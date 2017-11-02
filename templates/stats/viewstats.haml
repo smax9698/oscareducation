@@ -78,9 +78,7 @@
           -#    %a{href: "#students"}
           -#      Mes étudiants
           %ul.nav.nav-tabs
-            %li.active
-              %a{"data-toggle": "tab", href: "#class"} {{ lesson.name }}
-            %li.dropdown
+            %li.dropdown.active
               %a.dropdown-toggle{"data-toggle": "dropdown"}
                 Mes étudiants
                 %span.caret
@@ -96,86 +94,64 @@
 
 
           .tab-content
-            #class.tab-pane.fade.in.active
-              .ligneorange
-
-              .container-fluid.boxclassetitle
-
-                .pull-left Statistique de ma classe {{ lesson.name }}
-
-              .ligneorangefine
-
-              .container-fluid.boxclasse
-
-
-        %p
-          Nombre d'étudiants
-          %b
-            {{ student_number }}
-
-        %p
-          Nombre moyen de compétences acquises
-          %b
-            {{ avg_skill_acquired }}
-
-        %p
-          Compétence la moins maitrisée
-          %b
-            {{ least_mastered_skill }}
-
-        %p
-          Compétence la plus maitrisée
-          %b
-            {{ most_mastered_skill }}
-
             -# temporary until I get this sorted
-            #student2.tab-pane.fade
+            #student2.tab-pane.active
               .ligneorange
 
               .container-fluid.boxclassetitle
 
-                .pull-left Statistique de student2
+                .pull-left Statistique de la classe
 
               .ligneorangefine
 
               .container-fluid.boxclasse
 
                 %p
-                  Nombre de tests réussi
+                  Nombre d'étudiants
+                  %b
+                    {{ student_number }}
 
                 %p
-                  Dernier test réussi
+                  Nombre moyen de compétences acquises
+                  %b
+                    {{ avg_skill_acquired }}
 
                 %p
-                  Nombre d'authentification sur le site
+                  Compétence la moins maitrisée
+                  %b
+                    {{ least_mastered_skill }}
 
                 %p
-                  Dernière compétence acquise
-
-                %p
-                  Temps passé entre deux compétences
+                  Compétence la plus maitrisée
+                  %b
+                    {{ most_mastered_skill }}
             #student1.tab-pane.fade
               .ligneorange
 
               .container-fluid.boxclassetitle
 
-                .pull-left Statistique de student1
+                .pull-left Statistique de la classe
 
               .ligneorangefine
 
               .container-fluid.boxclasse
 
                 %p
-                  Nombre de tests réussi
+                  Nombre d'étudiants
+                  %b
+                    {{ student_number }}
 
                 %p
-                  Dernier test réussi
+                  Nombre moyen de compétences acquises
+                  %b
+                    {{ avg_skill_acquired }}
 
                 %p
-                  Nombre d'authentification sur le site
+                  Compétence la moins maitrisée
+                  %b
+                    {{ least_mastered_skill }}
 
                 %p
-                  Dernière compétence acquise
-
-                %p
-                  Temps passé entre deux compétences
+                  Compétence la plus maitrisée
+                  %b
+                    {{ most_mastered_skill }}

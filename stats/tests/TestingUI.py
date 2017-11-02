@@ -1,10 +1,9 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth.models import User
-
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 
-from users.models import Professor
 from promotions.models import Lesson, Stage
+from users.models import Professor
 
 
 class GeneralUITest(StaticLiveServerTestCase):

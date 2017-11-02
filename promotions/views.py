@@ -24,35 +24,29 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404, resolve_url
+from django.shortcuts import render, get_object_or_404
+from django.shortcuts import resolve_url
 from django.views.decorators.http import require_POST
 from ruamel.yaml.comments import CommentedMap
 
+from examinations.models import Context as Question
 from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
     TestFromClass
 from examinations.validate import validate_exercice_yaml_structure
-from resources.models import KhanAcademy, Sesamath, Resource
-from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
-from users.models import Student
-from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
-    TestUpdateForm, SesamathForm, ResourceForm, CSVForm
-from .models import Lesson, Stage
-from .utils import generate_random_password, user_is_professor
-import csv
-
-from django.db.models import Count
-from django.shortcuts import render, get_object_or_404
-
-from examinations.models import Context as Question
 from promotions.models import Lesson, Stage
 from promotions.utils import user_is_professor
 from resources.models import KhanAcademy, Sesamath
+from resources.models import Resource
 from skills.models import Skill
-from users.models import Professor, Student
-
+from skills.models import StudentSkill, CodeR, Section, Relations, CodeR_relations
+from users.models import Student
+from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
+    TestUpdateForm, SesamathForm, ResourceForm, CSVForm
+from .utils import generate_random_password
 
 """"@user_is_professor
 def exportCSV(request, pk):

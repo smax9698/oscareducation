@@ -1,10 +1,9 @@
-from TestingUI import GeneralUITest
-
 from selenium.webdriver.support.select import Select
+
+from TestingUI import GeneralUITest
 
 
 class ButtonShowSidebar(GeneralUITest):
-
     def test_no_visible_on_start(self):
         self.go_to_stat_page()
         self.assertFalse(self.selenium.find_element_by_id('sidebar-wrapper').is_displayed())
@@ -23,7 +22,6 @@ class ButtonShowSidebar(GeneralUITest):
 
 
 class SelectTimespanChangeInput(GeneralUITest):
-
     def test_input_correct_after_selection(self):
         self.go_to_stat_page()
         self.selenium.find_element_by_id("menu-toggle").click()
@@ -51,5 +49,3 @@ class SelectTimespanChangeInput(GeneralUITest):
         select.select_by_value("None")
         self.assertEqual(self.selenium.find_element_by_id("startDate").get_attribute("value"), start)
         self.assertEqual(self.selenium.find_element_by_id("endDate").get_attribute("value"), end)
-
-
