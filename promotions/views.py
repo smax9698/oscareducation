@@ -41,35 +41,40 @@ from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateFor
     TestUpdateForm, SesamathForm, ResourceForm, CSVForm
 from .models import Lesson, Stage
 from .utils import generate_random_password, user_is_professor
+import csv
 
-@user_is_professor
-def downloadCSV(request):
-    import csv
-    from django.http import HttpResponse
-    from io import StringIO
+from django.db.models import Count
+from django.shortcuts import render, get_object_or_404
 
-    f = StringIO()
-    writer = csv.writer(f)
-    writer.writerow(["code", "country", "ip", "url", "count"])
+from examinations.models import Context as Question
+from promotions.models import Lesson, Stage
+from promotions.utils import user_is_professor
+from resources.models import KhanAcademy, Sesamath
+from skills.models import Skill
+from users.models import Professor, Student
 
-    f.seek(0)
-    response = HttpResponse(f, content_type='text/csv')
-    #response['Content-Disposition'] = 'attachment; filename=stat-info.csv'
-    return response
 
-@user_is_professor
-def exportCSV(request):
+""""@user_is_professor
+def exportCSV(request, pk):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="users.csv"'
 
+    lesson = get_object_or_404(Lesson, pk=pk)
+    students = Student.objects.filter(lesson=lesson)
+    
     writer = csv.writer(response)
     writer.writerow(['Username', 'First name', 'Last name', 'Email address'])
+    # add pk, so be able to get which lesson
+
+
 
     return response
+"""
 
-@user_is_professor
+"""@user_is_professor
 def viewstats(request):
     return render(request, "stats/viewstats.haml")
+"""
 
 
 @user_is_professor
