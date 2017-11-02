@@ -142,7 +142,7 @@
            %button#comp_up_btn.compnavigation.glyphicon.glyphicon-menu-up{:style => "font-size: 30px; float:right; appearance: none; -webkit-appearance: none; -moz-appearance: none; outline: none; border: 0; background: transparent;"}
            %br
 
-            #skillsList{:style => "height:400px;overflow: hidden;"}
+            #skillsList{:style => "height:400px;overflow: hidden; text-align: center;"}
               -for stage in lesson.stages_in_unchronological_order
 
                 -get_students_skills of user.student at stage rename "student_skills"
@@ -156,7 +156,7 @@
 
                       %span
                       %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
-                        %button.btn.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}{:type => "button",:style => "width: 100px; height: 100px; padding: 10px 0px 10px 0px; margin: 20px; font-size: 16px; line-height: 1.33; border-radius: 100px;"}
+                        %button.btn.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}{:type => "button",:style => 'width: 100px; height: 100px; padding: 10px 0px 10px 0px; margin: 20px; font-size: 16px; line-height: 1.33; border-radius: 100px;{% if student_skill.acquired %}background-color:green; border: green solid;% elif student_skill.is_objective %}background-color:blue; border: black solid;{% elif student_skill.recommended_to_learn %}background-color:orange; border: black solid;{% endif %}'}
                           {{ student_skill.skill.code }}
                     .ligneorangefine
 

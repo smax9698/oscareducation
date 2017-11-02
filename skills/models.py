@@ -419,7 +419,7 @@ class StudentSkill(models.Model):
         list_level = [[]]
 
         def recursive(std_skill):
-            q_set = StudentSkill.objects.filter(skill__in=std_skill.skill.get_prerequisites_skills(), student=std_skill.student, acquired = None)  # Set of StudentSkill children not yet acquired
+            q_set = StudentSkill.objects.filter(skill__in=std_skill.skill.get_prerequisites_skills(), student=std_skill.student) #, acquired = None)  # Set of StudentSkill children not yet acquired
             if q_set.count() == 0:
                 if std_skill not in list_level[0]:
                     list_level[0].append(std_skill)
@@ -451,8 +451,6 @@ class StudentSkill(models.Model):
         var = var-1
         if var == 0:
             global  var
-            var = random.randint(1,3)
+            var = random.randint(3,3)
             return True
         return False
-
-
