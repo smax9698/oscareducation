@@ -79,6 +79,56 @@ def add_resource_accessed_by_student(student, resource_id):
 #      Get        #
 ###################
 
+
+def get_resources_accessed_by_student(student):
+    accessed_by_resources = {}
+
+    query = models.ResourceStudent.objects.filter(student=student)
+
+    for item in query:
+        if item.resource in accessed_by_resources:
+            accessed_by_resources[str(item.resource)] += 1
+        else:
+            accessed_by_resources[str(item.resource)] = 1
+
+    return accessed_by_resources
+
+
+def get_number_of_authentication_by_student(student):
+    query = models.AuthenticationStudent.objects.filter(student=student)
+
+    return len(query)
+
+
+def get_authentication_info_by_student(student):
+    return models.AuthenticationStudent.objects.filter(student=student)
+
+
+def get_skill_acquired_by_student(student):
+    query = StudentSkill.objects.filter(student=student).exclude(acquired__isnull=True)
+    return len(query)
+
+
+def get_number_succeeded_exam_by_student(student):
+    query = models.ExamStudent.objects.get(student=student, succeeded=True)
+
+    return len(query)
+
+
+def get_exam_by_student(student):
+    query = models.ExamStudent.objects.get(student=student)
+    # TODO find exam_id
+
+
+def get_time_spent_on_exam(exam):
+    """exam : examination.TestStudent"""
+    return exam.finished_at - exam.started_at
+
+
+def get_skill_status(skill_student):
+    return skill_student.progress
+
+
 def get_students_by_professor(professor):
     """
     Returns all students of all classes that the professor have
@@ -97,7 +147,30 @@ def get_students_by_professor(professor):
                 students_dico[str(student)] = True
 
 
+def get_average_skill_acquired(lesson, fct=None):
+    """
+    Returns the average of skill acquired by students
 
+    :param lesson: Lesson object
+    :param function:
+    :return: Average of skill acquired by students
+    """
+    count = 0
+
+    skills = Skill.objects.filter(stage=lesson.stage)
+    students = Student.objects.filter(lesson=lesson).distinct()
+
+    if len(students) <= 0:
+        return None
+
+    for i in students:
+        skills_student = StudentSkill.objects.filter(student=i, skill__in=skills).exclude(
+            acquired__isnull=True).distinct()
+        count += len(skills_student)
+
+        # TODO: filter function !!!
+
+    return (count * 1.0) / len(students)
 
 
 def get_latest_skill_acquired(student, lesson):
@@ -108,7 +181,7 @@ def get_latest_skill_acquired(student, lesson):
     :param lesson: Lesson object
     :return: Return the lastest skill mastered by the student in the lesson
     """
-    query = StudentSkill.objects.filter(student=student)
+    query = StudentSkill.objects.filter(student=student, skill__in=lesson.stage.skills.all())
     skills = lesson.stage.skills.all()
     max = None
     for i in query:
@@ -131,14 +204,16 @@ def least_mastered_skill(lesson, function):
     """
 
     skills = lesson.stage.skills.all()
+    students = lesson.students.all()
     min_skill = None
     min = None
 
     for i in skills:
 
-        len_skills_student = len(StudentSkill.objects.filter(skill=i).exclude(acquired__isnull=True))
+        len_skills_student = len(
+            StudentSkill.objects.filter(skill=i, student__in=students).exclude(acquired__isnull=True))
 
-        if min is None or min > len_skills_student:
+        if len_skills_student > 0 and (min is None or min > len_skills_student):
             min = len_skills_student
             min_skill = i
 
@@ -153,14 +228,16 @@ def most_mastered_skill(lesson, function):
     :return: the most mastered skill by the student of the lesson
     """
     skills = lesson.stage.skills.all()
+    students = lesson.students.all()
     min_skill = None
     max_len = None
 
     for i in skills:
 
-        len_skills_student = len(StudentSkill.objects.filter(skill=i).exclude(acquired__isnull=True))
+        len_skills_student = len(
+            StudentSkill.objects.filter(skill=i, student__in=students).exclude(acquired__isnull=True))
 
-        if max_len is None or max_len < len_skills_student:
+        if len_skills_student > 0 and (max_len is None or max_len < len_skills_student):
             max_len = len_skills_student
             min_skill = i
 
