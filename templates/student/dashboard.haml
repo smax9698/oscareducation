@@ -3,6 +3,13 @@
 -load static
 -load student_tags
 -load lesson_tags
+-load compress
+
+-block head
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/detailledViewStudent.js' %}"}
+  -compress css
+    %link{href: "{% static 'css/detailledViewStudent.css' %}", rel: "stylesheet"}
 
 -block breadcrumb
   -with lesson=user.student.lesson_set.first

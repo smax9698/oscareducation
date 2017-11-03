@@ -1873,12 +1873,6 @@ def main_education(request):
 
 def list_student_target(request, lesson_pk):
 
-
-    #{
-    #    "lessons": Lesson.objects.filter(professors=request.user.professor).annotate(Count("students")).select_related(
-    #        "stage"),
-    #    "no_menu": True,
-    #}
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     professor = request.user.professor
     return render(request, "professor/lesson/list_student_target.haml", {
