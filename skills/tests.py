@@ -179,23 +179,20 @@ class LearningTrackTests(TestCase):
             maps = LearningTrack._get_criteria_functions(targets)
             LearningTrack._sorting(['abc','xyz'], maps, self.student_skills)
 
-    # def test_sorting_correct_sort(self):
-     #   targets = [self.student_skills[0], self.student_skills[1]]
-      #  student_skills_list = LearningTrack._build_student_skills_list(targets)
+    def test_sorting_correct_sort(self):
+        targets = [self.student_skills[0], self.student_skills[1]]
+        student_skills_list = LearningTrack._build_student_skills_list(targets)
 
-#        ordered_criteria_names = LearningTrack._get_ordered_criteria_names(self.prof)
- #       criteria_functions = LearningTrack._get_criteria_functions(targets)
-        # lt = LearningTrack._sorting(ordered_criteria_names, criteria_functions, student_skills_list)
-        #
-        # for i in range(0, 5):
-        #     print lt[i] + " VS " + self.student_skills[i]
-        #
-        # self.assertEquals(lt[0], self.student_skills[4])
-        # self.assertEquals(lt[1], self.student_skills[3])
-        # self.assertEquals(lt[2], self.student_skills[5])
-        # self.assertEquals(lt[3], self.student_skills[1])
-        # self.assertEquals(lt[4], self.student_skills[2])
-        # self.assertEquals(lt[5], self.student_skills[0])
+        ordered_criteria_names = LearningTrack._get_ordered_criteria_names(self.prof)
+        criteria_functions = LearningTrack._get_criteria_functions(targets)
+        lt = LearningTrack._sorting(ordered_criteria_names, criteria_functions, student_skills_list)
+
+        self.assertEquals(lt[0].skill.code, self.student_skills[4].skill.code)
+        self.assertEquals(lt[1].skill.code, self.student_skills[3].skill.code)
+        self.assertEquals(lt[2].skill.code, self.student_skills[5].skill.code)
+        self.assertEquals(lt[3].skill.code, self.student_skills[1].skill.code)
+        self.assertEquals(lt[4].skill.code, self.student_skills[2].skill.code)
+        self.assertEquals(lt[5].skill.code, self.student_skills[0].skill.code)
 
 
     # ------------------------------------------------------------------------------------------#
@@ -229,6 +226,7 @@ class LearningTrackTests(TestCase):
     def test_prerequisite_list_correct_result(self):
         student_skills = LearningTrack._prerequisite_list(self.student_skill)
         for sk in student_skills:
+            print sk.skill.name ,"\n"
             self.assertTrue(sk in self.student_skills)
         self.assertEquals(student_skills.__len__(), 6)
 

@@ -432,7 +432,6 @@ class LearningTrack(models.Model):
 
         if targets is None or type(targets) is not list:
             raise TypeError
-
         student_skills = set()
 
         for target in targets:
