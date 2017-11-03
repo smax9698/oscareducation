@@ -162,7 +162,7 @@
           .container-fluid.boxclasse
             %svg{:id => "bar", :height => "500", :width => "480"}
               :javascript
-                BARCHART.init([{{ data }}]);
+                BARCHART.init([{{name}}, {{size}}, {{xtitle}}, {{ytitle}}, {{graphtitle}}]);
                 BARCHART.graph();
             %svg{:id => "pie", :height => "500", :width => "480"}
               :javascript

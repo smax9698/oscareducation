@@ -90,8 +90,11 @@ def viewstats(request, pk):
                        'Status des exercice', 'Nombre de ressource vue', 'Compétence acquise',
                        'Compétence en progression', 'Test passé', 'Temps passé sur les examens']
     data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
-    name = [1, 2, 3]  # ["Jean", "Marc", "Georges"]
+    name = ["Jean", "Marc", "Georges"]
     size = [18, 2, 42]
+    xtitle = ["X Axis"]
+    ytitle = ["Y Axis"]
+    title = ["Title"]
 
     return render(request, "stats/viewstats.haml", {
         "lesson": lesson,
@@ -106,6 +109,9 @@ def viewstats(request, pk):
         "students": students,
         "predefined_timespan": predefined_timespan,
         "list_stats": list_statistics,
+        "xtitle": xtitle,
+        "ytitle": ytitle,
+        "graphtitle": title
 
     })
 
