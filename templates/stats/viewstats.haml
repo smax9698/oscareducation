@@ -32,10 +32,10 @@
         %li
           %font{:color => "white", :size => "4"} Statistique à afficher
           %form
-            -for stat in list_stats
+            -for stat in stats
               .checkbox
                 %label
-                  %input{:type => "checkbox"}
+                  %input{:type => "checkbox", :checked => "checked"}
                   %font{:color => "white"} {{stat}}
         %li
           %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
@@ -44,9 +44,15 @@
               Données numériques
         %li
           %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
-          -csrf_token
-            %button.btn.btn-lg.btn-primary{type: "submit"}
-              Exporter en CSV
+            -csrf_token
+              %input{:checked => "checked", :name => "csv_type", :type => "radio", :value => "std"}/
+              Standard
+              
+              %input{:name => "csv_type", :type => "radio", :value => "euro"}/
+              European
+              
+              %button.btn.btn-lg.btn-primary{type: "submit"}
+                Exporter en CSV
         %li
           %font{:color => "white", :size => "4"} Période prédéfinie
           %select{:id => "select_timespan"}

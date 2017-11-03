@@ -16,24 +16,13 @@ var PIECHART = PIECHART || (function () {
             }
 
             var svg = d3.select("svg#pie"),
-                margin = {top: 100, right: 30, bottom: 30, left: 30},
-                width = +svg.attr("width") - margin.left - margin.right,
-                height = +svg.attr("height") - margin.top - margin.bottom,
-                radius = Math.min(width, height) / 2,
-                nml = -margin.left,
-                nmt = -margin.top,
-                g = svg.append("g").attr("transform", "translate(" + (width+margin.left) / 2 + "," + (height+margin.top) / 2 + ")")
+                width = +svg.attr("width"),
+                height = +svg.attr("height"),
+                radius = Math.min(width, height) / 3,
+                g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-            svg.append("text")
-                .attr("x", margin.left + (width / 2))
-                .attr("y", (margin.top / 2))
-                .attr("text-anchor", "middle")
-                .style("font-size", "16px")
-                .style("text-decoration", "underline")
-                .text("My Wonderful Title");
-
-
-            var color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+            var color = d3.scaleOrdinal()
+                .range(["#1a9850", "#66bd63", "#a6d96a","#d9ef8b","#ffffbf","#fee08b","#fdae61","#f46d43","#d73027"]);
 
             var pie = d3.pie()
                 .sort(null)
@@ -66,8 +55,36 @@ var PIECHART = PIECHART || (function () {
                 })
                 .attr("dy", "0.35em")
                 .text(function (d) {
-                    return d.data.text;
+                    return d.data.size;
                 });
+
+            // add legend
+
+            var legend = d3.select('svg#pie')
+                .append("g")
+                .selectAll("g")
+                .data(color.domain())
+                .enter()
+                .append('g')
+                  .attr('class', 'legend')
+                  .attr('transform', function(d, i) {
+                    var x = 100;
+                    var y = i * 15;
+                    return 'translate(' + x + ',' + y + ')';
+                });
+
+            legend.append('rect')
+                .attr('width', 8)
+                .attr('height', 8)
+                .attr('x', 0)
+                .attr('y', 50)
+                .style('fill', color)
+                .style('stroke', color);
+
+            legend.append('text')
+                .attr('x', 15)
+                .attr('y', 58)
+                .text(function(d) { return d; });
         }
     };
 }());

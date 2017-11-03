@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from promotions.models import Lesson, Stage
 from skills.models import Skill, StudentSkill
-from stats.utils import get_average_skill_acquired
+from stats.StatsObject import AverageSkillAcquired
 from users.models import Student, User, Professor
 
 
@@ -36,6 +36,8 @@ class AverageSkillTest(TestCase):
 
         self.lesson_no_student_mastered = Lesson.objects.create(name="hardLesson", stage=stage_no_mastered)
         self.lesson_no_student_mastered.save()
+
+        self.lesson_no_student = Lesson.objects.create(name="LessonNoStudent", stage=stage_no_mastered)
 
         user = User.objects.create(username="prof")
         professor = Professor.objects.create(user=user)
@@ -72,13 +74,24 @@ class AverageSkillTest(TestCase):
                     skill_student.save()
                     count_skills_acquired += 1
 
-        self.avg_acquired_skills = (count_skills_acquired * 1.0) / number_of_student
+        self.avg_acquired_skills = count_skills_acquired  / number_of_student
 
     def test_when_acquired_skills(self):
-        self.assertAlmostEqual(get_average_skill_acquired(self.lesson), self.avg_acquired_skills, delta=0.001)
+        averages = AverageSkillAcquired(self.lesson).data
+        sum_average = 0 # average is represented as a cumulative histogram
+        for key in averages:
+            if averages[key] > sum_average:
+                sum_average = averages[key]
+        self.assertAlmostEqual(sum_average, self.avg_acquired_skills, delta=0.001)
 
     def test_when_no_skill_in_stage(self):
-        self.assertEquals(get_average_skill_acquired(self.lesson_empty_skill), 0)
+        averages = AverageSkillAcquired(self.lesson_empty_skill).data
+        self.assertEquals(len(averages), 0)
 
     def test_when_no_student_mastered_skills(self):
-        self.assertEquals(get_average_skill_acquired(self.lesson_no_student_mastered), 0)
+        averages = AverageSkillAcquired(self.lesson_no_student_mastered).data
+        self.assertEquals(len(averages), 0)
+
+    def test_when_no_student_in_lesson(self):
+        averages = AverageSkillAcquired(self.lesson_no_student).data
+        self.assertEquals(averages, None)

@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from skills.models import Skill, StudentSkill
-from stats.utils import get_skill_acquired_by_student
+from stats.StatsObject import SkillOfStudent
 from users.models import Student, User
 
 
@@ -48,8 +48,17 @@ class TestRetrieveAcquiredSkillStudent(TestCase):
         self.expected_number_of_skill_acquired_by_student = student_skill_acquired
 
     def test_correct_number_skills_acquired_with_student_who_have_acquired_more_than_zero_skill(self):
-
-        self.assertEqual(get_skill_acquired_by_student(self.student), self.expected_number_of_skill_acquired_by_student)
+        skills = SkillOfStudent(self.student).data
+        count = 0
+        for key in skills:
+            if skills[key]:
+                count += 1
+        self.assertEqual(count, self.expected_number_of_skill_acquired_by_student)
 
     def test_when_student_no_acquired_skill(self):
-        self.assertEqual(get_skill_acquired_by_student(self.student_no_skills_acquired), 0)
+        skills = SkillOfStudent(self.student_no_skills_acquired).data
+        count = 0
+        for key in skills:
+            if skills[key]:
+                count += 1
+        self.assertEqual(count, 0)
