@@ -113,66 +113,15 @@
 
                 .pull-left Statistique de la classe
 
-              .ligneorangefine
-
-              .container-fluid.boxclasse
-
-                %p
-                  Nombre d'étudiants
-                  %b
-                    {{ student_number }}
-
-                %p
-                  Nombre moyen de compétences acquises
-                  %b
-                    {{ avg_skill_acquired }}
-
-                %p
-                  Compétence la moins maitrisée
-                  %b
-                    {{ least_mastered_skill }}
-
-                %p
-                  Compétence la plus maitrisée
-                  %b
-                    {{ most_mastered_skill }}
-            #student1.tab-pane.fade
-              .ligneorange
-
-              .container-fluid.boxclassetitle
-
-                .pull-left Statistique de la classe
-
-                  %p
-                    Nombre d'étudiants
-                    %b
-                      {{ student_number }}
-
-                  %p
-                    Nombre moyen de compétences acquises
-                    %b
-                      {{ avg_skill_acquired }}
-
-                  %p
-                    Compétence la moins maitrisée
-                    %b
-                      {{ least_mastered_skill }}
-
-                  %p
-                    Compétence la plus maitrisée
-                    %b
-                      {{ most_mastered_skill }}
-
-              .ligneorangefine
-
           .container-fluid.boxclasse
-            %svg{:id => "bar", :height => "500", :width => "480"}
-              :javascript
-                BARCHART.init([{{ data }}]);
-                BARCHART.graph();
-            %svg{:id => "pie", :height => "500", :width => "480"}
-              :javascript
-                PIECHART.init([{{name}}, {{size}}]);
-                PIECHART.graph();
-
-
+            -for stat in stats
+              -if stat.representation == None
+                %p
+                  {{stat}}
+                  %b
+                    {{stat.data}}
+              -elif stat.representation == "barchart"
+                %svg{:id => "bar", :height => "500", :width => "480"}
+                  :javascript
+                    BARCHART.init([{{ stat }}]);
+                    BARCHART.graph();
