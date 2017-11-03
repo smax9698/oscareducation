@@ -193,10 +193,12 @@ class TimeBetweenTwoSkills(StatisticStudent):
         data = {}
         for skill in query:
             if previous_time is None:
+                previous_time = skill.acquired
                 data[str(skill)] = 0
             else:
                 time_spend = skill.acquired - previous_time
-                data[str(skill)] = time_spend.days*24*60 + time_spend.minutes
+                previous_time = skill.acquired
+                data[str(skill)] = time_spend
         self.data = data
 
     def __str__(self):
@@ -273,8 +275,7 @@ class LatestTestSucceeded(StatisticStudent):
 
 
 class NumberOfTestPass(StatisticStudent):
-
-    def __int__(self, student, lesson):
+    def __init__(self, student, lesson):
         self.representation = None
         self.lesson = lesson
         super(NumberOfTestPass, self).__init__(student)
@@ -284,10 +285,10 @@ class NumberOfTestPass(StatisticStudent):
         query = ExamStudent.objects.filter(student=self.student)
         skills = self.lesson.stage.skills.all()
         for i in query:
-            skill_tested = ExamStudentSkill.object.get(skill_student=i)
+            skill_tested = ExamStudentSkill.objects.get(skill_student=i)
             if i.succeeded and skill_tested.skill in skills:  # check if skill_tested.skill is ok
                 count += 1
-        return count
+        self.data = count
 
     def __str__(self):
         return "Nombre de tests passé"
