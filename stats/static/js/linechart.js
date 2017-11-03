@@ -15,11 +15,19 @@ var LINECHART = LINECHART || (function () {
                 data.push({xdata: xdatax[i], ydata: ydatay[i]})
             }
 
-            var svg = d3.select("svg"),
-                margin = {top: 20, right: 20, bottom: 30, left: 50},
+            var svg = d3.select("svg#line"),
+                margin = {top: 50, right: 20, bottom: 30, left: 50},
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom,
                 g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            svg.append("text")
+                .attr("x", (width / 2))
+                .attr("y", 0 + (margin.top / 2))
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("My Wonderful Title");
 
             var parseTime = d3.timeParse("%d-%b-%y");
 
@@ -55,9 +63,9 @@ var LINECHART = LINECHART || (function () {
                 .append("text")
                 .attr("fill", "#000")
                 .attr("transform", "rotate(-90)")
-                .attr("y", 6)
                 .attr("dy", "0.71em")
-                .attr("text-anchor", "end");
+                .attr("text-anchor", "end")
+                .text("Y-axis");
 
             g.append("path")
                 .datum(data)

@@ -105,7 +105,6 @@ def viewstats(request, pk):
 
     return render(request, "stats/viewstats.haml", {
         "stats": stats,
-        "stats_json": stats_json,
         "lesson": lesson,
         "student_number": len(Student.objects.filter(lesson=lesson)),
         "data": data,
@@ -116,20 +115,6 @@ def viewstats(request, pk):
 
     })
 
-
-# TODO: maybe find a better way?
-def is_jsonable(object):
-    """
-    Check if an object is seriazable
-
-    :param object: the object to check
-    :return: True if the object is seriazable
-    """
-    try:
-        json.dump(object)
-        return True
-    except:
-        return False
 
 def stat_student(request, pk_lesson, pk_student):
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
