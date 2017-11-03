@@ -121,7 +121,10 @@
                   %b
                     {{stat.data}}
               -elif stat.representation == "barchart"
-                %svg{:id => "bar", :height => "500", :width => "480"}
+                %p
+                  {{stat}}
+                %svg{:id => "{{stat.id}}", :height => "500", :width => "480"}
                   :javascript
-                    BARCHART.init([{{ stat }}]);
+                    BARCHART.init([ {{stat.xaxis}}, {{stat.yaxis}}, ['{{stat.xtitle}}'], ['{{stat.ytitle}}'], ['{{stat.title}}'], ['{{stat.id}}']]);
                     BARCHART.graph();
+                .ligneorange

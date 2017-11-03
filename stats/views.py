@@ -13,7 +13,7 @@ from skills.models import Skill
 from users.models import Professor, Student
 from .utils import user_is_superuser
 
-from stats.StatsObject import get_class_stat
+from stats.StatsObject import get_class_stat, get_student_stat
 
 import json
 
@@ -96,20 +96,12 @@ def viewstats(request, pk):
 
     }
 
-    data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
-    name = ["Jean", "Marc", "Georges"]
-    size = [18, 2, 42]
-
     stats = get_class_stat(lesson)
-    stats_json = [json.dumps(x) if is_jsonable(x) else x for x in stats]
 
     return render(request, "stats/viewstats.haml", {
         "stats": stats,
         "lesson": lesson,
         "student_number": len(Student.objects.filter(lesson=lesson)),
-        "data": data,
-        "name": name,
-        "size": size,
         "students": students,
         "predefined_timespan": predefined_timespan,
 
@@ -117,24 +109,26 @@ def viewstats(request, pk):
 
 
 def stat_student(request, pk_lesson, pk_student):
+
+    predefined_timespan = {
+        "-----": None,
+        "Septembre 2016 - Décembre 2016": "01/09/2016-31/12/2016",
+        "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
+        "Septembre 2017 - Décembre 2017": "01/09/2017-31/12/2017",
+
+    }
+
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
     student = get_object_or_404(Student, pk=pk_student)
-    """
-    last_test_passed = get_latest_test_succeeded(student, lesson)
-    latest_skill = get_latest_skill_acquired(student, lesson)
-    time_spent_two_skill = time_between_two_last_skills(student)
+    stats = get_student_stat(student, lesson)
 
-    return render(request, "stats/stat_student.haml", {
+    return render(request, "stats/viewstats.haml", {
         "lesson": lesson,
         "student": student,
-        "tests_passed": number_of_test_pass(student, lesson),
-        "last_passed_test": last_test_passed if last_test_passed else "Aucun test realise!",
-        "auth_number": get_number_of_authentication_by_student(student),
-        "latest_skill": latest_skill if latest_skill else "Aucun skill encore acquis!",
-        "time_spent_two_skills": time_spent_two_skill if time_spent_two_skill else "Pas assez de data pour calculer la statistique"
+        "stats": stats,
+        "predefined_timespan": predefined_timespan,
 
     })
-    """
 
 
 def stat_student_tab(request, pk_lesson, pk_student):

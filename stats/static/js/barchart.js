@@ -1,31 +1,39 @@
-var BARCHART = BARCHART || (function () {
-    var _args = {}; // private
+var BARCHART = (function () {
+    var args = {}; // private
 
     return {
         init: function (Args) {
-            _args = Args;
+            args = Args;
             // some other initialising
         },
         graph: function () {
-            var xdata = _args[0];
-            var ydata = _args[1];
-            var xtitle = _args[2];
-            var ytitle = _args[3];
-            var title = _args[4];
+            var xdata = args[0];
+            var ydata = args[1];
+            var xtitle = args[2];
+            var ytitle = args[3];
+            var title = args[4];
+            var id = args[5];
             var data = [];
             var i;
             for (i = 0; i < xdata.length; i++) {
                 data.push({letter: xdata[i], frequency: ydata[i]})
             }
-
             var formatCount = d3.format(",.0f");
 
-            var svg = d3.select("svg#bar"),
+            var svg = d3.select("svg#" + id),
                 margin = {top: 50, right: 30, bottom: 30, left: 50},
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom,
                 g = svg.append("g")
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+             if (xdata.length === 0) {
+                svg.append("text").text("no data")
+                    .attr("x", margin.left + (width/2))
+                    .attr("y", (height / 2) +margin.top);
+                return
+            }
+
 
             svg.append("text")
                 .attr("x", margin.left + (width / 2))
