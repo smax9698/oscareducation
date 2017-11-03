@@ -13,7 +13,9 @@ from skills.models import Skill
 from users.models import Professor, Student
 from .utils import user_is_superuser
 
-from stats.StatsObject import get_class_stat, get_student_stat
+from stats.StatsObject import get_class_stat
+
+import json
 
 
 @user_is_professor
@@ -94,15 +96,16 @@ def viewstats(request, pk):
 
     }
 
-    list_statistics = ['Nombre de connexion', 'Nombre d\'exercice éssayé', 'Temps passé sur les exercice',
-                       'Status des exercice', 'Nombre de ressource vue', 'Compétence acquise',
-                       'Compétence en progression', 'Test passé', 'Temps passé sur les examens']
     data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
     name = ["Jean", "Marc", "Georges"]
     size = [18, 2, 42]
 
+    stats = get_class_stat(lesson)
+    stats_json = [json.dumps(x) if is_jsonable(x) else x for x in stats]
+
     return render(request, "stats/viewstats.haml", {
         "stats": stats,
+        "stats_json": stats_json,
         "lesson": lesson,
         "student_number": len(Student.objects.filter(lesson=lesson)),
         "data": data,
@@ -110,10 +113,23 @@ def viewstats(request, pk):
         "size": size,
         "students": students,
         "predefined_timespan": predefined_timespan,
-        "list_stats": list_statistics,
 
     })
 
+
+# TODO: maybe find a better way?
+def is_jsonable(object):
+    """
+    Check if an object is seriazable
+
+    :param object: the object to check
+    :return: True if the object is seriazable
+    """
+    try:
+        json.dump(object)
+        return True
+    except:
+        return False
 
 def stat_student(request, pk_lesson, pk_student):
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
