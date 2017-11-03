@@ -39,18 +39,18 @@
                   %font{:color => "white"} {{stat}}
         %li
           %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
-          -csrf_token
-            %button.btn.btn-lg.btn-primary{type: "submit"}
-              Données numériques
+            -csrf_token
+              %button.btn.btn-lg.btn-primary{type: "submit"}
+                Données numériques
         %li
           %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
             -csrf_token
               %input{:checked => "checked", :name => "csv_type", :type => "radio", :value => "std"}/
               Standard
-              
+
               %input{:name => "csv_type", :type => "radio", :value => "euro"}/
               European
-              
+
               %button.btn.btn-lg.btn-primary{type: "submit"}
                 Exporter en CSV
         %li

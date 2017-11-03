@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from models import ResourceStudent, AuthenticationStudent, ExamStudent, ExamStudentSkill
 from skills.models import StudentSkill, Skill
 from users.models import Student
@@ -79,14 +78,15 @@ class NumberOfLogin(StatisticStudent):
     def db_query(self):
         query = AuthenticationStudent.objects.filter(student=self.student).order_by('date_accessed')
         data = {}
-        sum = 0
+        sum_data = 0
         for answer in query:
             date = answer.date_accessed.strftime('%b %Y')
             if date not in data:
-                data[date] = sum
+                data[date] = sum_data
             else:
-                sum += 1
+                sum_data += 1
                 data[date] += 1
+        self.data = data
         xaxis = []
         yaxis = []
         for key in data:
@@ -95,7 +95,7 @@ class NumberOfLogin(StatisticStudent):
         self.xaxis = xaxis
         self.yaxis = yaxis
 
-    def __str__(self):
+    def __unicode__(self):
         return "Nombre de connection"
 
 
@@ -112,8 +112,8 @@ class ExerciseNumberAttempt(StatisticStudent):
     def db_query(self):
         return None
 
-    def __str__(self):
-        return "Nombre d'exercice essayé"
+    def __unicode__(self):
+        return "Nombre d'exercice essayer"
 
 
 class ExerciseTimeSpent(StatisticStudent):
@@ -129,8 +129,8 @@ class ExerciseTimeSpent(StatisticStudent):
     def db_query(self):
         return None
 
-    def __str__(self):
-        return "Temps passé sur les exercices"
+    def __unicode__(self):
+        return "Temps passe sur les exercices"
 
 
 class ExerciseStatus(StatisticStudent):
@@ -146,7 +146,7 @@ class ExerciseStatus(StatisticStudent):
     def db_query(self):
         return None
 
-    def __str__(self):
+    def __unicode__(self):
         return "Status des exercices"
 
 
@@ -171,6 +171,7 @@ class ResourcesViewed(StatisticStudent):
                 data[str(item.resource)] += 1
             else:
                 data[str(item.resource)] = 1
+        self.data = data
         xaxis = []
         yaxis = []
         for key in data:
@@ -179,8 +180,8 @@ class ResourcesViewed(StatisticStudent):
         self.xaxis = xaxis
         self.yaxis = yaxis
 
-    def __str__(self):
-        return "Nombre de ressources accédées"
+    def __unicode__(self):
+        return "Nombre de ressources accedees"
 
 
 class SkillOfStudent(StatisticStudent):
@@ -199,8 +200,8 @@ class SkillOfStudent(StatisticStudent):
             data[str(skill)] = True if skill.acquired else False
         self.data = data
 
-    def __str__(self):
-        return "État des compétences de l'étudiant"
+    def __unicode__(self):
+        return "etat des competences de l etudiant"
 
 
 class TimeBetweenTwoSkills(StatisticStudent):
@@ -210,9 +211,9 @@ class TimeBetweenTwoSkills(StatisticStudent):
     def __init__(self, student):
         self.representation = "barchart"
         self.id = self.representation + "-tsBetSk"
-        self.xtitle = "Compétence"
-        self.ytitle = "Temps depuis la précédente compétence"
-        self.title = r"Temps passé entre l\'acquisition de deux compétence"
+        self.xtitle = "Competence"
+        self.ytitle = "Temps depuis la precedente competence"
+        self.title = "Temps passe entre l acquisition de deux competence"
         super(TimeBetweenTwoSkills, self).__init__(student)
 
     def db_query(self):
@@ -227,6 +228,7 @@ class TimeBetweenTwoSkills(StatisticStudent):
                 time_spend = skill.acquired - previous_time
                 data[str(skill.skill).split(' ')[0]] = time_spend.days*24 + (time_spend.seconds/3600)
                 previous_time = skill.acquired
+        self.data = data
         xaxis = []
         yaxis = []
         for key in data:
@@ -237,8 +239,8 @@ class TimeBetweenTwoSkills(StatisticStudent):
         self.yaxis = yaxis
         self.data = data
 
-    def __str__(self):
-        return "Temps entre deux complétion de compétence"
+    def __unicode__(self):
+        return "Temps entre deux completion de competence"
 
 
 class ExamsPassed(StatisticStudent):
@@ -259,8 +261,8 @@ class ExamsPassed(StatisticStudent):
             data[str(exam.exam)] = exam.succeeded
         self.data = data
 
-    def __str__(self):
-        return "Tests de l'étudiant"
+    def __unicode__(self):
+        return "Tests de l etudiant"
 
 
 class TimeSpentExam(StatisticStudent):
@@ -273,7 +275,7 @@ class TimeSpentExam(StatisticStudent):
         self.id = self.representation + "-tsSpentExam"
         self.xtitle = "Test"
         self.ytitle = "Temps"
-        self.title = "Temps passé sur les tests"
+        self.title = "Temps passe sur les tests"
         self.exams = ExamsPassed(student)
         super(TimeSpentExam, self).__init__(student)
 
@@ -281,6 +283,7 @@ class TimeSpentExam(StatisticStudent):
         data = {}
         for exam in self.exams.tests:
             data[str(exam.exam)] = exam.finished_at - exam.started_at
+        self.data = data
         xaxis = []
         yaxis = []
         for key in data:
@@ -289,8 +292,8 @@ class TimeSpentExam(StatisticStudent):
         self.xaxis = xaxis
         self.yaxis = yaxis
 
-    def __str__(self):
-        return "Temps passé sur les tests"
+    def __unicode__(self):
+        return "Temps passe sur les tests"
 
 
 class LatestTestSucceeded(StatisticStudent):
@@ -318,8 +321,8 @@ class LatestTestSucceeded(StatisticStudent):
                     latest = i
         self.data = latest.exam.test if latest is not None else None
 
-    def __str__(self):
-        return "Dernier test réussi"
+    def __unicode__(self):
+        return "Dernier test reussi"
 
 
 class NumberOfTestPass(StatisticStudent):
@@ -340,8 +343,8 @@ class NumberOfTestPass(StatisticStudent):
                 count += 1
         self.data = count
 
-    def __str__(self):
-        return "Nombre de tests passé"
+    def __unicode__(self):
+        return "Nombre de tests passe"
 
 
 class LatestSkillAcquired(StatisticClass):
@@ -369,8 +372,8 @@ class LatestSkillAcquired(StatisticClass):
                         max = i
         self.data = max.skill if max is not None else None
 
-    def __str__(self):
-        return "Dernière compétence acquise"
+    def __unicode__(self):
+        return "Derniere competence acquise"
 
 
 ######################
@@ -388,7 +391,7 @@ class AverageSkillAcquired(StatisticClass):
         self.id = self.representation + "-classAvSkAcqui"
         self.xtitle = "Date"
         self.ytitle = "Moyenne"
-        self.title = "Nombre moyen de compétence acquise par chaque étudiant"
+        self.title = "Nombre moyen de competence acquise par chaque etudiant"
         super(AverageSkillAcquired, self).__init__(lesson)
 
     def db_query(self):
@@ -416,6 +419,7 @@ class AverageSkillAcquired(StatisticClass):
                     data[date_skill] = sum_skill
             for keys in data:
                 data[keys] /= len(students)
+            self.data = data
             xaxis = []
             yaxis = []
             for key in data:
@@ -424,8 +428,8 @@ class AverageSkillAcquired(StatisticClass):
             self.xaxis = xaxis
             self.yaxis = yaxis
 
-    def __str__(self):
-        return "Nombre de compétences moyenne acquises"
+    def __unicode__(self):
+        return "Nombre de competences moyenne acquises"
 
 
 
@@ -458,8 +462,8 @@ class LeastMasteredSkill(StatisticClass):
 
         self.data = min_skill
 
-    def __str__(self):
-        return "Compétence la moins maîtrisée"
+    def __unicode__(self):
+        return "Competence la moins maitrisee"
 
 
 class MostMasteredSkill(StatisticClass):
@@ -490,6 +494,5 @@ class MostMasteredSkill(StatisticClass):
 
         self.data = max_skill
 
-    def __str__(self):
-        return "Compétence la plus maîtrisée"
-
+    def __unicode__(self):
+        return "Competence la plus maitrisee"

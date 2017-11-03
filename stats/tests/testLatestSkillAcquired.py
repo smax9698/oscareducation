@@ -95,7 +95,7 @@ class TestLatestSkillAcquired(TestCase):
         self.expected_latest_skill_student1 = skill2
         self.expected_latest_skill_student2 = skill1
 
-        old_stage_student = Stage.object.create(name="old_stage", short_name="os", level=1)
+        old_stage_student = Stage.objects.create(name="old_stage", short_name="os", level=1)
 
         for i in range(0, 20):
             skill = Skill.objects.create(code="code" + str(i), name="name" + str(i))

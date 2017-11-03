@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import csv
 
 from django.db.models import Count
@@ -14,9 +13,6 @@ from users.models import Professor, Student
 from .utils import user_is_superuser
 
 from stats.StatsObject import get_class_stat, get_student_stat
-
-import json
-
 
 @user_is_professor
 def exportCSV(request, pk):
@@ -90,9 +86,9 @@ def viewstats(request, pk):
     # TODO: make automatic detection of timespan instead of hard coding
     predefined_timespan = {
         "-----": None,
-        "Septembre 2016 - Décembre 2016": "01/09/2016-31/12/2016",
+        "Septembre 2016 - Decembre 2016": "01/09/2016-31/12/2016",
         "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
-        "Septembre 2017 - Décembre 2017": "01/09/2017-31/12/2017",
+        "Septembre 2017 - Decembre 2017": "01/09/2017-31/12/2017",
 
     }
 
@@ -112,9 +108,9 @@ def stat_student(request, pk_lesson, pk_student):
 
     predefined_timespan = {
         "-----": None,
-        "Septembre 2016 - Décembre 2016": "01/09/2016-31/12/2016",
+        "Septembre 2016 - Decembre 2016": "01/09/2016-31/12/2016",
         "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
-        "Septembre 2017 - Décembre 2017": "01/09/2017-31/12/2017",
+        "Septembre 2017 - Decembre 2017": "01/09/2017-31/12/2017",
 
     }
 
