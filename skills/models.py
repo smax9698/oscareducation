@@ -415,17 +415,22 @@ class StudentSkill(models.Model):
 
     @staticmethod
     def __depth_sort_skills__(list_obj):
+        print("LIST OBJECTIFS")
+        print(list_obj)
 
         list_level = [[]]
         list_acquired = []
         def recursive(std_skill):
             q_set_r = StudentSkill.objects.filter(skill__in=std_skill.skill.get_prerequisites_skills(), student=std_skill.student)# acquired = None)  # Set of StudentSkill children not yet acquired
-            q_set = q_set_r.filter(acquired = None)
-            q_set_acq = q_set_r.exclude(acquired = None)
+            q_set = q_set_r.filter(acquired = None) #skills not acquired
+            q_set_acq = q_set_r.exclude(acquired = None) #skills acquired
+
+            # Puts every acquired item in list_acquired
             for elem in q_set_acq:
                 if elem not in list_acquired:
                     list_acquired.append(elem)
 
+            # if the QuerySet is empty
             if q_set.count() == 0:
                 if std_skill not in list_level[0]:
                     list_level[0].append(std_skill)
