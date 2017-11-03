@@ -450,7 +450,6 @@ class LearningTrack(models.Model):
         for prerequisite in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
                                                         student=student_skill.student):
             student_skills.extend(LearningTrack._prerequisite_list(prerequisite))
-            print prerequisite, "\n"
         return student_skills
 
     @staticmethod
