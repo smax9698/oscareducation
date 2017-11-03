@@ -9,7 +9,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from examinations.models import Context
-import numbers
 from django.contrib.postgres.fields import ArrayField
 
 
@@ -395,6 +394,9 @@ class LearningTrack(models.Model):
         :param professor:the teacher who has specified the targets skills for student
         """
 
+        if student is None or professor is None:
+            raise TypeError
+
         LearningTrack.objects.filter(student=student).delete()  # Clear previous learning track, if any
 
         targets = StudentSkill.objects.filter(student=student, is_target=True)
@@ -440,15 +442,16 @@ class LearningTrack(models.Model):
         List to iterate through a student skill and all its prerequisites if they are not acquired
         NOTE : THE STUDENT SKILL IN PARAMETER IS INCLUDED
         """
+        if student_skill is None or type(student_skill) is not StudentSkill:
+            raise TypeError
+
         # TODO Avoid always recomputing the prerequisites ?
-        if student_skill.acquired is None:
-            student_skills = [student_skill]
-            for prerequisite in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
-                                                            student=student_skill.student):
-                student_skills.extend(LearningTrack._prerequisite_list(prerequisite))
-            return student_skills
-        else:
-            return []
+        student_skills = [student_skill]
+        for prerequisite in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
+                                                        student=student_skill.student):
+            student_skills.extend(LearningTrack._prerequisite_list(prerequisite))
+            print prerequisite, "\n"
+        return student_skills
 
     @staticmethod
     def _higher_in_prerequisites_tree(a, b):
@@ -459,6 +462,10 @@ class LearningTrack(models.Model):
         :param b Another StudentSkill
         :return 0 if equal or unrelated; 1 if b prerequisite of a, -1 if a prerequisite of b
         """
+
+        if a is None or b is None or type(a) is not StudentSkill or type(b) is not StudentSkill:
+            raise TypeError
+
         if a.skill == b.skill:
             return 0
         elif b in LearningTrack._prerequisite_list(a):
@@ -478,10 +485,10 @@ class LearningTrack(models.Model):
         :return: the list of the learning track
         """
 
-        # if ordered_criteria_names is None or type(ordered_criteria_names) is not list \
-        #         or criteria_functions is None or type(criteria_functions) is not dict \
-        #         or student_skills_list is None or type(student_skills_list) is not list:
-        #     raise TypeError
+        if ordered_criteria_names is None or type(ordered_criteria_names) is not list \
+                or criteria_functions is None or type(criteria_functions) is not dict \
+                or student_skills_list is None or type(student_skills_list) is not list:
+            raise TypeError
 
         for criteria_name in reversed(ordered_criteria_names):
             if criteria_name not in criteria_functions:
@@ -527,12 +534,12 @@ class LearningTrack(models.Model):
         :return: void
         """
 
-        # if student_skill is None or type(student_skill) is not StudentSkill \
-        #         or skills_depth_map is None or type(skills_depth_map) is not dict \
-        #         or level is None  or type(level) is not numbers.Number:
-        #     raise TypeError
-        # if level < 0:
-        #     raise ValueError
+        if student_skill is None or type(student_skill) is not StudentSkill \
+                or skills_depth_map is None or type(skills_depth_map) is not dict \
+                or level is None or type(level) is not int:
+            raise TypeError
+        if level < 0:
+            raise ValueError
 
         LearningTrack._set_skill_depth(student_skill, level, skills_depth_map)
         for prerequisite_skill in student_skill.skill.get_prerequisites_skills():
@@ -548,12 +555,12 @@ class LearningTrack(models.Model):
         :param skills_depth_map:Dictionary(skill,depth)
         :return:void
         """
-        # if student_skill is None or type(student_skill) is not StudentSkill \
-        #         or skills_depth_map is None or type(skills_depth_map) is not dict \
-        #         or depth is None  or type(depth) is not numbers.Number:
-        #     raise TypeError
-        # if depth < 0:
-        #     raise ValueError
+        if student_skill is None or type(student_skill) is not StudentSkill \
+                or skills_depth_map is None or type(skills_depth_map) is not dict \
+                or depth is None or type(depth) is not int:
+            raise TypeError
+        if depth < 0:
+            raise ValueError
 
         if student_skill not in skills_depth_map:
             skills_depth_map[student_skill] = depth
