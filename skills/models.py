@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from collections import Iterable
+
+from django.db import models
 from datetime import datetime
 
 from django.contrib.auth.models import User
@@ -393,7 +396,6 @@ class LearningTrack(models.Model):
         :param student:the student who owns the learning track
         :param professor:the teacher who has specified the targets skills for student
         """
-
         if student is None or professor is None:
             raise TypeError
 
@@ -429,9 +431,9 @@ class LearningTrack(models.Model):
         :return a list of StudentSkill objects with targets and their prerequisites
         We know targets&prerequisites have been added in :func:'users.models.Student.set_targets'
         """
+        if targets is None or not isinstance(targets, Iterable):
+            raise TypeError("Wrong type for targets parameter : "+str(type(targets)))
 
-        if targets is None or type(targets) is not list:
-            raise TypeError
         student_skills = set()
 
         for target in targets:
