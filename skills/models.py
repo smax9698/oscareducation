@@ -429,6 +429,10 @@ class LearningTrack(models.Model):
         :return a list of StudentSkill objects with targets and their prerequisites
         We know targets&prerequisites have been added in :func:'users.models.Student.set_targets'
         """
+
+        if targets is None or type(targets) is not list:
+            raise TypeError
+
         student_skills = set()
 
         for target in targets:

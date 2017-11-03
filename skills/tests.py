@@ -48,7 +48,6 @@ class LearningTrackTests(TestCase):
         self.skills.append(tmp)
         tmp = Skill.objects.create(code=5, name="Epsilon", section=self.sections[3], estimated_time_to_master=250)
         self.skills.append(tmp)
-        self.skills.append(tmp)
 
         self.student_skills = []
 
@@ -246,9 +245,8 @@ class LearningTrackTests(TestCase):
     # ------------------------------------------------------------------------------------------#
 
     def test_build_student_skills_list_incorrect_targets(self):
-        targets = [self.student_skills[0], self.student_skills[1]]
         with self.assertRaises(TypeError):
-            LearningTrack._build_student_skills_list(targets)
+            LearningTrack._build_student_skills_list(None)
 
     def test_build_student_skills_list_correct_result(self):
         targets = [self.student_skills[0], self.student_skills[1]]
@@ -256,6 +254,3 @@ class LearningTrackTests(TestCase):
         for student_skill in student_skills_list:
             self.assertTrue(student_skill in self.student_skills)
         self.assertEquals(student_skills_list.__len__(), 6)
-
-        for sk in student_skills_list:
-            print sk, "\n"
