@@ -5,12 +5,12 @@ from django.test import TestCase
 from examinations.models import TestStudent, Test
 from promotions.models import Lesson, Stage
 from skills.models import Skill
+from stats.StatsObject import NumberOfTestPass
 from stats.models import ExamStudent, ExamStudentSkill
-from stats.utils import number_of_test_pass
 from users.models import User, Student
 
 
-class TestGetLatestTestSucceeded(TestCase):
+class TestNumberOfTestPass(TestCase):
     def setUp(self):
         user = User.objects.create(username="student1")
         user1 = User.objects.create(username="student2")
@@ -63,7 +63,9 @@ class TestGetLatestTestSucceeded(TestCase):
             exam_skill.save()
 
     def test_number_of_test_pass(self):
-        self.assertEquals(number_of_test_pass(self.student, self.lesson1), 100)
+        passed = NumberOfTestPass(self.student, self.lesson1)
+        self.assertEquals(passed.data, 100)
 
     def test_no_test(self):
-        self.assertEquals(number_of_test_pass(self.student1, self.lesson1), 0)
+        passed = NumberOfTestPass(self.student1, self.lesson1)
+        self.assertEquals(passed.data, 0)

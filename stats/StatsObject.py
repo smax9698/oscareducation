@@ -235,6 +235,7 @@ class TimeBetweenTwoSkills(StatisticStudent):
 
         self.xaxis = xaxis
         self.yaxis = yaxis
+        self.data = data
 
     def __str__(self):
         return "Temps entre deux complétion de compétence"

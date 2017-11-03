@@ -5,8 +5,8 @@ from django.test import TestCase
 from examinations.models import TestStudent, Test
 from promotions.models import Lesson, Stage
 from skills.models import Skill
+from stats.StatsObject import LatestTestSucceeded
 from stats.models import ExamStudent, ExamStudentSkill
-from stats.utils import get_latest_test_succeeded
 from users.models import User, Student
 
 
@@ -96,8 +96,11 @@ class TestGetLatestTestSucceeded(TestCase):
         exam_skill4.save()
 
     def test_get_latest_test_succeeded(self):
-        self.assertEquals(get_latest_test_succeeded(self.student, self.lesson1), self.test1)
-        self.assertEquals(get_latest_test_succeeded(self.student1, self.lesson1), self.test2)
+        test = LatestTestSucceeded(self.student, self.lesson1)
+        test1 = LatestTestSucceeded(self.student1, self.lesson1)
+        self.assertEquals(test.data, self.test1)
+        self.assertEquals(test1.data, self.test2)
 
     def test_when_no_test(self):
-        self.assertEquals(get_latest_test_succeeded(self.student2, self.lesson1), None)
+        test2 = LatestTestSucceeded(self.student2, self.lesson1)
+        self.assertEquals(test2.data, None)
