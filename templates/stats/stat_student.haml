@@ -1,0 +1,40 @@
+-extends "base.haml"
+-load static
+
+-load bootstrap3
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.pk %}"} Classe {{ lesson.name }}
+    %li
+      %a{href: "{% url 'stats:viewstats' lesson.pk %}"} Statistiques
+    %li
+      %a{href: "{% url 'stats:view_student' lesson.pk %}"} Mes élèves
+    %li.active
+      {{ student }}
+
+
+-block content
+
+  .container-fluid.boxclassetitle
+
+    %h2 Statistique de {{ student }}
+
+    %p
+      Nombre de tests réussi {{ tests_passed }}
+
+    %p
+      Dernier test réussi {{ last_passed_test }}
+
+    %p
+      Nombre d'authentification sur le site {{ auth_number }}
+
+    %p
+      Dernière compétence acquise {{ latest_skill }}
+
+    %p
+      Temps passé entre deux compétences {{ time_spent_two_skills }}
+

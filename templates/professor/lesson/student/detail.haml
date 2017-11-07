@@ -9,6 +9,17 @@
 
 -block javascript
   :javascript
+      $(function () {
+        $('[data-toggle="popover"]').popover({
+          html: true
+        });
+
+        $('.skill').each(function(index, node) {
+          node.setAttribute("data-content", node.nextSibling.nextSibling.innerHTML);
+        })
+      })
+
+
     $(function () {
       $('[data-toggle="popover"]').popover({
         html: true
@@ -58,7 +69,9 @@
       %li{role: "presentation"}
         %a{href: "#heatmap"}
           Vue globale de l'élève
-
+      %li{role: "presentation"}
+        %a.real-link{href: "{% url 'stats:stat_student' lesson.pk student.pk %}"}
+          Statistique
     .ligneorange
 
     .container-fluid.boxclassetitle

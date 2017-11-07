@@ -1,25 +1,21 @@
 # encoding: utf-8
 
 import json
-
 from datetime import datetime
 
-from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.views.decorators.http import require_POST
 from django.db import transaction
 from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.views.decorators.http import require_POST
 
 # from examinations import generation
 from examinations.models import TestStudent, Answer, TestExercice
+from resources.models import KhanAcademy, Sesamath
 from skills.models import StudentSkill, Skill, Section, CodeR, Relations, CodeR_relations
-from end_test_poll.models import StudentPoll
-from end_test_poll.forms import StudentPollForm
-from resources.models import KhanAcademy, Sesamath, Resource
-
-
+from stats.utils import add_exam_done_by_student
 from utils import user_is_student
 
 
@@ -50,6 +46,7 @@ def pass_test(request, pk):
         })
 
     if test_student.finished:
+        add_exam_done_by_student(student=request.user, exam_id=test_student)
         pool_form = None
         # TODO: poll disabled due to lack of the table in the DB
         """
