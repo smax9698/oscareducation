@@ -168,42 +168,78 @@
                           %div{:class=>"col-md-12"}
                             %div{:class=>"carousel slide multi-item-carousel", :id=>"theCarousel"}
                               %div{:class=>"carousel-inner"}
-                                -# TODO change for the learning track!!
-                                -for item in user.student.get_learning_track
-                                  -#-if student_skill.recommended_to_learn
-                                  -if forloop.first
-                                    %div{:class => "item active"}
-                                      %div{:class => "col-xs-3 col-xs-offset-1"}
-                                        %a{ :href => '{% url "student_skill_pedagogic_ressources" "skill" item.student_skill.skill.code %}', :title => "{{ item.student_skill.skill.name }}"}
-                                          -if item.student_skill.acquired
-                                            %img{:src => "http://placehold.it/300/8bc34a/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
-                                          -elif item.student_skill.tested
-                                            -if item.student_skill.recommended_to_learn
-                                              %img{:src => "http://placehold.it/300/0066ff/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
+                                -if user.student.get_learning_track|length > 0
+                                  -for item in user.student.get_learning_track
+                                    -#-if student_skill.recommended_to_learn
+                                    -if forloop.first
+                                      %div{:class => "item active"}
+                                        %div{:class => "col-xs-3 col-xs-offset-1"}
+                                          %a{ :href => '{% url "student_skill_pedagogic_ressources" "skill" item.student_skill.skill.code %}', :title => "{{ item.student_skill.skill.name }}"}
+                                            -if item.student_skill.acquired
+                                              %img{:src => "http://placehold.it/300/8bc34a/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -elif item.student_skill.tested
+                                              -if item.student_skill.recommended_to_learn
+                                                %img{:src => "http://placehold.it/300/0066ff/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
+                                              -else
+                                                %img{:src => "http://placehold.it/300/ff6600/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
                                             -else
-                                              %img{:src => "http://placehold.it/300/ff6600/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
-                                          -else
-                                            %img{:src => "http://placehold.it/300/969696/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
-                                          <span class="carousel-caption">
-                                            {{ item.student_skill.skill.name }}
-                                          </span>
+                                              %img{:src => "http://placehold.it/300/969696/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
+                                            <span class="carousel-caption">
+                                              {{ item.student_skill.skill.name }}
+                                            </span>
 
-                                  -else
-                                    %div{:class => "item"}
-                                      %div{:class => "col-xs-3 col-xs-offset-1"}
-                                        %a{ :href => '{% url "student_skill_pedagogic_ressources" "skill" item.student_skill.skill.code %}', :title =>"{{ item.student_skill.skill.name }}"}
-                                          -if item.student_skill.acquired
-                                            %img{:src => "http://placehold.it/300/8bc34a/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
-                                          -elif item.student_skill.tested
-                                            -if item.student_skill.recommended_to_learn
-                                              %img{:src => "http://placehold.it/300/0066ff/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
+                                    -else
+                                      %div{:class => "item"}
+                                        %div{:class => "col-xs-3 col-xs-offset-1"}
+                                          %a{ :href => '{% url "student_skill_pedagogic_ressources" "skill" item.student_skill.skill.code %}', :title =>"{{ item.student_skill.skill.name }}"}
+                                            -if item.student_skill.acquired
+                                              %img{:src => "http://placehold.it/300/8bc34a/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -elif item.student_skill.tested
+                                              -if item.student_skill.recommended_to_learn
+                                                %img{:src => "http://placehold.it/300/0066ff/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
+                                              -else
+                                                %img{:src => "http://placehold.it/300/ff6600/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
                                             -else
-                                              %img{:src => "http://placehold.it/300/ff6600/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
-                                          -else
-                                            %img{:src => "http://placehold.it/300/969696/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
-                                          <span class="carousel-caption">
-                                            {{ item.student_skill.skill.name }}
-                                          </span>
+                                              %img{:src => "http://placehold.it/300/969696/000000?text={{ item.student_skill.skill.code }}", :class=>"img-responsive"}
+                                            <span class="carousel-caption">
+                                              {{ item.student_skill.skill.name }}
+                                            </span>
+
+                                -else
+                                  -for student_skill in user.student.get_three_next_recommended
+                                    -if forloop.first
+                                      %div{:class => "item active"}
+                                        %div{:class => "col-xs-3 col-xs-offset-1"}
+                                          %a{ :href => '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}', :title => "{{ student_skill.skill.name }}"}
+                                            -if student_skill.acquired
+                                              %img{:src => "http://placehold.it/300/8bc34a/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -elif student_skill.tested
+                                              -if student_skill.recommended_to_learn
+                                                %img{:src => "http://placehold.it/300/0066ff/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                              -else
+                                                %img{:src => "http://placehold.it/300/ff6600/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -else
+                                              %img{:src => "http://placehold.it/300/969696/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            <span class="carousel-caption">
+                                              {{ student_skill.skill.name }}
+                                            </span>
+
+                                    -else
+                                      %div{:class => "item"}
+                                        %div{:class => "col-xs-3 col-xs-offset-1"}
+                                          %a{ :href => '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}', :title =>"{{ student_skill.skill.name }}"}
+                                            -if student_skill.acquired
+                                              %img{:src => "http://placehold.it/300/8bc34a/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -elif student_skill.tested
+                                              -if student_skill.recommended_to_learn
+                                                %img{:src => "http://placehold.it/300/0066ff/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                              -else
+                                                %img{:src => "http://placehold.it/300/ff6600/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            -else
+                                              %img{:src => "http://placehold.it/300/969696/000000?text={{ student_skill.skill.code }}", :class=>"img-responsive"}
+                                            <span class="carousel-caption">
+                                              {{ student_skill.skill.name }}
+                                            </span>
 
                       <ul class="pager">
                         <li class="previous"><a href="#theCarousel" role="button" data-slide="prev">&larr; Previous</a></li>
@@ -234,15 +270,26 @@
             -#            %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
             -#              {{ student_skill.skill.name }}
             %table.table.table-hover
-              -for item in user.student.get_three_next
-                %tr.legend-list
-                  %td.legend
-                    %i.round-section-icon.recommended{class: "fa fa-{{ item.student_skill.skill.image }}", title: "{{ item.student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ item.student_skill.skill.section }}"}
-                  %td.legend
-                    %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
-                  %td
-                    %a{href: '{% url "student_skill_pedagogic_ressources" "skill" item.student_skill.skill.code %}'}
-                      {{ item.student_skill.skill.name }}
+              -if user.student.get_three_next|length > 0
+                -for item in user.student.get_three_next
+                  %tr.legend-list
+                    %td.legend
+                      %i.round-section-icon.recommended{class: "fa fa-{{ item.student_skill.skill.image }}", title: "{{ item.student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ item.student_skill.skill.section }}"}
+                    %td.legend
+                      %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
+                    %td
+                      %a{href: '{% url "student_skill_pedagogic_ressources" "skill" item.student_skill.skill.code %}'}
+                        {{ item.student_skill.skill.name }}
+              -else
+                -for student_skill in user.student.get_three_next_recommended
+                  %tr.legend-list
+                    %td.legend
+                      %i.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}
+                    %td.legend
+                      %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
+                    %td
+                      %a{href: '{% url "student_skill_pedagogic_ressources" "skill" student_skill.skill.code %}'}
+                        {{ student_skill.skill.name }}
 
         -if user.student.teststudent_set.all|keep_unfinished_tests|remove_closed_tests
           -if user.student.has_recommended_skills

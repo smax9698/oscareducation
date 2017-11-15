@@ -75,6 +75,24 @@ class Student(models.Model):
 
         return False
 
+    def get_recommended_skills(self):
+        list = []
+        for student_skill in self.studentskill_set.all():
+            if student_skill.recommended_to_learn():
+                list.append(student_skill)
+        return list
+
+    def get_three_next_recommended(self):
+        list = []
+        i = 0
+        for student_skill in self.get_recommended_skills():
+            if student_skill.recommended_to_learn():
+                list.append(student_skill)
+                i += 1
+            if i >= 3:
+                break
+        return list
+
     def clear_targets(self):
         """Removes the target flag on all student skills"""
         student_skills = StudentSkill.objects.filter(student=self)
