@@ -1909,11 +1909,11 @@ def professor_set_learning_track_redirect(request, lesson_pk):
 
 def professor_set_learning_track(request, lesson_pk, list_students):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
-    students_pk = "_".split(list_students)
+    students_pk = list_students.split('_')
 
     students = []
     for s_pk in students_pk:
-        student = get_object_or_404(Student, pk=s_pk)  # FIXME This line causes the crash when setting targets
+        student = get_object_or_404(Student, pk=s_pk)
         students.append(student)
 
     return render(request, "professor/lesson/skill/learning_track.haml", {
