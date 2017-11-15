@@ -48,7 +48,7 @@
 
               .list-group
                 -for student in students
-                  %a.list-group-item{href: "#", :ng-click => "toggleSelection({{ student }})"}
+                  %a.list-group-item{href: "#", :ng-click => "toggleSelection({{ student.pk }})"}
                     =student
 
             .col-md-6

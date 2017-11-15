@@ -92,22 +92,21 @@
                   -for student_skill in student.get_targeted_skills
                     -if student_skill.acquired
                       %td{width: "150px", align:"center"}
-                        %a.btn.btn-default.skill.mastered_100{type: "button"}
+                        %a.btn.btn-default.skill.mastered_100{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}"}
                           %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
                     -elif student_skill.tested
                       %td{width: "150px", align:"center"}
-                        %a.btn.btn-default.skill.mastered_75{type: "button"}
+                        %a.btn.btn-default.skill.mastered_75{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}"}
                           %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
                     -else
                       %td{width: "150px", align:"center"}
-                        %a.btn.btn-default.skill.mastered_25{type: "button"}
+                        %a.btn.btn-default.skill.mastered_25{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}"}
                           %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
 
 
                   -if student.get_targeted_skills.count < 1
                     %td{width: "150px", align:"center"}
                       ?
-
                   -if student.get_targeted_skills.count < 2
                     %td{width: "150px", align:"center"}
                       ?
