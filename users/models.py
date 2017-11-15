@@ -159,3 +159,5 @@ class Student(models.Model):
 
         return list_return
 
+    def get_targeted_skills(self):
+        return StudentSkill.objects.filter(is_target=True)
