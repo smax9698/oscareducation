@@ -206,7 +206,7 @@
                                             </span>
 
                                 -else
-                                  -for student_skill in user.student.get_three_next_recommended
+                                  -for student_skill in user.student.get_recommended_skills
                                     -if forloop.first
                                       %div{:class => "item active"}
                                         %div{:class => "col-xs-3 col-xs-offset-1"}
