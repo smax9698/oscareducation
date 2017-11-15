@@ -1898,8 +1898,11 @@ def professor_set_learning_track_redirect(request, lesson_pk):
     professor = get_object_or_404(Professor, pk=professor_pk)
 
     for student in students:
-        student.set_targets(target_skills)
-        LearningTrack.new_learning_track(student, professor)
+        if len(target_skills) > 0:
+            student.set_targets(target_skills)
+            LearningTrack.new_learning_track(student, professor)
+        else:
+            LearningTrack.clear_learning_track(student)
 
     return HttpResponse("Done")
 
@@ -1910,7 +1913,7 @@ def professor_set_learning_track(request, lesson_pk, list_students):
 
     students = []
     for s_pk in students_pk:
-        student = get_object_or_404(Student, pk=s_pk)
+        student = get_object_or_404(Student, pk=s_pk)  # FIXME This line causes the crash when setting targets
         students.append(student)
 
     return render(request, "professor/lesson/skill/learning_track.haml", {

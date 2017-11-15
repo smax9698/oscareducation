@@ -388,6 +388,14 @@ class LearningTrack(models.Model):
     """Whether the LT is cleared or not"""
 
     @staticmethod
+    def clear_learning_track(student):
+        """
+        Clear previous learning track, if any
+        :param student: The student concerned by the learning track
+        """
+        LearningTrack.objects.filter(student=student).delete()
+
+    @staticmethod
     def new_learning_track(student, professor):
         """
         Create a new learning track for student based on the criteria of professor
@@ -399,7 +407,7 @@ class LearningTrack(models.Model):
         if student is None or professor is None:
             raise TypeError
 
-        LearningTrack.objects.filter(student=student).delete()  # Clear previous learning track, if any
+        LearningTrack.clear_learning_track(student)
 
         targets = StudentSkill.objects.filter(student=student, is_target=True)
 
