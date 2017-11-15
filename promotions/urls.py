@@ -97,4 +97,7 @@ urlpatterns = [
     url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track/(?P<list_students>[\w\-]+)/$', views.professor_set_learning_track,
         name='lesson_skill_learning_track'),
 
+    url(r'^lesson/edit_track/(?P<lesson_id>\d+).json$', views.lesson_edit_track,
+        name='lesson_edit_track'),
+
 ]

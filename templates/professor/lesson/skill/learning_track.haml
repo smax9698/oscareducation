@@ -3,10 +3,62 @@
 
 -load bootstrap3
 
+-load compress
+
+-block head
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/professor_edit_learning_track.js' %}"}
+
+  :javascript
+    context = {
+      lessonId: {{ lesson.id }}
+    };
+
 -block breadcrumb
   %ol.breadcrumb
     %li
       %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.pk %}"}
+        Classe
+        =lesson.name
     %li.active
-      Classe
-      =lesson.name
+      Editeur de chemin de compétences
+
+-block content
+  %h3
+    Chemin de compétences cibles
+  %hr
+
+  %body
+    .col-md-11
+    .ligneorange
+
+    .container-fluid.boxclassetitle
+
+    .ligneorangefine
+
+    .container-fluid.boxclasse
+      %div{ng-app: "oscar", ng-controller: "learningPathController"}
+        %form.form
+          .row
+            .col-md-6
+              %p
+                Etudiants :
+
+              .list-group
+                -for student in students
+                  %a.list-group-item{href: "#", :ng-click => "toggleSelection({{ student }})"}
+                    =student
+
+            .col-md-6
+              %p
+                Chemin de compétences :
+
+              .list-group
+                -for skill in learningTrack
+                  %a.list-group-item{href: "#"}
+                    =skill
+
+
+      %div#alerts

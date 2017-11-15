@@ -1918,8 +1918,17 @@ def professor_set_learning_track(request, lesson_pk, list_students):
 
     return render(request, "professor/lesson/skill/learning_track.haml", {
         "lesson": lesson,
-        "student": students,
+        "students": students,
     })
+
+
+def lesson_edit_track(request, lesson_id):
+    lesson = get_object_or_404(Lesson, id=lesson_id)
+
+    if request.user.professor not in lesson.professors.all():
+        raise PermissionDenied()
+
+    return HttpResponse("Done")
 
 
 def socles_competence(request):
