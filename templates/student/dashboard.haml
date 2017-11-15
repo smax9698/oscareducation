@@ -140,7 +140,7 @@
                 compétences transversales
 
       .col-md-6
-        -if user.student.has_recommended_skills
+        -if user.student.has_recommended_skills or user.student.get_three_next|length > 0
           .container-fluid.boxclassetitle
             .col-md-10
               %h5 Compétences recommandées
@@ -292,7 +292,7 @@
                         {{ student_skill.skill.name }}
 
         -if user.student.teststudent_set.all|keep_unfinished_tests|remove_closed_tests
-          -if user.student.has_recommended_skills
+          -if user.student.has_recommended_skills or user.student.get_three_next|length > 0
             %br
 
           .container-fluid.boxclassetitle
