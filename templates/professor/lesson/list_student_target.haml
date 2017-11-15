@@ -66,9 +66,13 @@
           %table.table
             -for student in lesson.students.all
               %tr
-                %td{width: "250px"}
-                  %input{:type => "checkbox", :name => "checkBox", :ng-checked => "selection.indexOf({{ student.pk }}) > -1", :ng-click => "toggleSelection({{ student.pk }})"}
+                %td{width: "150px"}
+                  %input{:type => "checkbox", :name => "checkBox", :ng-checked => "selectedStudent.indexOf({{ student.pk }}) > -1", :ng-click => "toggleSelection({{ student.pk }})"}
                   %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}= student
+                  -for student_skill in student.get_targeted_skills
+                    %td{width: "150px"}
+                      {{ student_skill.skill.code }}
+
 
         .panel.panel-default
           .panel-heading
@@ -120,7 +124,7 @@
                       </div>
                       </div>
             %div#alerts
-            %button.btn.btn-primary{ng-click: "setTemporaryTargets({{ lesson.pk }},{{ professor.pk }})", id: "setTargetButton", ng-disabled: "toTargetSkills.length==0 || selection.length==0"}
+            %button.btn.btn-primary{ng-click: "setTemporaryTargets({{ lesson.pk }},{{ professor.pk }})", id: "setTargetButton", ng-disabled: "toTargetSkills.length==0 || selectedStudent.length==0"}
               Valider les compétences cibles
 
     -block javascript
