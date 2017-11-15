@@ -58,6 +58,27 @@
     .ligneorange
 
     .container-fluid.boxclassetitle
+      .pull-right
+        %a#legend.btn.btn-sm.btn-info{type: "button", data-toggle: "popover", title: "Légende", data-placement: "left"}
+          Légende
+        %div{style: "display: none"}
+          %table.table
+            %tr
+              %td
+                %a.btn.btn-default.skill.mastered_100{type: "button"}
+                  %abbr{title: "", style: "cursor: default; border: none"} Maitrisée
+            %tr
+              %td
+                %a.btn.btn-default.skill.mastered_75{type: "button"}
+                  %abbr{title: "", style: "cursor: default; border: none"} Testée
+            %tr
+              %td
+                %a.btn.btn-default.skill.mastered_25{type: "button"}
+                  %abbr{title: "", style: "cursor: default; border: none"} Non testée
+            %tr
+              %td
+                %a.btn.btn-default.skill.mastered_not_enough{type: "button"}
+                  %abbr{title: "", style: "cursor: default; border: none"} ?
 
     .ligneorangefine
     .container-fluid.boxclasse
@@ -70,9 +91,30 @@
                   %input{:type => "checkbox", :name => "checkBox", :ng-checked => "selectedStudent.indexOf({{ student.pk }}) > -1", :ng-click => "toggleSelection({{ student.pk }})"}
                   %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}= student
                   -for student_skill in student.get_targeted_skills
-                    %td{width: "150px"}
-                      {{ student_skill.skill.code }}
+                    -if student_skill.acquired
+                      %td{width: "150px", align:"center"}
+                        %a.btn.btn-default.skill.mastered_100{type: "button"}
+                          %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
+                    -elif student_skill.tested
+                      %td{width: "150px", align:"center"}
+                        %a.btn.btn-default.skill.mastered_75{type: "button"}
+                          %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
+                    -else
+                      %td{width: "150px", align:"center"}
+                        %a.btn.btn-default.skill.mastered_25{type: "button"}
+                          %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
 
+
+                  -if student.get_targeted_skills.count < 1
+                    %td{width: "150px", align:"center"}
+                      ?
+
+                  -if student.get_targeted_skills.count < 2
+                    %td{width: "150px", align:"center"}
+                      ?
+                  -if student.get_targeted_skills.count < 3
+                    %td{width: "150px", align:"center"}
+                      ?
 
         .panel.panel-default
           .panel-heading
