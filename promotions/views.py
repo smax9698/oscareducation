@@ -1901,20 +1901,22 @@ def professor_set_learning_track_redirect(request, lesson_pk):
         student.set_targets(target_skills)
         LearningTrack.new_learning_track(student, professor)
 
-    return HttpResponse("Done")#HttpResponseRedirect(reverse("professor:lesson_skill_learning_track", args = str(lesson_pk)))#HttpResponse(str(lesson_pk))
+    return HttpResponse("Done")
 
 
 def professor_set_learning_track(request, lesson_pk, list_students):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    students_pk = "_".split(list_students)
+
+    students = []
+    for s_pk in students_pk:
+        student = get_object_or_404(Student, pk=s_pk)
+        students.append(student)
 
     return render(request, "professor/lesson/skill/learning_track.haml", {
         "lesson": lesson,
+        "student": students,
     })
-
-def launch_method(request):
-    print('launch method run')
-
-    return render(request, "professor/lesson/list_student_target.haml")
 
 
 def socles_competence(request):

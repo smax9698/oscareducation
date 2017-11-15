@@ -4,11 +4,11 @@ function selectSkillController($scope, $http) {
     $scope.setTemporaryTargets = function(lessonPk,professorPk) {
         $http.post("/professor/lesson/" + lessonPk + "/set_learning_track_redirect/", {
             "target_skill_codes": $scope.toTargetSkills,
-            "student_pk": $scope.selection,
+            "student_pk": $scope.selectedStudent,
             "professor_pk": professorPk
         }).success(function(data, status, headers, config) {
             new_url = "../set_learning_track/";
-            $scope.selection.forEach(function(entry) {
+            $scope.selectedStudent.forEach(function(entry) {
                 new_url += entry + "_";
             });
             window.location.href = new_url.substr(0, new_url.length - 1);
@@ -58,7 +58,7 @@ function selectSkillController($scope, $http) {
             success(function(data, status, headers, config) {
                 $scope.stages = data.stages;
                 $scope.toTargetSkills = [];
-                $scope.selection = [];
+                $scope.selectedStudent = [];
 
                 for (i in $scope.stages) {
                     $scope["stage" + i + "SelectedSkill"] = $scope.stages[i][0].code;
@@ -68,14 +68,14 @@ function selectSkillController($scope, $http) {
 
     $scope.toggleSelection = function toggleSelection(student) {
 
-        var idx = $scope.selection.indexOf(student);
+        var idx = $scope.selectedStudent.indexOf(student);
         // Is currently selected
         if (idx > -1) {
-          $scope.selection.splice(idx, 1);
+          $scope.selectedStudent.splice(idx, 1);
         }
         // Is newly selected
         else {
-          $scope.selection.push(student);
+          $scope.selectedStudent.push(student);
         }
       };
 

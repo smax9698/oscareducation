@@ -82,7 +82,6 @@ urlpatterns = [
     url(r'^education/enseignement-professionnel/$', views.enseign_pro, name='enseign-pro'),
     url(r'^education/enseignement-tech-art/$', views.enseign_techart, name='enseign-techart'),
     url(r'^education/enseignement-transition/$', views.enseign_trans, name='enseign-trans'),
-    url(r'^education/launch-method/$' , views.launch_method,name='launch-method'),
 
 
     url(r'^professor_correct/$', views.professor_correct, name='professor_correct'),
@@ -95,7 +94,6 @@ urlpatterns = [
 
     url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track_redirect/$', views.professor_set_learning_track_redirect,
         name='lesson_skill_learning_track_redirect'),
-
     url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track/(?P<list_students>[\w\-]+)/$', views.professor_set_learning_track,
         name='lesson_skill_learning_track'),
 
