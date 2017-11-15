@@ -416,7 +416,7 @@ class LearningTrack(models.Model):
         ordered_criteria_names = LearningTrack._get_ordered_criteria_names(professor)
         criteria_functions = LearningTrack._get_criteria_functions(targets)
 
-        learning_track = LearningTrack._sorting(ordered_criteria_names, criteria_functions, student_skills_list)
+        learning_track = LearningTrack.sorting(ordered_criteria_names, criteria_functions, student_skills_list)
         for i in range(0, len(learning_track)):
             LearningTrack.objects.create(
                 student=student,
@@ -488,13 +488,13 @@ class LearningTrack(models.Model):
             return 0
 
     @staticmethod
-    def _sorting(ordered_criteria_names, criteria_functions, student_skills_list):
+    def sorting(ordered_criteria_names, criteria_functions, student_skills_list):
         """
         Sort skills list to return the learning track
         :param ordered_criteria_names: list of criteria names ordered by importance
         :param criteria_functions:Dictionary(criteria name, dictionary(skill,value based on the criteria))
         :param student_skills_list:List of all the skills to be ordered
-        :return: the list of the learning track
+        :return: the list of the learning track, ordered
         """
 
         if ordered_criteria_names is None or type(ordered_criteria_names) is not list \

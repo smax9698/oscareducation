@@ -159,25 +159,25 @@ class LearningTrackTests(TestCase):
         targets = [self.student_skills[0], self.student_skills[1]]
         maps = LearningTrack._get_criteria_functions(targets)
         with self.assertRaises(TypeError):
-            LearningTrack._sorting(None, maps, self.student_skills)
+            LearningTrack.sorting(None, maps, self.student_skills)
 
     def test_sorting_with_incorrect_criteria_functions(self):
         ordered_criteria_names = [self.level.name, self.section.name, self.time.name]
         with self.assertRaises(TypeError):
-            LearningTrack._sorting(ordered_criteria_names, None, self.student_skills)
+            LearningTrack.sorting(ordered_criteria_names, None, self.student_skills)
 
     def test_sorting_with_incorrect_student_skills(self):
         ordered_criteria_names = [self.level.name, self.section.name, self.time.name]
         targets = [self.student_skills[0], self.student_skills[1]]
         maps = LearningTrack._get_criteria_functions(targets)
         with self.assertRaises(TypeError):
-            LearningTrack._sorting(ordered_criteria_names, maps, None)
+            LearningTrack.sorting(ordered_criteria_names, maps, None)
 
     def test_sorting_with_invalid_criteria_names(self):
         with self.assertRaises(ValueError):
             targets = [self.student_skills[0], self.student_skills[1]]
             maps = LearningTrack._get_criteria_functions(targets)
-            LearningTrack._sorting(['abc','xyz'], maps, self.student_skills)
+            LearningTrack.sorting(['abc', 'xyz'], maps, self.student_skills)
 
     def test_sorting_correct_sort(self):
         targets = [self.student_skills[0], self.student_skills[1]]
@@ -185,7 +185,7 @@ class LearningTrackTests(TestCase):
 
         ordered_criteria_names = LearningTrack._get_ordered_criteria_names(self.prof)
         criteria_functions = LearningTrack._get_criteria_functions(targets)
-        lt = LearningTrack._sorting(ordered_criteria_names, criteria_functions, student_skills_list)
+        lt = LearningTrack.sorting(ordered_criteria_names, criteria_functions, student_skills_list)
 
         self.assertEquals(lt[0].skill.name, self.student_skills[5].skill.name)
         self.assertEquals(lt[1].skill.name, self.student_skills[3].skill.name)

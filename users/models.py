@@ -76,22 +76,23 @@ class Student(models.Model):
         return False
 
     def get_recommended_skills(self):
-        list = []
-        for student_skill in self.studentskill_set.all():
-            if student_skill.recommended_to_learn():
-                list.append(student_skill)
-        return list
+        """
+        :return: Recommended skills of this student, ordered by group and required time.
+        """
+        def get_section(student_skill):
+            return student_skill.skill.section.name
+
+        def get_time(student_skill):
+            return student_skill.skill.estimated_time_to_master
+
+        # TODO At the moment sorting criterias of recommended skills are hardcoded
+        return LearningTrack.sorting(['Group', 'Time'], {'Group': get_section, 'Time': get_time}, filter(lambda s: s.recommended_to_learn(), self.studentskill_set.all()))[:3]
 
     def get_three_next_recommended(self):
-        list = []
-        i = 0
-        for student_skill in self.get_recommended_skills():
-            if student_skill.recommended_to_learn():
-                list.append(student_skill)
-                i += 1
-            if i >= 3:
-                break
-        return list
+        """
+        :return: The three first recommended skills of this student
+        """
+        return self.get_recommended_skills()[:3]
 
     def clear_targets(self):
         """Removes the target flag on all student skills"""
