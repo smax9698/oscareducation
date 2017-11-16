@@ -138,9 +138,6 @@ def lesson_detail(request, pk):
             print e
             print "Error: could no calculate heatmap"
 
-        for student in lesson.students.all():
-            print(str(get_stat_for_student(student, lesson, "UAA1")))
-
     return render(request, "professor/lesson/detail.haml", {
         "lesson": lesson,
         "number_of_students": number_of_students,
@@ -1892,3 +1889,10 @@ def enseign_trans(request):
     data["code_r"] = CodeR.objects.all().order_by('id')
     data["section"] = Section.objects.all()
     return render(request, "professor/skill/new-list-trans.haml", data)
+
+
+def retrieve_stat(request, pk_lesson, pk_student):
+    student = get_object_or_404(Student, pk=pk_student)
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+
+    return HttpResponse(get_stat_for_student(student, lesson, "UUA1"))

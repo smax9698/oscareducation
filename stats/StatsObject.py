@@ -35,7 +35,7 @@ def get_stat_for_student(student, lesson, current_uaa):
         skills_acquired = StudentSkill.objects.filter(student=student, skill__in=skill_tested, acquired__isnull=False)
         number_skill_acquired = 0
         for skill in skills_acquired:
-            if skill.acquired == test.finished_at:
+            if skill.acquired - test.finished_at <= 0:
                 number_skill_acquired += 1
         data[test.test.name] = {'acquired': number_skill_acquired, 'not-acquired': total_skill_tested-number_skill_acquired}
     return json.JSONEncoder().encode(data)
