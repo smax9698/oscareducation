@@ -39,19 +39,19 @@
                   %font{:color => "white"} {{stat}}
         %li
           %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
-          -csrf_token
-            %button.btn.btn-lg.btn-primary{type: "submit"}
-              Données numériques
+            -csrf_token
+              %button.btn.btn-lg.btn-primary{type: "submit"}
+                Données numériques
         %li
           %form{method: "POST", action: "{% url 'stats:exportCSV' lesson.pk %}"}
             -csrf_token
               %input{:checked => "checked", :name => "csv_type", :type => "radio", :value => "std"}/
               Standard
-              
+
               %input{:name => "csv_type", :type => "radio", :value => "euro"}/
               European
               
-              %button.btn.btn-lg.btn-primary{type: "submit"}
+              %button.btn.btn-lg.btn-primary{type: "submit", name: "csv_export_button"}
                 Exporter en CSV
         %li
           %font{:color => "white", :size => "4"} Période prédéfinie
@@ -113,66 +113,18 @@
 
                 .pull-left Statistique de la classe
 
-              .ligneorangefine
-
-              .container-fluid.boxclasse
-
-                %p
-                  Nombre d'étudiants
-                  %b
-                    {{ student_number }}
-
-                %p
-                  Nombre moyen de compétences acquises
-                  %b
-                    {{ avg_skill_acquired }}
-
-                %p
-                  Compétence la moins maitrisée
-                  %b
-                    {{ least_mastered_skill }}
-
-                %p
-                  Compétence la plus maitrisée
-                  %b
-                    {{ most_mastered_skill }}
-            #student1.tab-pane.fade
-              .ligneorange
-
-              .container-fluid.boxclassetitle
-
-                .pull-left Statistique de la classe
-
-                  %p
-                    Nombre d'étudiants
-                    %b
-                      {{ student_number }}
-
-                  %p
-                    Nombre moyen de compétences acquises
-                    %b
-                      {{ avg_skill_acquired }}
-
-                  %p
-                    Compétence la moins maitrisée
-                    %b
-                      {{ least_mastered_skill }}
-
-                  %p
-                    Compétence la plus maitrisée
-                    %b
-                      {{ most_mastered_skill }}
-
-              .ligneorangefine
-
           .container-fluid.boxclasse
-            %svg{:id => "bar", :height => "500", :width => "480"}
-              :javascript
-                BARCHART.init([{{name}}, {{size}}, {{xtitle}}, {{ytitle}}, {{graphtitle}}]);
-                BARCHART.graph();
-            %svg{:id => "pie", :height => "500", :width => "480"}
-              :javascript
-                PIECHART.init([{{name}}, {{size}}]);
-                PIECHART.graph();
-
-
+            -for stat in stats
+              -if stat.representation == None
+                %p
+                  {{stat}}
+                  %b
+                    {{stat.data}}
+              -elif stat.representation == "barchart"
+                %p
+                  {{stat}}
+                %svg{:id => "{{stat.id}}", :height => "500", :width => "480"}
+                  :javascript
+                    BARCHART.init([ {{stat.xaxis}}, {{stat.yaxis}}, ['{{stat.xtitle}}'], ['{{stat.ytitle}}'], ['{{stat.title}}'], ['{{stat.id}}']]);
+                    BARCHART.graph();
+                .ligneorange

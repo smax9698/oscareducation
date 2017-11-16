@@ -41,16 +41,19 @@ class TestTimeBetweenTwoSkills(TestCase):
                                                           acquired=datetime.date(2017, 6, 27))
         self.skill_student3.save()
 
-        self.diff1 = datetime.date(2017, 6, 27) - datetime.date(2016, 3, 13)
-        self.diff2 = datetime.date(2016, 3, 13) - datetime.date(2015, 4, 23)
-        self.diff3 = datetime.date(2015, 4, 23) - datetime.date(2010, 10, 27)
+        diff1 = datetime.date(2017, 6, 27) - datetime.date(2016, 3, 13)
+        self.result = diff1.days * 24 + (diff1.seconds / 3600)
+        diff2 = datetime.date(2016, 3, 13) - datetime.date(2015, 4, 23)
+        self.result1 = diff2.days * 24 + (diff2.seconds / 3600)
+        diff3 = datetime.date(2015, 4, 23) - datetime.date(2010, 10, 27)
+        self.result2 = diff3.days * 24 + (diff3.seconds / 3600)
 
     def test_time_between_two_skills(self):
         time = TimeBetweenTwoSkills(self.student)
-        self.assertEquals(time.data[str(self.skill_student2)], 0)
-        self.assertEquals(time.data[str(self.skill_student1)], self.diff3)
-        self.assertEquals(time.data[str(self.skill_student)], self.diff2)
-        self.assertEquals(time.data[str(self.skill_student3)], self.diff1)
+        self.assertEquals(time.data[str(self.skill_student2.skill).split(' ')[0]], 0)
+        self.assertEquals(time.data[str(self.skill_student1.skill).split(' ')[0]], self.result2)
+        self.assertEquals(time.data[str(self.skill_student.skill).split(' ')[0]], self.result1)
+        self.assertEquals(time.data[str(self.skill_student3.skill).split(' ')[0]], self.result)
 
     def test_no_skills_acquired(self):
         time = TimeBetweenTwoSkills(self.student1)

@@ -10,6 +10,7 @@ class GeneralUITest(StaticLiveServerTestCase):
     def setUp(self):
         self.selenium = webdriver.Firefox()
         self.selenium.implicitly_wait(10)
+
         # Creation of the professor and setting up the database
         user = User.objects.create_user(username='prof', password='prof', email='prof@prof.com')
         user.save()

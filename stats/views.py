@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import csv
 
 from django.db.models import Count
@@ -14,7 +13,6 @@ from users.models import Professor, Student
 from .utils import user_is_superuser
 
 from stats.StatsObject import get_class_stat, get_student_stat
-
 
 @user_is_professor
 def exportCSV(request, pk):
@@ -88,58 +86,45 @@ def viewstats(request, pk):
     # TODO: make automatic detection of timespan instead of hard coding
     predefined_timespan = {
         "-----": None,
-        "Septembre 2016 - Décembre 2016": "01/09/2016-31/12/2016",
+        "Septembre 2016 - Decembre 2016": "01/09/2016-31/12/2016",
         "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
-        "Septembre 2017 - Décembre 2017": "01/09/2017-31/12/2017",
+        "Septembre 2017 - Decembre 2017": "01/09/2017-31/12/2017",
 
     }
 
-    list_statistics = ['Nombre de connexion', 'Nombre d\'exercice éssayé', 'Temps passé sur les exercice',
-                       'Status des exercice', 'Nombre de ressource vue', 'Compétence acquise',
-                       'Compétence en progression', 'Test passé', 'Temps passé sur les examens']
-    data = [0.7, 0.8, 0.9, 0.8, 0.9, 0.9, 0.9]
-    name = ["Jean", "Marc", "Georges"]
-    size = [18, 2, 42]
-    xtitle = ["X Axis"]
-    ytitle = ["Y Axis"]
-    title = ["Title"]
+    stats = get_class_stat(lesson)
 
     return render(request, "stats/viewstats.haml", {
         "stats": stats,
         "lesson": lesson,
         "student_number": len(Student.objects.filter(lesson=lesson)),
-        "data": data,
-        "name": name,
-        "size": size,
         "students": students,
         "predefined_timespan": predefined_timespan,
-        "list_stats": list_statistics,
-        "xtitle": xtitle,
-        "ytitle": ytitle,
-        "graphtitle": title
 
     })
 
 
 def stat_student(request, pk_lesson, pk_student):
+
+    predefined_timespan = {
+        "-----": None,
+        "Septembre 2016 - Decembre 2016": "01/09/2016-31/12/2016",
+        "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
+        "Septembre 2017 - Decembre 2017": "01/09/2017-31/12/2017",
+
+    }
+
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
     student = get_object_or_404(Student, pk=pk_student)
-    """
-    last_test_passed = get_latest_test_succeeded(student, lesson)
-    latest_skill = get_latest_skill_acquired(student, lesson)
-    time_spent_two_skill = time_between_two_last_skills(student)
+    stats = get_student_stat(student, lesson)
 
-    return render(request, "stats/stat_student.haml", {
+    return render(request, "stats/viewstats.haml", {
         "lesson": lesson,
         "student": student,
-        "tests_passed": number_of_test_pass(student, lesson),
-        "last_passed_test": last_test_passed if last_test_passed else "Aucun test realise!",
-        "auth_number": get_number_of_authentication_by_student(student),
-        "latest_skill": latest_skill if latest_skill else "Aucun skill encore acquis!",
-        "time_spent_two_skills": time_spent_two_skill if time_spent_two_skill else "Pas assez de data pour calculer la statistique"
+        "stats": stats,
+        "predefined_timespan": predefined_timespan,
 
     })
-    """
 
 
 def stat_student_tab(request, pk_lesson, pk_student):
@@ -151,3 +136,7 @@ def stat_student_tab(request, pk_lesson, pk_student):
         "student": student
     })
 
+
+@user_is_professor
+def retrieve_stat(request, pk_lesson, pf_student):
+    return None
