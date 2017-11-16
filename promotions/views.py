@@ -1891,8 +1891,9 @@ def enseign_trans(request):
     return render(request, "professor/skill/new-list-trans.haml", data)
 
 
-def retrieve_stat(request, pk_lesson, pk_student):
-    student = get_object_or_404(Student, pk=pk_student)
+def retrieve_stat(request, pk_lesson, username):
+    user = get_object_or_404(User, username=username)
+    student = get_object_or_404(Student, user=user)
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
 
     return HttpResponse(get_stat_for_student(student, lesson, "UUA1"))

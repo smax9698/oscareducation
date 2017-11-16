@@ -80,7 +80,7 @@
                         %img.icon{src: "{% static 'img/icons/multy-mdp.png' %}", data-toggle: "tooltip", data-placement: "top", title: "regénérer un code pour l´élève"}
 
                   %td
-                    %svg{:id => "{{student.pk}}", :class => "graph-student", :height => "100", :width => "400"}
+                    %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "100", :width => "400"}
 
 
                   %td

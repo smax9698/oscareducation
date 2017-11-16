@@ -4,6 +4,8 @@ from users.models import Student
 from examinations.models import BaseTest, TestStudent
 import json
 
+from datetime import timedelta
+
 # TODO: find why ExamsPassed(student) throws an error and add TimeSpentExam(student), ExamPassed(student) to the list
 def get_student_stat(student, lesson):
     return [NumberOfLogin(student), ResourcesViewed(student), SkillOfStudent(student), TimeBetweenTwoSkills(student),
@@ -27,17 +29,19 @@ def get_stat_for_student(student, lesson, current_uaa):
 
     tests_lesson = BaseTest.objects.filter(lesson=lesson)
     tests = TestStudent.objects.filter(student=student, test__in=tests_lesson)
-    data = {}
+    data = {'data': [], 'xaxis': []}
     total_skill_tested = 0
+    number_skill_acquired = 0
     for test in tests:
         skill_tested = test.test.skills.all()
         total_skill_tested += len(skill_tested)
         skills_acquired = StudentSkill.objects.filter(student=student, skill__in=skill_tested, acquired__isnull=False)
-        number_skill_acquired = 0
         for skill in skills_acquired:
-            if skill.acquired - test.finished_at <= 0:
+            if skill.acquired and test.finished_at and skill.acquired - test.finished_at <= timedelta(days=1):
                 number_skill_acquired += 1
-        data[test.test.name] = {'acquired': number_skill_acquired, 'not-acquired': total_skill_tested-number_skill_acquired}
+        data['data'].append({'acquired': number_skill_acquired, 'not-acquired': total_skill_tested-number_skill_acquired})
+        data['xaxis'].append(test.test.name)
+    print(data)
     return json.JSONEncoder().encode(data)
 
 

@@ -1,39 +1,21 @@
-function generateGraph(user_pk) {
-    d3.request("getStat/"+user_pk)
-        .get(function(data) {
-            console.log(data);
-    });
-    var data = [
-        {
-            "acquired": 3,
-            "not-acquired": 2
-        },
-        {
-            "acquired": 5,
-            "not-acquired": 0
-        },
-        {
-            "acquired": 7,
-            "not-acquired": 3
-        },
-        {
-            "acquired": 12,
-            "not-acquired": 0
-        }
-    ];
-    var xtest = ["test1", "test2", "test3", "test4"],
+function generateGraph(username, data) {
+    var data_parsed = jQuery.parseJSON(data);
+    console.log(data_parsed.data);
+
+    var xtest = data_parsed.xaxis,
         yz = [[], []],
         xmonthz = ["Septembre", "Octobre", "Novembre", "Décembre"];
 
-    data.forEach(function (item) {
+    data_parsed.data.forEach(function (item) {
         yz[0].push(item["acquired"]);
         yz[1].push(item["not-acquired"]);
     });
 
     var y01z = d3.stack().keys(d3.range(2))(d3.transpose(yz));
 
-    var svg = d3.select("svg#" + user_pk),
-        margin = {top: 40, right: 10, bottom: 20, left: 10},
+    var svg = d3.select("svg#"+username.replace(".","\\."));
+
+    var margin = {top: 40, right: 10, bottom: 20, left: 10},
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom,
         g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -80,7 +62,7 @@ function generateGraph(user_pk) {
         .attr("height", function (d) {
             return y(d[0]) - y(d[1]);
         });
-
+    /* Do not need this for the global view with all student
     g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
@@ -94,8 +76,19 @@ function generateGraph(user_pk) {
         .call(d3.axisBottom(xmonth)
             .tickSize(0)
             .tickPadding(10));
+    */
 }
 
 $(".graph-student").each(function() {
-    generateGraph($(this.getAttribute("id")).selector);
+    var username = $(this.getAttribute("id")).selector
+    d3.request(encodeURI("getStat/"+username))
+        .get(function(data) {
+            if (data === null) {
+                console.log("no data");
+            } else {
+                var dic = data.response;
+                generateGraph(username, dic);
+            }
+    });
+
 });
