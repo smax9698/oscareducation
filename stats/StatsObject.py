@@ -1,6 +1,8 @@
 from models import ResourceStudent, AuthenticationStudent, ExamStudent, ExamStudentSkill
 from skills.models import StudentSkill, Skill
 from users.models import Student
+from examinations.models import BaseTest, TestStudent
+import json
 
 # TODO: find why ExamsPassed(student) throws an error and add TimeSpentExam(student), ExamPassed(student) to the list
 def get_student_stat(student, lesson):
@@ -11,6 +13,32 @@ def get_student_stat(student, lesson):
 
 def get_class_stat(lesson):
     return [AverageSkillAcquired(lesson), LeastMasteredSkill(lesson), MostMasteredSkill(lesson)]
+
+
+def get_stat_for_student(student, lesson, current_uaa):
+    """
+    Retrieve statistics about skills for a specific lesson depending of a specific UAA
+
+    :param student: Student for which we take the data
+    :param lesson: Lesson of the student
+    :param current_uaa: Current UAA of the year for this lesson
+    :return: JSON formatted data
+    """
+
+    tests_lesson = BaseTest.objects.filter(lesson=lesson)
+    tests = TestStudent.objects.filter(student=student, test__in=tests_lesson)
+    data = {}
+    total_skill_tested = 0
+    for test in tests:
+        skill_tested = test.test.skills.all()
+        total_skill_tested += len(skill_tested)
+        skills_acquired = StudentSkill.objects.filter(student=student, skill__in=skill_tested, acquired__isnull=False)
+        number_skill_acquired = 0
+        for skill in skills_acquired:
+            if skill.acquired == test.finished_at:
+                number_skill_acquired += 1
+        data[test.test.name] = {'acquired': number_skill_acquired, 'not-acquired': total_skill_tested-number_skill_acquired}
+    return json.JSONEncoder().encode(data)
 
 
 class StatisticStudent(object):

@@ -136,3 +136,7 @@ def stat_student_tab(request, pk_lesson, pk_student):
         "student": student
     })
 
+
+@user_is_professor
+def retrieve_stat(request, pk_lesson, pf_student):
+    return None

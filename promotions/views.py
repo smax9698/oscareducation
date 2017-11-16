@@ -48,6 +48,8 @@ from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateFor
     TestUpdateForm, SesamathForm, ResourceForm, CSVForm
 from .utils import generate_random_password
 
+from stats.StatsObject import get_stat_for_student
+
 """"@user_is_professor
 def exportCSV(request, pk):
     response = HttpResponse(content_type='text/csv')
@@ -135,6 +137,9 @@ def lesson_detail(request, pk):
             traceback.print_exc(file=sys.stdout)
             print e
             print "Error: could no calculate heatmap"
+
+        for student in lesson.students.all():
+            print(str(get_stat_for_student(student, lesson, "UAA1")))
 
     return render(request, "professor/lesson/detail.haml", {
         "lesson": lesson,

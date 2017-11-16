@@ -3,6 +3,9 @@
 
 -load bootstrap3
 
+-block head
+  %script{:src => "https://d3js.org/d3.v4.min.js"}
+
 -block breadcrumb
   %ol.breadcrumb
     %li
@@ -77,6 +80,10 @@
                         %img.icon{src: "{% static 'img/icons/multy-mdp.png' %}", data-toggle: "tooltip", data-placement: "top", title: "regénérer un code pour l´élève"}
 
                   %td
+                    %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "100", :width => "400"}
+
+
+                  %td
                     .pull-right
                       %a{href: "{% url 'professor:lesson_student_delete' lesson.pk student.pk %}"}
                         %img.icon{src: "{% static 'img/icons/delete.png' %}", data-toggle: "tooltip", data-placement: "top", title: "supprimer"}
@@ -103,6 +110,7 @@
       -include "professor/lesson/detail/heatmap.haml"
 
   -block javascript
+    %script(src="/static/js/graph_student.js")
     :javascript
                   $(function () {
                     $('[data-toggle="popover"]').popover({
