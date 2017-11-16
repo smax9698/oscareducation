@@ -1,4 +1,8 @@
-function generateGraph(username) {
+function generateGraph(user_pk) {
+    d3.request("getStat/"+user_pk)
+        .get(function(data) {
+            console.log(data);
+    });
     var data = [
         {
             "acquired": 3,
@@ -28,7 +32,7 @@ function generateGraph(username) {
 
     var y01z = d3.stack().keys(d3.range(2))(d3.transpose(yz));
 
-    var svg = d3.select("svg#" + username),
+    var svg = d3.select("svg#" + user_pk),
         margin = {top: 40, right: 10, bottom: 20, left: 10},
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom,
@@ -93,5 +97,5 @@ function generateGraph(username) {
 }
 
 $(".graph-student").each(function() {
-    generateGraph($(this.getAttribute("id")).selector.replace(".","\\."));
+    generateGraph($(this.getAttribute("id")).selector);
 });
