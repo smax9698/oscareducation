@@ -40,6 +40,24 @@ def exportCSV(request, pk):
     return response
 
 
+@user_is_professor
+def superuser_view_stats(request):
+    # TODO: make automatic detection of timespan instead of hard coding
+    predefined_timespan = {
+        "-----": None,
+        "Septembre 2016 - Decembre 2016": "01/09/2016-31/12/2016",
+        "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
+        "Septembre 2017 - Decembre 2017": "01/09/2017-31/12/2017",
+
+    }
+
+    return render(request, "stats/superuser_view_stats.haml", {
+
+        "predefined_timespan": predefined_timespan,
+
+    })
+
+
 @user_is_superuser
 def dashboard(request):
     questions_per_stage = []

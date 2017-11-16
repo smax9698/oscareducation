@@ -1,0 +1,192 @@
+-extends "base.haml"
+
+-load bootstrap3
+-load static
+
+-block head
+  %link{href: "{% static 'css/bartchart.css' %}", rel: "stylesheet"}
+  %link{href: "{% static 'css/piechart.css' %}", rel: "stylesheet"}
+  %link{href: "{% static 'css/sidebar.css' %}", rel: "stylesheet"}
+  %script{:src => "https://d3js.org/d3.v4.min.js"}
+  %script(src="/static/js/barchart.js")
+  %script(src="/static/js/linechart.js")
+  %script(src="/static/js/piechart.js")
+
+-block javascript
+  %script(src="/static/js/updateUI.js")
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{} Oscar
+    %li.active
+      Statistiques
+
+-block content
+  %div{:id => "wrapper"}
+    / Sidebar for customization
+      / Actual content of the page
+    %div{:id => "page-content-wrapper"}
+      .container-fluid
+        .col-md-10
+         
+          %ul.nav.nav-tabs
+            %li.dropdown.active
+              %a.dropdown-toggle{"data-toggle": "dropdown"}
+                Statistiques
+                %span.caret
+              %ul.dropdown-menu
+                %li
+                  %a{"data-toggle": "tab",href: "#loginStats"} Login Stats
+                %li
+                  %a{"data-toggle": "tab",href: "#resStudent"} Resource Student
+                %li
+                  %a{"data-toggle": "tab",href: "#authStudent"} Authentication Student
+                %li
+                  %a{"data-toggle": "tab",href: "#examStudent"} Exam Student
+                %li
+                  %a{"data-toggle": "tab",href: "#examStudSkill"} Exam Student Skill
+            
+
+          .tab-content
+            #loginStats.tab-pane.active
+              .ligneorange
+              .container-fluid.boxclassetitle
+                .pull-left
+                %font{:size => "4"} Login Stats
+                %br
+                %br
+                %p Sélectionnez les types d'utilisateurs
+                %form
+                  %label.checkbox-inline
+                    %input{:type => "checkbox", :value => "student"}>/
+                    Étudiant·e
+                  %label.checkbox-inline
+                    %input{:type => "checkbox", :value => "professor"}>/
+                    Professeur
+                  %label.checkbox-inline
+                    %input{:type => "checkbox", :value => "admin"}>/
+                    Admin
+                %br
+                %p Période définie
+
+                %div{:id => "timespan"}
+                  %label.checkbox-inline
+                    Depuis :
+                    %input{:id => "startDate", :type => "text", :value => "jj/mm/aa"}/
+                  %label.checkbox-inline
+                    Jusque :
+                    %input{:id => "endDate", :type => "text", :value => "jj/mm/aa"}
+
+
+
+            #resStudent.tab-pane
+              .ligneorange
+              .container-fluid.boxclassetitle
+                .pull-left
+                %font{:size => "4"} Resource Student
+                %br
+                %br
+                %p Période définie
+
+                %div{:id => "timespan"}
+                  %label.checkbox-inline
+                    Depuis :
+                    %input{:id => "startDate", :type => "text", :value => "jj/mm/aa"}/
+                  %label.checkbox-inline
+                    Jusque :
+                    %input{:id => "endDate", :type => "text", :value => "jj/mm/aa"}
+
+
+            #authStudent.tab-pane
+              .ligneorange
+              .container-fluid.boxclassetitle
+                .pull-left Authentication Student
+
+
+            #examStudent.tab-pane
+              .ligneorange
+              .container-fluid.boxclassetitle
+                .pull-left Exam Student
+                .container
+                  %br
+                  %b Cours
+                  %br
+                  %form
+                    %label.checkbox-inline
+                      %input{:type => "checkbox", :value => ""}>/
+                      Mathematics
+                    %label.checkbox-inline
+                      %input{:type => "checkbox", :value => ""}>/
+                      Physique
+                    %label.checkbox-inline
+                      %input{:type => "checkbox", :value => ""}>/
+                      Droit
+                    %label.checkbox-inline
+                      %input{:type => "checkbox", :value => ""}>/
+                      Science
+                  %form
+                    %label.checkbox-inline
+                      %input{:type => "checkbox", :value => ""}>/
+                      Algorithmique
+                    %label.checkbox-inline
+                      %input{:type => "checkbox", :value => ""}>/
+                      Chimique
+
+                .container
+                  %br
+                  %b Resultat Examen
+                  %br
+                  %form
+                    %label.checkbox-inline
+                      %input{:type => "checkbox", :value => ""}>/
+                      Reussi
+                    %label.checkbox-inline
+                      %input{:type => "checkbox", :value => ""}>/
+                      Echec
+
+            #examStudSkill.tab-pane
+              .ligneorange
+              .container-fluid.boxclassetitle
+                .pull-left Exam Student Skill
+                %table.table
+                  %thead
+                    %tr
+                      %th Row
+                      %th First Name
+                      %th Last Name
+                      %th Email
+                  %tbody
+                    %tr
+                      %td 1
+                      %td John
+                      %td Carter
+                      %td johncarter@mail.com
+                    %tr
+                      %td 2
+                      %td Peter
+                      %td Parker
+                      %td peterparker@mail.com
+                    %tr
+                      %td 3
+                      %td John
+                      %td Rambo
+                      %td johnrambo@mail.com
+
+          .ligneorange
+          .container-fluid.boxclassetitle
+            .pull-right
+              %form{method: "POST", action: "{ url '#' }"}
+                -csrf_token
+                %input{:checked => "checked", :name => "csv_type", :type => "radio", :value => "std"}/
+                Standard
+
+                %input{:name => "csv_type", :type => "radio", :value => "euro"}/
+                European
+                %br
+                %br
+                %button.btn.btn-lg.btn-primary{type: "submit", name: "csv_export_button"}
+                  Exporter en CSV
+
+
+          
