@@ -8,31 +8,8 @@
 -block head
   -compress js
     %script{type: "text/javascript", src: "{% static 'js/detailledViewStudent.js' %}"}
-    -#%script{type: "text/javascript", src: "{% static 'js/detailledViewStudent2.js' %}"}
-    <script type="text/javascript">
-    $().ready(function(){
-      $('[rel="tooltip"]').tooltip();
+    %script{type: "text/javascript", src: "{% static 'js/detailledViewStudent2.js' %}"}
 
-      $('a.scroll-down').click(function(e){
-        e.preventDefault();
-        scroll_target = $(this).data('href');
-        $('html, body').animate({
-          scrollTop: $(scroll_target).offset().top - 60
-        }, 1000);
-      });
-
-    });
-
-    function rotateCard(btn){
-      var $card = $(btn).closest('.card-container');
-      console.log($card);
-      if($card.hasClass('hover')){
-        $card.removeClass('hover');
-      } else {
-        $card.addClass('hover');
-      }
-    }
-  </script>
   -compress css
     %link{href: "{% static 'css/detailledViewStudent.css' %}", rel: "stylesheet"}
 
@@ -328,7 +305,7 @@
                 -for item in user.student.get_three_next
                   %tr.legend-list
                     %td.legend
-                      %i.round-section-icon.recommended{class: "fa fa-%i.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}", title: "{{ item.student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ item.student_skill.skill.section }}"}
+                      %i.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}
                     %td.legend
                       %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
                     %td
