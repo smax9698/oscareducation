@@ -1,4 +1,8 @@
 import csv
+import io
+#  from io import StringIO
+import zipfile
+import StringIO
 
 from django.db.models import Count
 from django.http import HttpResponse
@@ -13,6 +17,7 @@ from users.models import Professor, Student
 from .utils import user_is_superuser
 
 from stats.StatsObject import get_class_stat, get_student_stat
+from stats.utils import *
 
 @user_is_professor
 def exportCSV(request, pk):
@@ -56,6 +61,65 @@ def superuser_view_stats(request):
         "predefined_timespan": predefined_timespan,
 
     })
+
+@user_is_professor
+def superuserCSV(request):
+    """Downloads a CSV file of the displayed data"""
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = 'filename=all_data.zip'
+
+    if request.POST.get("csv_type", None) == "euro":
+        csvT = ";"
+    else:
+        csvT = ","
+
+    buff = StringIO.StringIO()
+    archive = zipfile.ZipFile(buff,'w',zipfile.ZIP_DEFLATED)
+
+    if request.POST.get("loginStats", None) != None:
+        file_like_1 = StringIO.StringIO()
+        writer1 = csv.writer(file_like_1, delimiter=csvT)
+        temp = []
+        if request.POST.get('student', None) != None:
+            temp.append('student')
+        if request.POST.get('professor', None) != None:
+            temp.append('professor')
+        if request.POST.get('admin', None) != None:
+            temp.append('admin')
+        for item in get_login_stats_by_professor(request.POST.get("startDateLS", None),request.POST.get("endDateLS", None),temp):
+            writer1.writerow(item)
+        archive.writestr('loginStats.csv',file_like_1.getvalue())
+    if request.POST.get("resStudent", None) != None:
+        file_like_1 = StringIO.StringIO()
+        writer1 = csv.writer(file_like_1, delimiter=csvT)
+        # for item in get_res_students_by_professor(request.POST.get("startDateRS", None),request.POST.get("endDateRS", None)):
+        #     writer1.writerow(item)
+        archive.writestr('resourcesStudent.csv',file_like_1.getvalue())
+    if request.POST.get("authStudent", None) != None:
+        file_like_1 = StringIO.StringIO()
+        writer1 = csv.writer(file_like_1, delimiter=csvT)
+        # for item in get_auth_students_by_professor(request.POST.get("startDateAS", None),request.POST.get("endDateAS", None)):
+        #     writer1.writerow(item)
+        archive.writestr('authenticationStudents.csv',file_like_1.getvalue())
+    if request.POST.get("examStudent", None) != None:
+        file_like_1 = StringIO.StringIO()
+        writer1 = csv.writer(file_like_1, delimiter=csvT)
+        # for item in get_exam_students_by_professor():
+        #     writer1.writerow(item)
+        archive.writestr('examStudents.csv',file_like_1.getvalue())
+    if request.POST.get("examStudentSkill", None) != None:
+        file_like_1 = StringIO.StringIO()
+        writer1 = csv.writer(file_like_1, delimiter=csvT)
+        # for item in get_exam_students_skill_by_professor():
+        #     writer1.writerow(item)
+        archive.writestr('examStudentSkill.csv',file_like_1.getvalue())
+
+    archive.close()
+    buff.flush()
+    ret_zip = buff.getvalue()
+    buff.close()
+    response.write(ret_zip)
+    return response
 
 
 @user_is_superuser

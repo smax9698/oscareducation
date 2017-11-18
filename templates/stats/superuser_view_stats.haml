@@ -30,40 +30,40 @@
       .container-fluid.boxclassetitle
         .col-md-12
          
-          %form
+          %form{method: "POST", action: "{% url 'stats:superuserCSV' %}"}
             %label.checkbox
-              %input{:type => "checkbox", :value => "student"}>/
+              %input{:type => "checkbox", :value => "loginStats", :name => "loginStats"}>/
               %font{:size => "4"} Login Stats
               .ligneorange
               .container-fluid.boxclassetitle
                 .pull-left
                 %p Sélectionnez les types d'utilisateurs
-                %form
+                  %br
+
                   %label.checkbox-inline
-                    %input{:type => "checkbox", :value => "student"}>/
+                    %input{:type => "checkbox", :name => "student", :value => "student"}>/
                     Étudiant·e
                   %label.checkbox-inline
-                    %input{:type => "checkbox", :value => "professor"}>/
+                    %input{:type => "checkbox", :name => "professor", :value => "professor"}>/
                     Professeur
                   %label.checkbox-inline
-                    %input{:type => "checkbox", :value => "admin"}>/
+                    %input{:type => "checkbox", :name => "admin", :value => "admin"}>/
                     Admin
-                %br
-                %br
+                
                 %p Période date d'accès
 
                 %div{:id => "timespan"}
                   %label.checkbox-inline
                     Depuis :
-                    %input#startDateLS{:type => "date"}/
+                    %input#startDateLS{:type => "date", :name => "startDateLS"}/
                   %label.checkbox-inline
                     Jusque :
-                    %input#endDateLS{:type => "date"}/
+                    %input#endDateLS{:type => "date", :name => "endDateLS"}/
 
 
 
             %label.checkbox
-              %input{:type => "checkbox", :value => "student"}>/
+              %input{:type => "checkbox", :value => "resStudent", :name => "resStudent"}>/
               %font{:size => "4"} Resource Student
               .ligneorange
               .container-fluid.boxclassetitle
@@ -74,14 +74,14 @@
                 %div{:id => "timespan"}
                   %label.checkbox-inline
                     Depuis :
-                    %input#startDateRS{:type => "date"}/
+                    %input#startDateRS{:type => "date", :name => "startDateRS"}/
                   %label.checkbox-inline
                     Jusque :
-                    %input#endDateRS{:type => "date"}/
+                    %input#endDateRS{:type => "date", :name => "endDateRS"}/
 
 
             %label.checkbox
-              %input{:type => "checkbox", :value => "student"}>/
+              %input{:type => "checkbox", :value => "authStudent", :name => "authStudent"}>/
               %font{:size => "4"} Authentication Student
               .ligneorange
               .container-fluid.boxclassetitle
@@ -91,26 +91,23 @@
                 %div{:id => "timespan"}
                   %label.checkbox-inline
                     Depuis :
-                    %input#startDateAS{:type => "date"}/
+                    %input#startDateAS{:type => "date", :name => "startDateAS"}/
                   %label.checkbox-inline
                     Jusque :
-                    %input#endDateAS{:type => "date"}/
+                    %input#endDateAS{:type => "date", :name => "endDateAS"}/
 
             %label.checkbox
-              %input{:type => "checkbox", :value => "student"}>/
+              %input{:type => "checkbox", :value => "examStudent", :name => "examStudent"}>/
               %font{:size => "4"} Exam Student
               .ligneorange
             %br
             %label.checkbox
-              %input{:type => "checkbox", :value => "student"}>/
+              %input{:type => "checkbox", :value => "examStudentSkill", :name => "examStudentSkill"}>/
               %font{:size => "4"} Exam Student Skill
-             
 
-
-          .ligneorange
-          .container-fluid.boxclassetitle
-            .pull-right
-              %form{method: "POST", action: "{ url '#' }"}
+            .ligneorange
+            %br
+            %br
                 -csrf_token
                 %input{:checked => "checked", :name => "csv_type", :type => "radio", :value => "std"}/
                 Standard
@@ -119,6 +116,7 @@
                 Européen
                 %br
                 %br
-                %button.btn.btn-lg.btn-primary{type: "submit", name: "csv_export_button"}
-                  Exporter en CSV
+            
+            %button.btn.btn-lg.btn-primary{type: "submit", name: "csv_export_button"}
+              Exporter en CSV
           
