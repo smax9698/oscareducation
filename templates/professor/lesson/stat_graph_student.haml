@@ -21,33 +21,32 @@
     / Actual content of the page
     %div{:id => "page-content-wrapper"}
       .container-fluid
-        .jumbotron
-          .ligneorangefine
-          -#%ul.nav.orange.nav-tabs
-          -#  %li.active{role: "presentation"}
-          -#    %a{href: "#class"}
-          -#      {{ lesson.name }}
-          -#  %li{role: "presentation"}
-              -# %a{href: "{% url 'stats:view_student' lesson.pk %}"}
-          -#    %a{href: "#students"}
-          -#      Mes étudiants
-          %ul.nav.nav-tabs
-            %li.dropdown.active
-              %a.dropdown-toggle{"data-toggle": "dropdown"}
+        .col-lg-4
+          .container-fluid
+            .dropdown
+              .button{:class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
                 Etudiants de la classe
                 %span.caret
               %ul.dropdown-menu
-                -for student in lesson.students.all
-                  %li
-                    %a{"data-toggle": "tab", href: "#menu2"} {{ student }}
-
-            %p Profil de l'étudiant
-            %h2 Nom : {{student.user.first_name}}
-            %h2 Prénom : {{student.user.last_name}}
-            %h2 Email : {{ student.user.email}}
-        .container-fluid
-          .jumbotron
-            %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "300", :width => "400", :lesson => "{{lesson.pk}}"}
+                -for stud in lesson.students.all
+                  -if stud == student
+                    %li{:class=>"active"}
+                      %a
+                        {{ stud }}
+                  -else
+                    %li
+                      %a{:href=>'#'}
+                        {{ stud }}
+        .col-lg-8
+          .container-fluid
+            .jumbotron
+              %p Profil de l'étudiant
+              %h2 Nom : {{student.user.first_name}}
+              %h2 Prénom : {{student.user.last_name}}
+              %h2 Email : {{ student.user.email}}
+      .container-fluid
+        .jumbotron
+          %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "400", :width => "600", :lesson => "{{lesson.pk}}"}
 
 
 
