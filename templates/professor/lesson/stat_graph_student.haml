@@ -1,0 +1,59 @@
+-extends "base.haml"
+-load static
+
+-load bootstrap3
+
+-block head
+  %script{:src => "https://d3js.org/d3.v4.min.js"}
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.pk %}"} Classe {{lesson.name}}
+    %li.active
+      Statistiques
+      =student
+
+-block content
+
+    / Actual content of the page
+    %div{:id => "page-content-wrapper"}
+      .container-fluid
+        .jumbotron
+          .ligneorangefine
+          -#%ul.nav.orange.nav-tabs
+          -#  %li.active{role: "presentation"}
+          -#    %a{href: "#class"}
+          -#      {{ lesson.name }}
+          -#  %li{role: "presentation"}
+              -# %a{href: "{% url 'stats:view_student' lesson.pk %}"}
+          -#    %a{href: "#students"}
+          -#      Mes étudiants
+          %ul.nav.nav-tabs
+            %li.dropdown.active
+              %a.dropdown-toggle{"data-toggle": "dropdown"}
+                Etudiants de la classe
+                %span.caret
+              %ul.dropdown-menu
+                -for student in lesson.students.all
+                  %li
+                    %a{"data-toggle": "tab", href: "#menu2"} {{ student }}
+
+            %p Profil de l'étudiant
+            %h2 Nom : {{student.user.first_name}}
+            %h2 Prénom : {{student.user.last_name}}
+            %h2 Email : {{ student.user.email}}
+        .container-fluid
+          .jumbotron
+            %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "300", :width => "400", :lesson => "{{lesson.pk}}"}
+
+
+
+
+
+
+
+  -block javascript
+    %script(src="/static/js/graph_specific_student.js")

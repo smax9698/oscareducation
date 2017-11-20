@@ -67,7 +67,6 @@ function generateGraph(username, data) {
         .attr("height", function (d) {
             return y(d[0]) - y(d[1]);
         });
-    /* Do not need this for the global view with all student
     g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
@@ -81,7 +80,6 @@ function generateGraph(username, data) {
         .call(d3.axisBottom(xmonth)
             .tickSize(0)
             .tickPadding(10));
-    */
 }
 
 $(".graph-student").each(function() {

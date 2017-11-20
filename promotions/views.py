@@ -1,4 +1,4 @@
-# encoding: utf-8
+    # encoding: utf-8
 
 import json
 import os
@@ -1897,3 +1897,18 @@ def retrieve_stat(request, pk_lesson, username):
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
 
     return HttpResponse(get_stat_for_student(student, lesson, "UUA1"))
+
+
+def show_specific_stat(request, pk_lesson, username):
+
+    user = get_object_or_404(User, username=username)
+    student = get_object_or_404(Student, user=user)
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+
+    data = {}
+    data['graph'] = get_stat_for_student(student, lesson, "UAA1")
+    data['student'] = student
+    data['lesson'] = lesson
+
+    return render(request, "professor/lesson/stat_graph_student.haml", data)
+
