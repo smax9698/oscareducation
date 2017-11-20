@@ -37,6 +37,15 @@
                     %li
                       %a{:href=>'#'}
                         {{ stud }}
+            .dropdown
+              .button{:class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
+                Unité d'enseignement
+                %span.caret
+              %ul.dropdown-menu
+                -for uaa in uaa_list
+                  %li
+                    %a{href: "{% url 'professor:show_specific_stat' lesson.pk student.user.username uaa.pk %}"}
+                      {{ uaa.name }}
         .col-lg-8
           .container-fluid
             .jumbotron
@@ -46,7 +55,7 @@
               %h2 Email : {{ student.user.email}}
       .container-fluid
         .jumbotron
-          %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "400", :width => "600", :lesson => "{{lesson.pk}}"}
+          %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "400", :width => "600", :lesson => "{{lesson.pk}}", :uaa => current_uaa}
 
 
 

@@ -85,7 +85,9 @@ function generateGraph(username, data) {
 $(".graph-student").each(function() {
     var username = $(this.getAttribute("id")).selector;
     var lesson = $(this.getAttribute("lesson")).selector;
-    d3.request(encodeURI("/professor/lesson/" + lesson + "/getStat/"+username))
+    var uaa = $(this.getAttribute("uaa")).selector;
+
+    d3.request(encodeURI("/professor/lesson/" + lesson + "/getStat/"+username + "/" + uaa + "/"))
         .get(function(data) {
             if (data === null) {
                 console.log("no data");
