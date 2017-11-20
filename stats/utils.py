@@ -1,5 +1,5 @@
 import datetime
-
+from datetime import datetime
 import pytz
 from django.contrib.auth.decorators import user_passes_test
 
@@ -95,3 +95,86 @@ def get_students_by_professor(professor):
             if str(student) not in students_dico:
                 yield student
                 students_dico[str(student)] = True
+
+def get_login_stats_by_professor(startDate,endDate, userKind):
+    """
+    Returns all login stats objects fulfilling the filtering criteria
+
+    :param startDate: timedate
+    :param endDate: timedate
+    """
+    if startDate != '':
+        if endDate != '': # filter with both
+            allLogins = models.LoginStats.objects.filter(when__lte=endDate).filter(when__gte=startDate).filter(user_kind__in=userKind)
+        else: # filter with only endDate
+            allLogins = models.LoginStats.objects.filter(when__lte=endDate).filter(user_kind__in=userKind)
+    else:
+        if endDate != '': # filter with only start
+            allLogins = models.LoginStats.objects.filter(when__gte=startDate).filter(user_kind__in=userKind)
+        else: # no filter
+            allLogins = models.LoginStats.objects.all()
+
+    for item in allLogins:
+        yield [item.user, item.user_kind, item.when]
+
+def get_res_students_by_professor(startDate,endDate):
+    """
+    Returns all resource student objects fulfilling the filtering criteria
+
+    :param startDate: timedate
+    :param endDate: timedate
+    """
+    if startDate != '':
+        if endDate != '': # filter with both
+            allLogins = models.ResourceStudent.objects.filter(when__lte=endDate).filter(when__gte=startDate).filter(user_kind__in=userKind)
+        else: # filter with only endDate
+            allLogins = models.ResourceStudent.objects.filter(when__lte=endDate).filter(user_kind__in=userKind)
+    else:
+        if endDate != '': # filter with only start
+            allLogins = models.ResourceStudent.objects.filter(when__gte=startDate).filter(user_kind__in=userKind)
+        else: # no filter
+            allLogins = models.ResourceStudent.objects.all()
+
+    for item in allLogins:
+        yield [item.resource, item.student, item.when]
+
+def get_auth_students_by_professor(startDate,endDate):
+    """
+    Returns all authentication student objects fulfilling the filtering criteria
+
+    :param startDate: timedate
+    :param endDate: timedate
+    """
+    if startDate != '':
+        if endDate != '': # filter with both
+            allLogins = models.AuthenticationStudent.objects.filter(date_accessed__lte=endDate).filter(date_accessed__gte=startDate)
+        else: # filter with only endDate
+            allLogins = models.AuthenticationStudent.objects.filter(date_accessed__lte=endDate)
+    else:
+        if endDate != '': # filter with only start
+            allLogins = models.AuthenticationStudent.objects.filter(date_accessed__gte=startDate)
+        else: # no filter
+            allLogins = models.AuthenticationStudent.objects.all()
+
+    for item in allLogins:
+        yield [item.student, item.date_accessed, item.end_of_session]
+
+def get_exam_students_by_professor():
+    """
+    Returns all authentication student objects fulfilling the filtering criteria
+
+    """
+    allLogins = models.ExamStudent.objects.all()
+
+    for item in allLogins:
+        yield [item.student, item.exam, item.succeeded]
+
+def get_exam_students_skill_by_professor():
+    """
+    Returns all authentication student objects fulfilling the filtering criteria
+
+    """
+    allLogins = models.ExamStudentSkill.objects.all()
+
+    for item in allLogins:
+        yield [item.skill_student, item.skill]
