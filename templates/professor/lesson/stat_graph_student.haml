@@ -5,6 +5,7 @@
 
 -block head
   %script{:src => "https://d3js.org/d3.v4.min.js"}
+  %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"}
 
 -block breadcrumb
   %ol.breadcrumb
@@ -12,7 +13,7 @@
       %a{href: "{% url 'professor:dashboard' %}"} Oscar
     %li
       %a{href: "{% url 'professor:lesson_detail' lesson.pk %}"} Classe {{lesson.name}}
-    %li.active
+    %li.active{:id => "breadcrumb"}
       Statistiques
       =student
 
@@ -30,12 +31,12 @@
               %ul.dropdown-menu
                 -for stud in lesson.students.all
                   -if stud == student
-                    %li{:class=>"active"}
-                      %a
+                    %li
+                      %a{:href=>"#", :onclick => "updateCount( \"{{ student.user.username }}\",\"{{ stud.user.username }}\" , \"{{ lesson.pk }}\" );"}
                         {{ stud }}
                   -else
                     %li
-                      %a{:href=>'#'}
+                      %a{:href=>"#", :onclick => "updateCount( \"{{ student.user.username }}\",\"{{ stud.user.username}}\" , \"{{ lesson.pk }}\" );"}
                         {{ stud }}
             .dropdown
               .button{:class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
@@ -50,18 +51,13 @@
           .container-fluid
             .jumbotron
               %p Profil de l'étudiant
-              %h2 Nom : {{student.user.first_name}}
-              %h2 Prénom : {{student.user.last_name}}
-              %h2 Email : {{ student.user.email}}
+              %h2{:id => "last_name" } Nom : {{student.user.last_name}}
+              %h2{:id => "first_name" } Prénom : {{student.user.first_name}}
+              %h2{:id => "email" } Email : {{ student.user.email}}
       .container-fluid
         .jumbotron
-          %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "400", :width => "600", :lesson => "{{lesson.pk}}", :uaa => current_uaa}
-
-
-
-
-
-
+          %svg{:id => "{{student.user.username}}", :graph => "graph", :class => "graph-student", :height => "400", :width => "600", :lesson => "{{lesson.pk}}", :uaa => current_uaa}
 
   -block javascript
     %script(src="/static/js/graph_specific_student.js")
+    %script(src="/static/js/reload_graph.js")
