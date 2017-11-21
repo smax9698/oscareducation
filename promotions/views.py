@@ -43,12 +43,11 @@ from resources.models import KhanAcademy, Sesamath
 from resources.models import Resource
 from skills.models import Skill
 from skills.models import StudentSkill, CodeR, Section, Relations, CodeR_relations
+from stats.StatsObject import get_stat_for_student, get_all_uaa_for_lesson
 from users.models import Student
 from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
     TestUpdateForm, SesamathForm, ResourceForm, CSVForm
 from .utils import generate_random_password
-
-from stats.StatsObject import get_stat_for_student
 
 """"@user_is_professor
 def exportCSV(request, pk):
@@ -1891,9 +1890,28 @@ def enseign_trans(request):
     return render(request, "professor/skill/new-list-trans.haml", data)
 
 
-def retrieve_stat(request, pk_lesson, username):
+def retrieve_stat(request, pk_lesson, username, pk_uaa):
+    user = get_object_or_404(User, username=username)
+    student = get_object_or_404(Student, user=user)
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+    uaa = get_object_or_404(Section, pk=pk_uaa) if not (pk_uaa == u'-1') else None
+
+    return HttpResponse(get_stat_for_student(student, lesson, uaa))
+
+
+def show_specific_stat(request, pk_lesson, username, pk_uaa):
     user = get_object_or_404(User, username=username)
     student = get_object_or_404(Student, user=user)
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
 
-    return HttpResponse(get_stat_for_student(student, lesson, "UUA1"))
+    uaa = get_object_or_404(Section, pk=pk_uaa) if not (pk_uaa == u"-1") else None
+
+    data = {
+        'graph': get_stat_for_student(student, lesson, uaa),
+        'student': student,
+        'lesson': lesson,
+        'uaa_list': get_all_uaa_for_lesson(lesson),
+        'current_uaa': pk_uaa
+    }
+
+    return render(request, "professor/lesson/stat_graph_student.haml", data)

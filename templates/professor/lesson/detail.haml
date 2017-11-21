@@ -76,7 +76,8 @@
                         %img.icon{src: "{% static 'img/icons/multy-mdp.png' %}", data-toggle: "tooltip", data-placement: "top", title: "regénérer un code pour l´élève"}
 
                   %td
-                    %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "100", :width => "400"}
+                    %a{href: "{% url 'professor:show_specific_stat' lesson.pk student.user.username -1 %}"}
+                      %svg{:id => "{{student.user.username}}", :class => "graph-student", :height => "100", :width => "400", :lesson => "{{lesson.pk}}", :uaa => "-1"}
 
 
                   %td
