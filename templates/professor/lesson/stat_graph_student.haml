@@ -31,12 +31,12 @@
               %ul.dropdown-menu
                 -for stud in lesson.students.all
                   -if stud == student
-                    %li
-                      %a{:href=>"#", :onclick => "updateCount( \"{{ student.user.username }}\",\"{{ stud.user.username }}\" , \"{{ lesson.pk }}\" );"}
+                    %li{:class => "active stud"}
+                      %a{:href=>"#",:student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
                         {{ stud }}
                   -else
-                    %li
-                      %a{:href=>"#", :onclick => "updateCount( \"{{ student.user.username }}\",\"{{ stud.user.username}}\" , \"{{ lesson.pk }}\" );"}
+                    %li{:class => "stud"}
+                      %a{:href=>"#", :student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
                         {{ stud }}
             .dropdown
               .button{:class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
@@ -44,8 +44,10 @@
                 %span.caret
               %ul.dropdown-menu
                 -for uaa in uaa_list
-                  %li
-                    %a{href: "{% url 'professor:show_specific_stat' lesson.pk student.user.username uaa.pk %}"}
+                  %li{:class => "uaaSelector"}
+                    %a{href: "#", :uaa => "{{uaa.pk}}"}
+                      {{ uaa.name }}
+                    /%a{href: "{% url 'professor:show_specific_stat' lesson.pk student.user.username uaa.pk %}"}
                       {{ uaa.name }}
         .col-lg-8
           .container-fluid
