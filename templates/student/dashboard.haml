@@ -173,102 +173,52 @@
                                 -if user.student.get_learning_track|length > 0
                                   -for item in user.student.get_learning_track
                                     -#-if student_skill.recommended_to_learn
-                                    -if forloop.first
-                                      %div{:class => "item active"}
-                                        %div{:class => "col-sm-4"}
-                                          %div{:class => "card-container"}
-                                            %div{:class => "card"}
-                                              %div{:class => "front"}
-                                                %div{:class => "cover red"}
-                                                  <!-- <img src="images/rotating_card_thumb2.png"/> -->
-                                                %div{:class => "user"}
-                                                  <img class="img-circle" src="images/rotating_card_profile3.png" />
-                                                %div{:class => "content"}
-                                                  %div{:class => "main"}
-                                                    <h3 class="name"> {{ item.student_skill.skill.code }} </h3>
-                                                  %div{:class => "footer"}
-                                                    <i class="fa fa-mail-forward"></i> Description
-                                              %div{:class => "back"}
-                                                %div{:class => "header"}
-                                                  <h5 class="motto">S4E3II</h5>
-                                                %div{:class => "content"}
-                                                  %div{:class => "main"}
-                                                    <h4 class="text-center">Description</h4>
-                                                    <p class="text-center"> {{ item.student_skill.skill.name }} </p>
-
-
-                                    -else
-                                      %div{:class => "item"}
-                                        %div{:class => "col-sm-4"}
-                                          %div{:class => "card-container"}
-                                            %div{:class => "card"}
-                                              %div{:class => "front"}
-                                                %div{:class => "cover red"}
-                                                  <!-- <img src="images/rotating_card_thumb2.png"/> -->
-                                                %div{:class => "user"}
-                                                  <img class="img-circle" src="images/rotating_card_profile3.png" />
-                                                %div{:class => "content"}
-                                                  %div{:class => "main"}
-                                                    <h3 class="name"> {{ item.student_skill.skill.code }} </h3>
-                                                  %div{:class => "footer"}
-                                                    <i class="fa fa-mail-forward"></i> Description
-                                              %div{:class => "back"}
-                                                %div{:class => "header"}
-                                                  <h5 class="motto">S4E3II</h5>
-                                                %div{:class => "content"}
-                                                  %div{:class => "main"}
-                                                    <h4 class="text-center">Description</h4>
-                                                    <p class="text-center"> {{ item.student_skill.skill.name }} </p>
+                                    %div{:class => "item"}
+                                      %div{:class => "col-sm-4"}
+                                        %div{:class => "card-container"}
+                                          %div{:class => "card"}
+                                            %div{:class => "front"}
+                                              %div{:class => "cover red"}
+                                                <!-- <img src="images/rotating_card_thumb2.png"/> -->
+                                              %div{:class => "user"}
+                                                <img class="img-circle" src="images/rotating_card_profile3.png" />
+                                              %div{:class => "content"}
+                                                %div{:class => "main"}
+                                                  <h3 class="name"> {{ item.student_skill.skill.code }} </h3>
+                                                %div{:class => "footer"}
+                                                  <i class="fa fa-mail-forward"></i> Description
+                                            %div{:class => "back"}
+                                              %div{:class => "header"}
+                                                <h5 class="motto">S4E3II</h5>
+                                              %div{:class => "content"}
+                                                %div{:class => "main"}
+                                                  <h4 class="text-center">Description</h4>
+                                                  <p class="text-center"> {{ item.student_skill.skill.name }} </p>
 
                                 -else
                                   -for student_skill in user.student.get_recommended_skills
-                                    -if forloop.first
-                                      %div{:class => "item active"}
-                                        %div{:class => "col-sm-4"}
-                                          %div{:class => "card-container"}
-                                            %div{:class => "card"}
-                                              %div{:class => "front"}
-                                                %div{:class => "cover red"}
-                                                  <!-- <img src="images/rotating_card_thumb2.png"/> -->
-                                                %div{:class => "user"}
-                                                  <img class="img-circle" src="images/rotating_card_profile3.png" />
-                                                %div{:class => "content"}
-                                                  %div{:class => "main"}
-                                                    <h3 class="name"> {{ item.student_skill.skill.code }} </h3>
-                                                  %div{:class => "footer"}
-                                                    <i class="fa fa-mail-forward"></i> Description
-                                              %div{:class => "back"}
-                                                %div{:class => "header"}
-                                                  <h5 class="motto">S4E3II</h5>
-                                                %div{:class => "content"}
-                                                  %div{:class => "main"}
-                                                    <h4 class="text-center">Description</h4>
-                                                    <p class="text-center"> {{ item.student_skill.skill.name }} </p>
 
-
-
-                                    -else
-                                      %div{:class => "item active"}
-                                        %div{:class => "col-sm-4"}
-                                          %div{:class => "card-container"}
-                                            %div{:class => "card"}
-                                              %div{:class => "front"}
-                                                %div{:class => "cover red"}
-                                                  <!-- <img src="images/rotating_card_thumb2.png"/> -->
-                                                %div{:class => "user"}
-                                                  <img class="img-circle" src="images/rotating_card_profile3.png" />
-                                                %div{:class => "content"}
-                                                  %div{:class => "main"}
-                                                    <h3 class="name"> {{ item.student_skill.skill.code }} </h3>
-                                                  %div{:class => "footer"}
-                                                    <i class="fa fa-mail-forward"></i> Description
-                                              %div{:class => "back"}
-                                                %div{:class => "header"}
-                                                  <h5 class="motto">S4E3II</h5>
-                                                %div{:class => "content"}
-                                                  %div{:class => "main"}
-                                                    <h4 class="text-center">Description</h4>
-                                                    <p class="text-center"> {{ item.student_skill.skill.name }} </p>
+                                    %div{:class => "item"}
+                                      %div{:class => "col-sm-4"}
+                                        %div{:class => "card-container"}
+                                          %div{:class => "card"}
+                                            %div{:class => "front"}
+                                              %div{:class => "cover red"}
+                                                <!-- <img src="images/rotating_card_thumb2.png"/> -->
+                                              %div{:class => "user"}
+                                                <img class="img-circle" src="images/rotating_card_profile3.png" />
+                                              %div{:class => "content"}
+                                                %div{:class => "main"}
+                                                  <h3 class="name"> {{ item.student_skill.skill.code }} </h3>
+                                                %div{:class => "footer"}
+                                                  <i class="fa fa-mail-forward"></i> Description
+                                            %div{:class => "back"}
+                                              %div{:class => "header"}
+                                                <h5 class="motto">S4E3II</h5>
+                                              %div{:class => "content"}
+                                                %div{:class => "main"}
+                                                  <h4 class="text-center">Description</h4>
+                                                  <p class="text-center"> {{ item.student_skill.skill.name }} </p>
 
 
 

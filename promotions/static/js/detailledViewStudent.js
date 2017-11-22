@@ -19,4 +19,6 @@ $(function(){
         $(this).siblings(':first').children(':first-child').clone().appendTo($(this));
       }
     });
+    $('#theCarousel .item').first().addClass("active")
+    console.log();
 })
