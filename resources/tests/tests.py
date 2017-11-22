@@ -26,9 +26,9 @@ class TestAdmin(LiveServerTestCase):
         driver = self.driver
         driver.get(self.base_url + "/admin/login/?next=/admin/")
         driver.find_element_by_id("id_password").clear()
-        driver.find_element_by_id("id_password").send_keys("oscar")
+        driver.find_element_by_id("id_password").send_keys("test")
         driver.find_element_by_id("id_username").clear()
-        driver.find_element_by_id("id_username").send_keys("oscar")
+        driver.find_element_by_id("id_username").send_keys("test")
         driver.find_element_by_css_selector("input[type=\"submit\"]").click()
         driver.find_element_by_xpath("(//a[contains(text(),'Modifier')])[10]").click()
         driver.find_element_by_link_text("Ajouter professor criteria").click()
