@@ -1,17 +1,16 @@
 function selectSkillController($scope, $http) {
     $scope.stages = [];
 
-    $scope.setTemporaryTargets = function(lessonPk,professorPk) {
-        $http.post("/professor/lesson/" + lessonPk + "/set_learning_track_redirect/", {
+    $scope.setTemporaryTargets = function(lessonPk) {
+        $http.post("/professor/lesson/set_learning_track_redirect/", {
             "target_skill_codes": $scope.toTargetSkills,
-            "student_pk": $scope.selectedStudent,
-            "professor_pk": professorPk
+            "student_pk": $scope.selectedStudent
         }).success(function(data, status, headers, config) {
             new_url = "../set_learning_track/";
             $scope.selectedStudent.forEach(function(entry) {
                 new_url += entry + "_";
             });
-            window.location.href = new_url.substr(0, new_url.length - 1);
+            window.location.href = new_url.substr(0, new_url.length - 1) + "/0/";
         })
     };
 
@@ -51,7 +50,7 @@ function selectSkillController($scope, $http) {
         $("#alerts").html('<div />');
         $scope.toTargetSkills.splice($scope.toTargetSkills.indexOf(skill), 1);
         $("#" + skill).show();
-    }
+    };
 
     update_test_list = function () {
         $http.get("/professor/lesson_tests_and_skills/" + context.lessonId + ".json").

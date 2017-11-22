@@ -1874,20 +1874,16 @@ def main_education(request):
 def list_student_target(request, lesson_pk):
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
-    professor = request.user.professor
     return render(request, "professor/lesson/list_student_target.haml", {
         "lesson": lesson,
-        "professor": professor
     })
 
 @require_POST
 @user_is_professor
-def professor_set_learning_track_redirect(request, lesson_pk):
-    lesson = get_object_or_404(Lesson, pk=lesson_pk)
+def professor_set_learning_track_redirect(request):
     data = json.load(request)
     target_skill_codes = data["target_skill_codes"]
     students_pk = data["student_pk"]
-    professor_pk = data["professor_pk"]
     students = []
     for sPk in students_pk:
         students.append(get_object_or_404(Student, pk=sPk))
@@ -1895,7 +1891,7 @@ def professor_set_learning_track_redirect(request, lesson_pk):
     for tPk in target_skill_codes:
         target_skills.append(get_object_or_404(Skill, code=tPk))
 
-    professor = get_object_or_404(Professor, pk=professor_pk)
+    professor = request.user.professor
 
     for student in students:
         if len(target_skills) > 0:
@@ -1907,29 +1903,20 @@ def professor_set_learning_track_redirect(request, lesson_pk):
     return HttpResponse("Done")
 
 
-def professor_set_learning_track(request, lesson_pk, list_students):
+def professor_set_learning_track(request, lesson_pk, list_students, index):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
-    students_pk = list_students.split('_')
-
-    students = []
-    for s_pk in students_pk:
-        student = get_object_or_404(Student, pk=s_pk)
-        students.append(student)
-
-    return render(request, "professor/lesson/skill/learning_track.haml", {
-        "lesson": lesson,
-        "students": students,
-    })
-
-
-def lesson_edit_track(request, lesson_id):
-    lesson = get_object_or_404(Lesson, id=lesson_id)
-
-    if request.user.professor not in lesson.professors.all():
-        raise PermissionDenied()
-
-    return HttpResponse("Done")
-
+    students_pk = list_students.split("_")
+    if(int(index) < len(students_pk)):
+        student = get_object_or_404(Student, pk=students_pk[int(index)])
+        return render(request, "professor/lesson/skill/learning_track.haml", {
+            "lesson": lesson,
+            "list_students": list_students,
+            "student": student,
+            "length": len(students_pk),
+            "index": int(index)+1,
+        })
+    else:
+        return HttpResponseRedirect(reverse("professor:lesson_list_student_target", args=(lesson.pk,)))
 
 def socles_competence(request):
     data = {x.short_name: x for x in Stage.objects.all()}

@@ -1,18 +1,4 @@
 -extends "base.haml"
--load static
-
--load bootstrap3
-
--load compress
-
--block head
-  -compress js
-    %script{type: "text/javascript", src: "{% static 'js/professor_edit_learning_track.js' %}"}
-
-  :javascript
-    context = {
-      lessonId: {{ lesson.id }}
-    };
 
 -block breadcrumb
   %ol.breadcrumb
@@ -23,11 +9,13 @@
         Classe
         =lesson.name
     %li.active
-      Editeur de chemin de compétences
+      Editeur de chemin d'apprentissage
 
 -block content
   %h3
-    Chemin de compétences cibles
+    Chemin d'apprentissage:
+    %br
+    {{ student }}
   %hr
 
   %body
@@ -36,29 +24,21 @@
 
     .container-fluid.boxclassetitle
 
+      .pull-right
+        %a.btn.btn-primary{href: "{% url 'professor:lesson_skill_learning_track' lesson.pk list_students index %}"}
+          -if length == index
+            Terminer
+          -else
+            Elève suivant
+
     .ligneorangefine
 
     .container-fluid.boxclasse
-      %div{ng-app: "oscar", ng-controller: "learningPathController"}
+      %div
         %form.form
           .row
             .col-md-6
-              %p
-                Etudiants :
-
-              .list-group
-                -for student in students
-                  %a.list-group-item{href: "#", :ng-click => "toggleSelection({{ student.pk }})"}
-                    =student
-
-            .col-md-6
-              %p
-                Chemin de compétences :
-
-              .list-group
-                -for skill in learningTrack
-                  %a.list-group-item{href: "#"}
-                    =skill
-
-
-      %div#alerts
+              %tr
+                %td
+                  -for lt in student.get_learning_track
+                    {{ lt.student_skill.skill.code }}

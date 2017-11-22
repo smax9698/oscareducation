@@ -92,12 +92,9 @@ urlpatterns = [
     url(r'^professor_test_add_skill/$', views.professor_test_add_skill, name='professor_test_add_skill'),
     url(r'^professor_test_delete_skill/$', views.professor_test_delete_skill, name='professor_test_delete_skill'),
 
-    url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track_redirect/$', views.professor_set_learning_track_redirect,
+    url(r'^lesson/set_learning_track_redirect/$', views.professor_set_learning_track_redirect,
         name='lesson_skill_learning_track_redirect'),
-    url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track/(?P<list_students>[\w\-]+)/$', views.professor_set_learning_track,
+    url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track/(?P<list_students>[\w\-]+)/(?P<index>\d+)/$', views.professor_set_learning_track,
         name='lesson_skill_learning_track'),
-
-    url(r'^lesson/edit_track/(?P<lesson_id>\d+).json$', views.lesson_edit_track,
-        name='lesson_edit_track'),
 
 ]
