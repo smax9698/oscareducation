@@ -10,6 +10,11 @@
   -compress js
     %script{type: "text/javascript", src: "{% static 'js/professor_edit_learning_track.js' %}"}
 
+  :javascript
+    context = {
+      studentPk: {{ student.pk }}
+    };
+
 -block breadcrumb
   %ol.breadcrumb
     %li

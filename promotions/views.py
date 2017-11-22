@@ -1919,6 +1919,20 @@ def professor_set_learning_track(request, lesson_pk, list_students, index):
     else:
         return HttpResponseRedirect(reverse("professor:lesson_list_student_target", args=(lesson.pk,)))
 
+@require_POST
+@user_is_professor
+def professor_update_learning_track(request):
+    data = json.load(request)
+    list_skills = data["list_skills"]
+    student_pk = data["student_pk"]
+
+    student = get_object_or_404(Student, pk=student_pk)
+    skills = []
+    for skill_str in list_skills:
+        skills.append((get_object_or_404(Skill, code=skill_str.split(" ")[0])))
+    LearningTrack.save_modified_learning_track(student, skills)
+    return HttpResponse("Done")
+
 def socles_competence(request):
     data = {x.short_name: x for x in Stage.objects.all()}
 

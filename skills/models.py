@@ -396,6 +396,18 @@ class LearningTrack(models.Model):
         LearningTrack.objects.filter(student=student).delete()
 
     @staticmethod
+    def save_modified_learning_track(student, skills):
+        if student is None or skills is None:
+            raise TypeError
+
+        LearningTrack.clear_learning_track(student)
+        i = 0
+        for skill in skills:
+            student_skill = StudentSkill.objects.filter(skill=skill).first()
+            LearningTrack.objects.create(student=student, student_skill=student_skill, order=i)
+            i += 1
+
+    @staticmethod
     def new_learning_track(student, professor):
         """
         Create a new learning track for student based on the criteria of professor

@@ -96,5 +96,7 @@ urlpatterns = [
         name='lesson_skill_learning_track_redirect'),
     url(r'^lesson/(?P<lesson_pk>\d+)/set_learning_track/(?P<list_students>[\w\-]+)/(?P<index>\d+)/$', views.professor_set_learning_track,
         name='lesson_skill_learning_track'),
+    url(r'^lesson/update_learning_track/$', views.professor_update_learning_track,
+        name='lesson_skill_update_learning_track'),
 
 ]
