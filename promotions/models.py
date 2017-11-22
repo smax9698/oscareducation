@@ -58,8 +58,6 @@ class Lesson(models.Model):
     stage = models.ForeignKey(Stage, verbose_name=u"Année")
     """This Lesson Stage (its "level" in the education)"""
 
-    current_uaa = models.ForeignKey(Section, verbose_name=u"Unité d'enseignement actuelle", null=True)
-
     def stages_in_unchronological_order(self):
         stage = self.stage
 

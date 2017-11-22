@@ -77,7 +77,15 @@ def get_stat_for_student(student, lesson, current_uaa):
         data['data'].append(
             {'acquired': number_skill_acquired, 'not-acquired': total_skill_tested - number_skill_acquired})
         data['xaxis'].append(test.test.name)
+
+    data['student'] = {}
+
+    data['student']['first_name'] = student.user.first_name
+    data['student']['last_name'] = student.user.last_name
+    data['student']['email'] = student.user.email
+
     print(data)
+
     return json.JSONEncoder().encode(data)
 
 
