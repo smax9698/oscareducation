@@ -58,9 +58,10 @@ def add_authentication_by_student(user, end_date):
     end_date -- date object in the same form as datetime.datetime, which times the end of the session
 
     """
-    student = Student.objects.filter(user=user)[0]
-    new_entry = models.AuthenticationStudent(student=student, end_of_session=end_date)
-    new_entry.save()
+    pass
+#    student = Student.objects.filter(user=user)[0]
+#    new_entry = models.AuthenticationStudent(student=student, end_of_session=end_date)
+#    new_entry.save()
 
 
 def add_resource_accessed_by_student(student, resource_id):

@@ -17,7 +17,7 @@ import unittest, time, re
 class TestAdmin(LiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(30)
+        self.driver.implicitly_wait(300)
         self.base_url = "http://127.0.0.1:8000"
         self.verificationErrors = []
         self.accept_next_alert = True
@@ -29,6 +29,7 @@ class TestAdmin(LiveServerTestCase):
         driver.find_element_by_id("id_password").send_keys("test")
         driver.find_element_by_id("id_username").clear()
         driver.find_element_by_id("id_username").send_keys("test")
+        driver.find_element_by_id("djHideToolBarButton").click()
         driver.find_element_by_css_selector("input[type=\"submit\"]").click()
         driver.find_element_by_xpath("(//a[contains(text(),'Modifier')])[10]").click()
         driver.find_element_by_link_text("Ajouter professor criteria").click()
