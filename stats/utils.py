@@ -103,16 +103,17 @@ def get_login_stats_by_professor(startDate,endDate, userKind):
     :param startDate: timedate
     :param endDate: timedate
     """
+    print(userKind)
     if startDate != '':
         if endDate != '': # filter with both
             allLogins = models.LoginStats.objects.filter(when__lte=endDate).filter(when__gte=startDate).filter(user_kind__in=userKind)
-        else: # filter with only endDate
-            allLogins = models.LoginStats.objects.filter(when__lte=endDate).filter(user_kind__in=userKind)
+        else: # filter with only startDate
+            allLogins = models.LoginStats.objects.filter(when__lte=startDate).filter(user_kind__in=userKind)
     else:
-        if endDate != '': # filter with only start
-            allLogins = models.LoginStats.objects.filter(when__gte=startDate).filter(user_kind__in=userKind)
+        if endDate != '': # filter with only end
+            allLogins = models.LoginStats.objects.filter(when__gte=endDate).filter(user_kind__in=userKind)
         else: # no filter
-            allLogins = models.LoginStats.objects.all()
+            allLogins = models.LoginStats.objects.filter(user_kind__in=userKind)
 
     for item in allLogins:
         yield [item.user, item.user_kind, item.when]
@@ -126,12 +127,12 @@ def get_res_students_by_professor(startDate,endDate):
     """
     if startDate != '':
         if endDate != '': # filter with both
-            allLogins = models.ResourceStudent.objects.filter(when__lte=endDate).filter(when__gte=startDate).filter(user_kind__in=userKind)
+            allLogins = models.ResourceStudent.objects.filter(when__lte=endDate).filter(when__gte=startDate)
         else: # filter with only endDate
-            allLogins = models.ResourceStudent.objects.filter(when__lte=endDate).filter(user_kind__in=userKind)
+            allLogins = models.ResourceStudent.objects.filter(when__lte=startDate)
     else:
         if endDate != '': # filter with only start
-            allLogins = models.ResourceStudent.objects.filter(when__gte=startDate).filter(user_kind__in=userKind)
+            allLogins = models.ResourceStudent.objects.filter(when__gte=endDate)
         else: # no filter
             allLogins = models.ResourceStudent.objects.all()
 
@@ -149,10 +150,10 @@ def get_auth_students_by_professor(startDate,endDate):
         if endDate != '': # filter with both
             allLogins = models.AuthenticationStudent.objects.filter(date_accessed__lte=endDate).filter(date_accessed__gte=startDate)
         else: # filter with only endDate
-            allLogins = models.AuthenticationStudent.objects.filter(date_accessed__lte=endDate)
+            allLogins = models.AuthenticationStudent.objects.filter(date_accessed__lte=startDate)
     else:
         if endDate != '': # filter with only start
-            allLogins = models.AuthenticationStudent.objects.filter(date_accessed__gte=startDate)
+            allLogins = models.AuthenticationStudent.objects.filter(date_accessed__gte=endDate)
         else: # no filter
             allLogins = models.AuthenticationStudent.objects.all()
 

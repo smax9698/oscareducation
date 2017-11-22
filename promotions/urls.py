@@ -18,8 +18,8 @@ urlpatterns = [
     url(r'^lesson/(?P<pk>\d+)/$', views.lesson_detail, name='lesson_detail'),
     url(r'^lesson/(?P<pk>\d+)/update/$', views.lesson_update, name='lesson_update'),
     url(r'^lesson/(?P<pk>\d+)/delete/$', user_is_professor(LessonDelete.as_view()), name='lesson_delete'),
-    url(r'^lesson/(?P<pk_lesson>\d+)/getStat/(?P<username>([a-zA-Z0-9]|\.)+)/$', views.retrieve_stat, name="retrieve_stat"),
-    url(r'^lesson/(?P<pk_lesson>\d+)/viewStat/(?P<username>([a-zA-Z0-9]|\.)+)/$', views.show_specific_stat, name="show_specific_stat"),
+    url(r'^lesson/(?P<pk_lesson>\d+)/getStat/(?P<username>([a-zA-Z0-9]|\.)+)/(?P<pk_uaa>(-?[0-9]|\.)+)/$', views.retrieve_stat, name="retrieve_stat"),
+    url(r'^lesson/(?P<pk_lesson>\d+)/viewStat/(?P<username>([a-zA-Z0-9]|\.)+)/(?P<pk_uaa>(-?[0-9]|\.)+)/$', views.show_specific_stat, name="show_specific_stat"),
 
     # TODO : Delete lesson_student_list and its template
     url(r'^lesson/(?P<pk>\d+)/student/$', user_is_professor(LessonStudentListView.as_view()), name='lesson_student_list'),

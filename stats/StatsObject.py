@@ -1,20 +1,48 @@
-from models import ResourceStudent, AuthenticationStudent, ExamStudent, ExamStudentSkill
-from skills.models import StudentSkill, Skill
-from users.models import Student
-from examinations.models import BaseTest, TestStudent
 import json
-
 from datetime import timedelta
+
+from examinations.models import BaseTest, TestStudent
+from models import ResourceStudent, AuthenticationStudent, ExamStudent, ExamStudentSkill
+from skills.models import StudentSkill, Skill, CodeR
+from users.models import Student
+
 
 # TODO: find why ExamsPassed(student) throws an error and add TimeSpentExam(student), ExamPassed(student) to the list
 def get_student_stat(student, lesson):
     return [NumberOfLogin(student), ResourcesViewed(student), SkillOfStudent(student), TimeBetweenTwoSkills(student),
-              LatestTestSucceeded(student, lesson),
+            LatestTestSucceeded(student, lesson),
             NumberOfTestPass(student, lesson), LatestSkillAcquired(student, lesson)]
 
 
 def get_class_stat(lesson):
     return [AverageSkillAcquired(lesson), LeastMasteredSkill(lesson), MostMasteredSkill(lesson)]
+
+
+def get_all_uaa_for_lesson(lesson):
+    """
+    Retains all the UAA of the lesson gave at parameter
+    :param lesson: the Lesson object
+    :return: A list of UAA related to this lesson
+    """
+    stage_for_this_lesson = lesson.stage
+
+    uaa_list = []
+
+    for uaa in CodeR.objects.filter(skill__in=stage_for_this_lesson.skills.all().distinct()).distinct('section'):
+        uaa_list.append(uaa.section)
+
+    return uaa_list
+
+
+def get_skills_for_uaa(uaa):
+    skills = {}
+
+    for cr in CodeR.objects.filter(section=uaa):
+        for skill in cr.skill.all():
+            if skill.pk not in skills:
+                skills[skill.pk] = skill
+
+    return list(skills.values())
 
 
 def get_stat_for_student(student, lesson, current_uaa):
@@ -26,6 +54,13 @@ def get_stat_for_student(student, lesson, current_uaa):
     :param current_uaa: Current UAA of the year for this lesson
     :return: JSON formatted data
     """
+    uaa_skills = get_skills_for_uaa(current_uaa) if current_uaa is not None else None
+
+    def intersection(tested_skills, section_skills):
+        if section_skills is None:
+            return tested_skills
+
+        return list(set(tested_skills).intersection(section_skills))
 
     tests_lesson = BaseTest.objects.filter(lesson=lesson)
     tests = TestStudent.objects.filter(student=student, test__in=tests_lesson)
@@ -33,15 +68,24 @@ def get_stat_for_student(student, lesson, current_uaa):
     total_skill_tested = 0
     number_skill_acquired = 0
     for test in tests:
-        skill_tested = test.test.skills.all()
+        skill_tested = intersection(test.test.skills.all(), uaa_skills)
         total_skill_tested += len(skill_tested)
         skills_acquired = StudentSkill.objects.filter(student=student, skill__in=skill_tested, acquired__isnull=False)
         for skill in skills_acquired:
             if skill.acquired and test.finished_at and skill.acquired - test.finished_at <= timedelta(days=1):
                 number_skill_acquired += 1
-        data['data'].append({'acquired': number_skill_acquired, 'not-acquired': total_skill_tested-number_skill_acquired})
+        data['data'].append(
+            {'acquired': number_skill_acquired, 'not-acquired': total_skill_tested - number_skill_acquired})
         data['xaxis'].append(test.test.name)
+
+    data['student'] = {}
+
+    data['student']['first_name'] = student.user.first_name
+    data['student']['last_name'] = student.user.last_name
+    data['student']['email'] = student.user.email
+
     print(data)
+
     return json.JSONEncoder().encode(data)
 
 
@@ -123,6 +167,7 @@ class ExerciseNumberAttempt(StatisticStudent):
     """
     Statistic representing the number of exercises attempted by the student.
     """
+
     # TODO: need module from other group
     def __init__(self, student):
         super(ExerciseNumberAttempt, self).__init__(student)
@@ -138,6 +183,7 @@ class ExerciseTimeSpent(StatisticStudent):
     """
     Statistic representing the time spent on a exercise by the student.
     """
+
     # TODO: need module from other group
     def __init__(self, student):
         super(ExerciseTimeSpent, self).__init__(student)
@@ -153,6 +199,7 @@ class ExerciseStatus(StatisticStudent):
     """
     Statistic representing the status of an exercise.
     """
+
     # TODO: need module from other group
     def __init__(self, student):
         super(ExerciseStatus, self).__init__(student)
@@ -190,6 +237,7 @@ class SkillOfStudent(StatisticStudent):
     """
     Statistic representing all the skill of the student (acquired and in progress)
     """
+
     def __init__(self, student):
         super(SkillOfStudent, self).__init__(student)
 
@@ -208,11 +256,13 @@ class TimeBetweenTwoSkills(StatisticStudent):
     """
     Statistics representing the time between two acquired skills"
     """
+
     def __init__(self, student):
         super(TimeBetweenTwoSkills, self).__init__(student)
 
     def db_query(self):
-        query = StudentSkill.objects.filter(student=self.student).distinct().exclude(acquired__isnull=True).order_by('acquired')
+        query = StudentSkill.objects.filter(student=self.student).distinct().exclude(acquired__isnull=True).order_by(
+            'acquired')
         previous_time = None
         data = {}
         for skill in query:
@@ -221,7 +271,7 @@ class TimeBetweenTwoSkills(StatisticStudent):
                 previous_time = skill.acquired
             else:
                 time_spend = skill.acquired - previous_time
-                data[str(skill.skill).split(' ')[0]] = time_spend.days*24 + (time_spend.seconds/3600)
+                data[str(skill.skill).split(' ')[0]] = time_spend.days * 24 + (time_spend.seconds / 3600)
                 previous_time = skill.acquired
         self.data = data
 
@@ -238,7 +288,6 @@ class ExamsPassed(StatisticStudent):
         super(ExamsPassed, self).__init__(student)
 
     def db_query(self):
-
         query = ExamStudent.objects.get(student=self.student, succeeded=True)
         data = {}
         for exam in query:
@@ -269,7 +318,6 @@ class TimeSpentExam(StatisticStudent):
 
 
 class LatestTestSucceeded(StatisticStudent):
-
     def __init__(self, student, lesson):
         self.lesson = lesson
         super(LatestTestSucceeded, self).__init__(student)
@@ -296,7 +344,6 @@ class LatestTestSucceeded(StatisticStudent):
 
 
 class NumberOfTestPass(StatisticStudent):
-
     def __init__(self, student, lesson):
         self.lesson = lesson
         super(NumberOfTestPass, self).__init__(student)
@@ -316,7 +363,6 @@ class NumberOfTestPass(StatisticStudent):
 
 
 class LatestSkillAcquired(StatisticClass):
-
     def __init__(self, student, lesson):
         self.student = student
         super(LatestSkillAcquired, self).__init__(lesson)
@@ -385,9 +431,7 @@ class AverageSkillAcquired(StatisticClass):
         return "Nombre de competences moyenne acquises"
 
 
-
 class LeastMasteredSkill(StatisticClass):
-
     def __init__(self, lesson):
         super(LeastMasteredSkill, self).__init__(lesson)
 
@@ -418,7 +462,6 @@ class LeastMasteredSkill(StatisticClass):
 
 
 class MostMasteredSkill(StatisticClass):
-
     def __init__(self, lesson):
         super(MostMasteredSkill, self).__init__(lesson)
 
