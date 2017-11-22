@@ -1906,15 +1906,23 @@ def professor_set_learning_track_redirect(request):
 def professor_set_learning_track(request, lesson_pk, list_students, index):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     students_pk = list_students.split("_")
-    if(int(index) < len(students_pk)):
-        student = get_object_or_404(Student, pk=students_pk[int(index)])
-        return render(request, "professor/lesson/skill/learning_track.haml", {
-            "lesson": lesson,
-            "list_students": list_students,
-            "student": student,
-            "length": len(students_pk),
-            "index": int(index)+1,
-        })
+    i = int(index)
+    if(i < len(students_pk)):
+        student = get_object_or_404(Student, pk=students_pk[i])
+        while i < len(students_pk) and len(student.get_learning_track()) == 0:
+            i += 1
+            if i < len(students_pk):
+                student = get_object_or_404(Student, pk=students_pk[i])
+        if i < len(students_pk):
+            return render(request, "professor/lesson/skill/learning_track.haml", {
+                "lesson": lesson,
+                "list_students": list_students,
+                "student": student,
+                "length": len(students_pk),
+                "index": i+1,
+            })
+        else:
+            return HttpResponseRedirect(reverse("professor:lesson_list_student_target", args=(lesson.pk,)))
     else:
         return HttpResponseRedirect(reverse("professor:lesson_list_student_target", args=(lesson.pk,)))
 
