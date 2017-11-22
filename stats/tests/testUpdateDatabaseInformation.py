@@ -97,6 +97,7 @@ class UpdateAuthenticationByStudent(TestCase):
         student = Student.objects.create(user=user)
         student.save()
         self.student = student
+        self.user = user
 
         date_one = datetime.date(2017, 10, 26)
         self.date_one = date_one
