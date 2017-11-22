@@ -84,10 +84,13 @@
       %div{ng-app: "oscar", ng-controller: "selectSkillController"}
         .panel.panel-default
           %table.table
+            %tr
+              %input{:type => "checkbox", :name => "studAll", :ng-model => "studAll"}
+                Selectionner tous les étudiants
             -for student in lesson.students.all
               %tr
                 %td{width: "150px"}
-                  %input{:type => "checkbox", :name => "checkBox", :ng-checked => "selectedStudent.indexOf({{ student.pk }}) > -1", :ng-click => "toggleSelection({{ student.pk }})"}
+                  %input{:type => "checkbox", :name => "checkBox", :ng-checked => "studAll || selectedStudent.indexOf({{ student.pk }}) > -1", :ng-click => "toggleSelection({{ student.pk }})"}
                   %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}= student
                   -for student_skill in student.get_targeted_skills
                     -if student_skill.acquired
