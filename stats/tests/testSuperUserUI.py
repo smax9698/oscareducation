@@ -12,12 +12,14 @@ class SuperUserUI(unittest.TestCase):
         self.selenium = webdriver.Firefox(profile)
         #self.selenium = webdriver.Firefox()
 
-    def test_get_standard_csv_file(self):
+    def test_login_stats_standard_csv_file(self):
+        self.go_to_super_user_template()
         self.check_login_stats()
         self.selenium.implicitly_wait(10)
         self.selenium.find_element_by_name("csv_export_button").click()
 
-    def test_get_european_csv_file(self):
+    def test_login_stats_european_csv_file(self):
+        self.go_to_super_user_template()
         self.check_login_stats()
         self.selenium.implicitly_wait(10)
         list = self.selenium.find_elements_by_name("csv_type")
@@ -25,17 +27,29 @@ class SuperUserUI(unittest.TestCase):
         #self.selenium.find_element_by_xpath("//input[value='euro']").click()
         self.selenium.find_element_by_name("csv_export_button").click()
 
-    def check_login_stats(self):
+    def test_login_stats_empty_date_inputs(self):
         self.go_to_super_user_template()
+        self.selenium.find_element_by_name("loginStats").click()
+        self.selenium.implicitly_wait(10)
+        self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        self.selenium.find_element_by_name("csv_export_button").click()
+
+    def test_login_stats_empty_champs(self):
+        self.go_to_super_user_template()
+        self.selenium.find_element_by_name("loginStats").click()
+        self.selenium.implicitly_wait(10)
+        self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        self.selenium.find_element_by_name("csv_export_button").click()
+
+    def check_login_stats(self):
         # login stats checkbox
         self.selenium.find_element_by_name("loginStats").click()
         # check some user types
         self.selenium.find_element_by_name("professor").click()
         self.selenium.find_element_by_name("admin").click()
 
-        #TODO Months increase by 1 and days decrease by 1
-        self.selenium.execute_script("document.getElementById('startDateLS').valueAsDate = new Date(2017, 10, 02);")
-        self.selenium.execute_script("document.getElementById('endDateLS').valueAsDate = new Date(2017, 10, 23);")
+        self.selenium.execute_script("document.getElementById('startDateLS').valueAsDate = new Date('2017-11-01');")
+        self.selenium.execute_script("document.getElementById('endDateLS').valueAsDate = new Date('2017-11-22');")
 
         time.sleep(2)
 
