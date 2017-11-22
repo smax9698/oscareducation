@@ -178,10 +178,23 @@
                                         %div{:class => "card-container"}
                                           %div{:class => "card"}
                                             %div{:class => "front"}
-                                              %div{:class => "cover red"}
-                                                <!-- <img src="images/rotating_card_thumb2.png"/> -->
-                                              %div{:class => "user"}
-                                                <img class="img-circle" src="images/rotating_card_profile3.png" />
+                                              -if item.student_skill.acquired
+                                                %div{:class => "cover green"}
+                                                  <!-- <img src="images/mastered.png"/> -->
+                                                %div{:class => "user"}
+                                                  <img class="img-circle" src="{% static 'img/icons/mastered.png' %}" />
+                                              -elif item.student_skill.tested
+                                                %div{:class => "cover orange"}
+                                                  <!-- <img src="images/not-mastered.png"/> -->
+                                                %div{:class => "user"}
+                                                  <img class="img-circle" src="{% static 'img/icons/not-mastered.png' %}" />
+                                              -else
+                                                %div{:class => "cover gris"}
+                                                  <!-- <img src="images/not-tested.png"/> -->
+                                                %div{:class => "user"}
+                                                  <img class="img-circle" src="{% static 'img/icons/not-tested.png' %}" />
+
+
                                               %div{:class => "content"}
                                                 %div{:class => "main"}
                                                   <h3 class="name"> {{ item.student_skill.skill.code }} </h3>
@@ -189,11 +202,16 @@
                                                   <i class="fa fa-mail-forward"></i> Description
                                             %div{:class => "back"}
                                               %div{:class => "header"}
-                                                <h5 class="motto">S4E3II</h5>
+                                                <h5 class="motto">{{item.student_skill.skill.code}}</h5>
                                               %div{:class => "content"}
                                                 %div{:class => "main"}
                                                   <h4 class="text-center">Description</h4>
                                                   <p class="text-center"> {{ item.student_skill.skill.name }} </p>
+                                                  <p class="text-center"> Testé : {{ item.student_skill.tested }} </p>
+                                                  -if item.student_skill.acquired
+                                                    <p class="text-center"> Acquis : {{ item.student_skill.acquired }} </p>
+                                                  -else
+                                                    <p class="text-center"> Acquis : / </p>
 
                                 -else
                                   -for student_skill in user.student.get_recommended_skills
@@ -203,10 +221,22 @@
                                         %div{:class => "card-container"}
                                           %div{:class => "card"}
                                             %div{:class => "front"}
-                                              %div{:class => "cover red"}
-                                                <!-- <img src="images/rotating_card_thumb2.png"/> -->
-                                              %div{:class => "user"}
-                                                <img class="img-circle" src="images/rotating_card_profile3.png" />
+                                              -if student_skill.acquired
+                                                %div{:class => "cover green"}
+                                                  <!-- <img src="images/mastered.png"/> -->
+                                                %div{:class => "user"}
+                                                  <img class="img-circle" src="{% static 'img/icons/mastered.png' %}" />
+                                              -elif student_skill.tested
+                                                %div{:class => "cover orange"}
+                                                  <!-- <img src="images/not-mastered.png"/> -->
+                                                %div{:class => "user"}
+                                                  <img class="img-circle" src="{% static 'img/icons/not-mastered.png' %}" />
+                                              -else
+                                                %div{:class => "cover gris"}
+                                                  <!-- <img src="images/not-tested.png"/> -->
+                                                %div{:class => "user"}
+                                                  <img class="img-circle" src="{% static 'img/icons/not-tested.png' %}" />
+
                                               %div{:class => "content"}
                                                 %div{:class => "main"}
                                                   <h3 class="name"> {{ item.student_skill.skill.code }} </h3>
@@ -214,16 +244,18 @@
                                                   <i class="fa fa-mail-forward"></i> Description
                                             %div{:class => "back"}
                                               %div{:class => "header"}
-                                                <h5 class="motto">S4E3II</h5>
+                                                <h5 class="motto">{{item.student_skill.skill.code}}</h5>
                                               %div{:class => "content"}
                                                 %div{:class => "main"}
                                                   <h4 class="text-center">Description</h4>
-                                                  <p class="text-center"> {{ item.student_skill.skill.name }} </p>
+                                                  <p class="text-center"> {{ student_skill.skill.name }} </p>
+                                                  <p class="text-center"> Testé : {{ student_skill.tested }} </p>
+                                                  <p class="text-center"> Acquis : {{ student_skill.acquired }} </p>
 
 
 
                       <ul class="pager">
-                        <li class="previous"><a href="#theCarousel" role="button" data-slide="prev">&larr; Precedant</a></li>
+                        <li class="previous"><a href="#theCarousel" role="button" data-slide="prev">&larr; Précedent</a></li>
                         <li class="next"><a href="#theCarousel" role="button" data-slide="next">Suivant &rarr;</a></li>
                       </ul>
 
@@ -255,7 +287,7 @@
                 -for item in user.student.get_three_next
                   %tr.legend-list
                     %td.legend
-                      %i.round-section-icon.recommended{class: "fa fa-{{ student_skill.skill.image }}", title: "{{ student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ student_skill.skill.section }}"}
+                      %i.round-section-icon.recommended{class: "fa fa-{{ item.student_skill.skill.image }}", title: "{{ item.student_skill.skill.name }}", data-toggle: "tooltip", data-placement: "right", section: "{{ item.student_skill.skill.section }}"}
                     %td.legend
                       %img.icon.student-skill{src: "{% static 'img/icons/recommended.png' %}"}
                     %td

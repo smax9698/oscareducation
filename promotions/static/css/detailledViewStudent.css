@@ -360,6 +360,14 @@
 }
 
 
-.red{
-    background-color: red;
+.card .green{
+    background-color: #8cc63f;
+}
+
+.card .gris{
+    background-color: #a6a3a2;
+}
+
+.card .orange{
+    background-color: #ec7004;
 }
