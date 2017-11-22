@@ -1,5 +1,15 @@
 -extends "base.haml"
 
+-load bootstrap3
+
+-load static
+-load compress
+
+-block head
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/professor_edit_learning_track.js' %}"}
+
 -block breadcrumb
   %ol.breadcrumb
     %li
@@ -19,26 +29,37 @@
   %hr
 
   %body
-    .col-md-11
-    .ligneorange
+    %div{ng-app: "oscar", ng-controller: "learningPathController"}
+      .col-md-11
+      .ligneorange
 
-    .container-fluid.boxclassetitle
+      .container-fluid.boxclassetitle
 
-      .pull-right
-        %a.btn.btn-primary{href: "{% url 'professor:lesson_skill_learning_track' lesson.pk list_students index %}"}
+        .pull-right
           -if length == index
-            Terminer
+            %button.btn.btn-primary{ng-click: "nextStudent({{ index }})"}
+              Terminer
           -else
-            Elève suivant
+            %button.btn.btn-primary{ng-click: "nextStudent({{ index }})"}
+              Elève suivant
+          -#%a.btn.btn-primary{href: "{% url 'professor:lesson_skill_learning_track' lesson.pk list_students index %}"}
+            -if length == index
+              Terminer
+            -else
+              Elève suivant
 
-    .ligneorangefine
+      .ligneorangefine
 
-    .container-fluid.boxclasse
-      %div
-        %form.form
-          .row
-            .col-md-6
-              %tr
-                %td
-                  -for lt in student.get_learning_track
-                    {{ lt.student_skill.skill.code }}
+      .container-fluid.boxclasse
+        %div
+          %table{class: "table table-bordered pagin-table"}
+            %tbody
+              -for lt in student.get_learning_track
+                %tr
+                  %td
+                    {{ lt.student_skill.skill.code }} - {{ lt.student_skill.skill.name }}
+
+        %div#alerts
+    -block javascript
+    :javascript
+      $('tbody').sortable();
