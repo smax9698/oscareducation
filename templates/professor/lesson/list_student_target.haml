@@ -95,15 +95,15 @@
                   -for student_skill in student.get_targeted_skills
                     -if student_skill.acquired
                       %td{width: "150px", align:"center"}
-                        %a.btn.btn-default.skill.mastered_100{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}"}
+                        %a.btn.btn-default.skill.mastered_100{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}", :style => "width: 100%"}
                           %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
                     -elif student_skill.tested
                       %td{width: "150px", align:"center"}
-                        %a.btn.btn-default.skill.mastered_75{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}"}
+                        %a.btn.btn-default.skill.mastered_75{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}", :style => "width: 100%"}
                           %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
                     -else
                       %td{width: "150px", align:"center"}
-                        %a.btn.btn-default.skill.mastered_25{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}"}
+                        %a.btn.btn-default.skill.mastered_25{type: "button", href: "{% url 'professor:lesson_skill_detail' lesson.pk student_skill.skill.code %}", :style => "width: 100%"}
                           %abbr{title: "", style: "cursor: default; border: none"} {{student_skill.skill.code}}
 
 
@@ -131,7 +131,8 @@
 
                   .well
                     %span{ng-repeat: "skill in toTargetSkills"}
-                      %button.btn.btn-primary.selected-skill{type: "button", title: "{& skill.name &}", ng-click: "removeSkill(skill)"}
+                      %div
+                      %button.btn.btn-primary.selected-skill{type: "button", title: "{& skill.name &}", ng-click: "removeSkill(skill)", :style => "width: 100%"}
                         {& skill &}
 
                 .col-md-6
