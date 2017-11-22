@@ -250,3 +250,16 @@ class LearningTrackTests(TestCase):
         for student_skill in student_skills_list:
             self.assertTrue(student_skill in self.student_skills)
         self.assertEquals(student_skills_list.__len__(), 6)
+
+    # ------------------------------------------------------------------------------------------#
+
+    def test_clear_targets(self):
+        self.assertNotEqual(len(StudentSkill.objects.filter(student=self.stud, is_target=True)), 0)
+        self.stud.clear_targets()
+        self.assertEquals(len(StudentSkill.objects.filter(student=self.stud, is_target=True)), 0)
+
+    def test_clear_learning_track(self):
+        LearningTrack.new_learning_track(student=self.stud, professor=self.prof)
+        self.assertNotEqual(len(LearningTrack.objects.filter(student=self.stud)), 0)
+        LearningTrack.clear_learning_track(self.stud)
+        self.assertEquals(len(LearningTrack.objects.filter(student=self.stud)), 0)
