@@ -171,7 +171,7 @@ def password(request, template_name='registration/login_password.haml',
                 return HttpResponseRedirect(reverse("professor:dashboard"))
             elif hasattr(request.user, "student"):
                 LoginStats.objects.create(user=request.user, user_kind="student")
-                add_authentication_by_student(student=request.user, end_date=None)
+                add_authentication_by_student(user=request.user, end_date=None)
                 return HttpResponseRedirect(reverse("student_dashboard"))
             else:
                 raise Exception("Unknown user kind, can't login")
