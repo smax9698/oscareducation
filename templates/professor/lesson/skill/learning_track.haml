@@ -42,7 +42,7 @@
 
         .pull-right
           -if length == index
-            %button.btn.btn-primary{ng-click: "nextStudent({{ index }})"}
+            %button.btn.btn-primary{ng-click: "nextStudent({{ index }})", id: "finish"}
               Terminer
           -else
             %button.btn.btn-primary{ng-click: "nextStudent({{ index }})"}

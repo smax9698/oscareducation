@@ -16,7 +16,7 @@ import unittest, time, re
 
 class TestAdmin(LiveServerTestCase):
 
-    STUDENT_USERNAME = "student.student"
+    STUDENT_USERNAME = "dorian.ricci"
     STUDENT_PASSWORD = "student"
 
     PROFESSOR_USERNAME = "prof"
@@ -145,7 +145,7 @@ class TestAdmin(LiveServerTestCase):
         driver.find_element_by_css_selector("button.close").click()
         driver.find_element_by_css_selector("a.icon.logout").click()
 
-    def test_prof(self):
+    def test_prof1(self):
         driver = self.driver
         driver.get(self.base_url + "/accounts/usernamelogin/")
         driver.find_element_by_id("djHideToolBarButton").click()
@@ -155,6 +155,20 @@ class TestAdmin(LiveServerTestCase):
         driver.find_element_by_id("id_password").clear()
         driver.find_element_by_id("id_password").send_keys(self.PROFESSOR_PASSWORD)
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
+        driver.find_element_by_class_name("list-group-item").click()
+        driver.find_element_by_link_text("Compétences cibles").click()
+        driver.find_element_by_name("checkBox").click()
+        Select(driver.find_element_by_xpath("//select")).select_by_visible_text(
+            u"S13d - Utiliser la soustraction comme la réciproque de l'addition et la division comme la réciproque de la multiplication")
+        driver.find_element_by_id("addSkillToTestButtonForStage9").click()
+        driver.find_element_by_id("addSkillToTestButtonForStage9").click()
+        Select(driver.find_element_by_xpath("//select")).select_by_visible_text(
+            u"S13g - Choisir et utiliser avec pertinence le calcul mental, le calcul écrit ou la calculatrice en fonction de la situation.")
+        driver.find_element_by_id("addSkillToTestButtonForStage9").click()
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        driver.find_element_by_id("setTargetButton").click()
+        driver.find_element_by_id("finish").click()
+
         driver.find_element_by_css_selector("a.icon.logout").click()
 
     def is_element_present(self, how, what):
