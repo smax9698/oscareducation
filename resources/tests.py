@@ -59,14 +59,15 @@ class TestAdmin(LiveServerTestCase):
         driver.find_element_by_link_text(u"Déconnexion").click()
 
     def test_student(self):
+        """As a student, I can see a detail view of my learning track. """
         driver = self.driver
         driver.get(self.base_url + "/accounts/usernamelogin/")
         driver.find_element_by_id("djHideToolBarButton").click()
         driver.find_element_by_id("id_username").clear()
-        driver.find_element_by_id("id_username").send_keys("dorian.ricci")
+        driver.find_element_by_id("id_username").send_keys("roland.bailly")
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
         driver.find_element_by_id("id_password").clear()
-        driver.find_element_by_id("id_password").send_keys("student")
+        driver.find_element_by_id("id_password").send_keys("aqwzsxed")
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         driver.find_element_by_link_text(u"Suivant →").click()
