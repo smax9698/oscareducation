@@ -403,7 +403,7 @@ class LearningTrack(models.Model):
         LearningTrack.clear_learning_track(student)
         i = 0
         for skill in skills:
-            student_skill = StudentSkill.objects.filter(skill=skill).first()
+            student_skill = StudentSkill.objects.filter(skill=skill, student=student).first()
             LearningTrack.objects.create(student=student, student_skill=student_skill, order=i)
             i += 1
 
@@ -566,8 +566,8 @@ class LearningTrack(models.Model):
             raise ValueError
 
         LearningTrack._set_skill_depth(student_skill, level, skills_depth_map)
-        for prerequisite_skill in student_skill.skill.get_prerequisites_skills():
-            prerequisite_student_skill = StudentSkill.objects.filter(skill=prerequisite_skill)[0]
+        for prerequisite_student_skill in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
+                                                        student=student_skill.student):
             LearningTrack._set_level(prerequisite_student_skill, skills_depth_map, level + 1)
 
     @staticmethod
