@@ -415,6 +415,7 @@ class AverageSkillAcquired(StatisticClass):
                     data[date_skill] = sum_skill
             for keys in data:
                 data[keys] /= len(students)
+            self.data = data
 
     def __unicode__(self):
         return "Nombre de competences moyenne acquises"

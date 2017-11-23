@@ -1,5 +1,4 @@
 import datetime
-from datetime import datetime
 import pytz
 from django.contrib.auth.decorators import user_passes_test
 

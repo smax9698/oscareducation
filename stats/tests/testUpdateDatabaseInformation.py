@@ -8,6 +8,7 @@ from stats.utils import *
 from users.models import User, Student
 from skills.models import Skill
 
+import datetime
 
 # Create your tests here.
 
@@ -91,6 +92,8 @@ class UpdateSkillAcquiredByStudent(TestCase):
 class UpdateAuthenticationByStudent(TestCase):
     def setUp(self):
         user = User.objects.create(username="username")
+        user.save()
+        self.user = user
         student = Student.objects.create(user=user)
         student.save()
         self.student = student
@@ -101,14 +104,14 @@ class UpdateAuthenticationByStudent(TestCase):
         self.date_two = date_two
 
     def test_when_no_row_insert_one(self):
-        add_authentication_by_student(self.student, self.date_one)
+        add_authentication_by_student(self.user, self.date_one)
         result_query = AuthenticationStudent.objects.filter(student=self.student)
         self.assertEqual(len(result_query), 1)
         self.assertEqual(result_query[0].end_of_session.date(), self.date_one)
 
     def test_when_already_one_not_deleted(self):
-        add_authentication_by_student(self.student, self.date_one)
-        add_authentication_by_student(self.student, self.date_two)
+        add_authentication_by_student(self.user, self.date_one)
+        add_authentication_by_student(self.user, self.date_two)
 
         result_query = AuthenticationStudent.objects.filter(student=self.student)
 
