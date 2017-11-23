@@ -14,6 +14,8 @@ from promotions.utils import user_is_professor
 from resources.models import KhanAcademy, Sesamath
 from skills.models import Skill
 from users.models import Professor
+import datetime
+from datetime import datetime
 
 from stats.utils import *
 
@@ -87,19 +89,47 @@ def superuserCSV(request):
         if request.POST.get('admin', None) != None:
             temp.append('admin')
         #will write the information into its own file and append it to the zip file
-        for item in get_login_stats_by_professor(request.POST.get("startDateLS", None),request.POST.get("endDateLS", None),temp):
+        if request.POST.get("preDefDateLS", None) != 'None':
+            dateString  = request.POST.get("preDefDateLS", None).split('-')
+            startDate = datetime.datetime.strptime(dateString[0], "%d/%m/%Y").date()
+            endDate =  datetime.datetime.strptime(dateString[1], "%d/%m/%Y").date()
+            
+        else:
+            startDate = request.POST.get("startDateLS", None)
+            endDate = request.POST.get("endDateLS", None)
+
+        for item in get_login_stats_by_professor(startDate,endDate,temp):
             writer1.writerow(item)
         archive.writestr('loginStats.csv',file_like_1.getvalue())
     if request.POST.get("resStudent", None) != None:
         file_like_1 = StringIO.StringIO()
         writer1 = csv.writer(file_like_1, delimiter=csvT)
-        for item in get_res_students_by_professor(request.POST.get("startDateRS", None),request.POST.get("endDateRS", None)):
+
+        if request.POST.get("preDefDateRS", None) != 'None':
+            dateString  = request.POST.get("preDefDateRS", None).split('-')
+            startDate = datetime.datetime.strptime(dateString[0], "%d/%m/%Y").date()
+            endDate =  datetime.datetime.strptime(dateString[1], "%d/%m/%Y").date()
+            
+        else:
+            startDate = request.POST.get("startDateRS", None)
+            endDate = request.POST.get("endDateRS", None)
+
+        for item in get_res_students_by_professor(startDate,endDate):
             writer1.writerow(item)
         archive.writestr('resourcesStudent.csv',file_like_1.getvalue())
     if request.POST.get("authStudent", None) != None:
         file_like_1 = StringIO.StringIO()
         writer1 = csv.writer(file_like_1, delimiter=csvT)
-        for item in get_auth_students_by_professor(request.POST.get("startDateAS", None),request.POST.get("endDateAS", None)):
+        if request.POST.get("preDefDateAS", None) != 'None':
+            dateString  = request.POST.get("preDefDateAS", None).split('-')
+            startDate = datetime.datetime.strptime(dateString[0], "%d/%m/%Y").date()
+            endDate =  datetime.datetime.strptime(dateString[1], "%d/%m/%Y").date()
+            
+        else:
+            startDate = request.POST.get("startDateAS", None)
+            endDate = request.POST.get("endDateAS", None)
+
+        for item in get_auth_students_by_professor(startDate,endDate):
             writer1.writerow(item)
         archive.writestr('authenticationStudents.csv',file_like_1.getvalue())
     if request.POST.get("examStudent", None) != None:

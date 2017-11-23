@@ -51,8 +51,18 @@
                     Admin
                 
                 %p Période date d'accès
+                %select{:value => "preDefDateLS", :name => "preDefDateLS"}
+                  -for option, val in predefined_timespan.items
+                    -if val == None
+                      %option{:value => val, :selected} {{option}}
+                    -else
+                      %option{:value => val} {{option}}
 
+
+                %br
+                %br
                 %div{:id => "timespan"}
+                  
                   %label.checkbox-inline
                     Depuis :
                     %input#startDateLS{:type => "date", :name => "startDateLS"}/
@@ -70,6 +80,12 @@
                 .pull-left
 
                 %p Période date d'accès
+                %select{:value => "preDefDateRS", :name => "preDefDateRS"}
+                  -for option, val in predefined_timespan.items
+                    -if val == None
+                      %option{:value => val, :selected} {{option}}
+                    -else
+                      %option{:value => val} {{option}}
 
                 %div{:id => "timespan"}
                   %label.checkbox-inline
@@ -87,6 +103,12 @@
               .container-fluid.boxclassetitle
                 .pull-left 
                 %p Période date d'accès
+                %select{:value => "preDefDateAS", :name => "preDefDateAS"}
+                  -for option, val in predefined_timespan.items
+                    -if val == None
+                      %option{:value => val, :selected} {{option}}
+                    -else
+                      %option{:value => val} {{option}}
 
                 %div{:id => "timespan"}
                   %label.checkbox-inline
