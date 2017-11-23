@@ -119,6 +119,7 @@
             Sélectionner les compétences cibles
 
           .panel-body
+            %div#alerts
             %form.form
               .row
                 .col-md-5
@@ -164,7 +165,7 @@
                     -if forloop.last and forloop.counter >= 3
                       </div>
                       </div>
-            %div#alerts
+            %div#waiting
             %button.btn.btn-primary{ng-click: "setTemporaryTargets({{ lesson.pk }})", id: "setTargetButton", onclick:"this.disabled=true", ng-disabled: "selectedStudent.length==0"}
               Valider les compétences cibles
 
