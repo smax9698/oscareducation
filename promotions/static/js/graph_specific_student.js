@@ -41,6 +41,23 @@ function generateGraph(username, data) {
     g.call(tip);
 
     // Determine the position of the bar in the graph (relative to the width of the graph)
+
+    var count = 0;
+    yz.forEach(function(array){
+        array.forEach(function(item){
+            count += item;
+        });
+    });
+
+    if (count === 0) {
+        console.log('ramin')
+        svg.text("text").text("no data");
+        svg.append("text").text("Pas de données pour cette UAA")
+            .attr("x", margin.left + (width / 3.5) + 8)
+            .attr("y", (height / 2) + margin.top);
+        return
+    }
+
     var x = d3.scaleBand()
         .domain(xz)
         .rangeRound([0, width])
@@ -131,15 +148,16 @@ function generateGraph(username, data) {
 
 }
 
-$(".graph-student").each(function() {
+$(".graph-student").each(function () {
     var username = $(this.getAttribute("id")).selector;
     var lesson = $(this.getAttribute("lesson")).selector;
     var uaa = $(this.getAttribute("uaa")).selector;
 
-    d3.request(encodeURI("/professor/lesson/" + lesson + "/getStat/"+username + "/" + uaa + "/"))
-        .get(function(data) {
+    d3.request(encodeURI("/professor/lesson/" + lesson + "/getStat/" + username + "/" + uaa + "/"))
+        .get(function (data) {
             if (data === null) {
                 console.log("no data");
+                generateGraph(username, null);
             } else {
                 var dic = data.response;
                 generateGraph(username, dic);

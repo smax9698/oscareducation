@@ -28,18 +28,18 @@
         .col-lg-4
           .container-fluid
             .dropdown
-              .button{:class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
+              .button{:id => "student_choice", :class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
                 Etudiants de la classe
                 %span.caret
               %ul.dropdown-menu
                 -for stud in lesson.students.all
                   -if stud == student
                     %li{:class => "active stud"}
-                      %a{:href=>"#",:student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
+                      %a{:id => "{{ stud.user.username }}",:href=>"#",:student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
                         {{ stud }}
                   -else
                     %li{:class => "stud"}
-                      %a{:href=>"#", :student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
+                      %a{:id =>"{{ stud.user.username }}",  :href=>"#", :student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
                         {{ stud }}
             .dropdown
               .button{:class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
@@ -48,7 +48,7 @@
               %ul.dropdown-menu
                 -for uaa in uaa_list
                   %li{:class => "uaaSelector"}
-                    %a{href: "#", :uaa => "{{uaa.pk}}"}
+                    %a{:id => "{{uaa.pk}}", :href => "#", :uaa => "{{uaa.pk}}"}
                       {{ uaa.name }}
                     /%a{href: "{% url 'professor:show_specific_stat' lesson.pk student.user.username uaa.pk %}"}
                       {{ uaa.name }}

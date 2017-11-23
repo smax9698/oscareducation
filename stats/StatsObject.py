@@ -51,6 +51,7 @@ def get_stat_for_student(student, lesson, current_uaa):
 
         return list(set(tested_skills).intersection(section_skills))
 
+
     tests_lesson = BaseTest.objects.filter(lesson=lesson)
     tests = TestStudent.objects.filter(student=student, test__in=tests_lesson)
     data = {'data': [], 'xaxis': []}
@@ -72,8 +73,6 @@ def get_stat_for_student(student, lesson, current_uaa):
     data['student']['first_name'] = student.user.first_name
     data['student']['last_name'] = student.user.last_name
     data['student']['email'] = student.user.email
-
-    print(data)
 
     return json.JSONEncoder().encode(data)
 
