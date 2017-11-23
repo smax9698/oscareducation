@@ -3,6 +3,7 @@ function selectSkillController($scope, $http) {
 
     $scope.setTemporaryTargets = function(lessonPk) {
         $("#waiting").html('<div class="alert alert-info">Veuillez patienter, vous allez être redirigé automatiquement.</div>');
+        $("#alerts").html('<div />');
         $http.post("/professor/lesson/set_learning_track_redirect/", {
             "target_skill_codes": $scope.toTargetSkills,
             "student_pk": $scope.selectedStudent
