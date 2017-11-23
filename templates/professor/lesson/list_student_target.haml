@@ -83,6 +83,8 @@
     .container-fluid.boxclasse
       %div{ng-app: "oscar", ng-controller: "selectSkillController"}
         .panel.panel-default
+          .panel-heading
+            Sélectionner les élèves
           %table.table
             -for student in lesson.students.all
               %tr
