@@ -163,7 +163,7 @@
                     %div{:class => "modal-header"}
                       %button{:type => "button", :class => "close", :data-dismiss => "modal", :aria-label => "Close"}
                         %span{:aria-hidden => "true"} &times;
-                      %h4{:class => "modal-title", :id => "myModalLabel", :style => "color:black;"} Detailed view
+                      %h4{:class => "modal-title", :id => "myModalLabel", :style => "color:black;"} Vue détaillée
                     %div{:class => "modal-body"}
                       %div{:class=>"container"}
                         %div{:class=>"row"}
@@ -197,6 +197,7 @@
 
                                               %div{:class => "content"}
                                                 %div{:class => "main"}
+                                                  <h3>{{ forloop.counter }}</h3>
                                                   <h3 class="name"> {{ item.student_skill.skill.name }} </h3>
                                                 %div{:class => "footer"}
                                                   <i class="fa fa-mail-forward"></i> Description
@@ -242,6 +243,7 @@
 
                                               %div{:class => "content"}
                                                 %div{:class => "main"}
+                                                  <h3>{{ forloop.counter }}</h3>
                                                   <h3 class="name"> {{ student_skill.skill.code }} </h3>
                                                 %div{:class => "footer"}
                                                   <i class="fa fa-mail-forward"></i> Description
