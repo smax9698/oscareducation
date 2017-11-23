@@ -6,7 +6,7 @@ function updateCount(last_student, student, lesson, selected_uaa){
             $('#first_name').text("Prénom : " + obj.student.first_name);
             $('#email').text("Email : " + obj.student.email);
 
-            $('svg[graph=graph]').var("");
+            $('svg[graph=graph]').empty();
             $('svg[graph=graph]').text(generateGraph(last_student, data));
             $('#breadcrumb').text(" Statistiques " + obj.student.first_name + " " + obj.student.last_name);
         })
