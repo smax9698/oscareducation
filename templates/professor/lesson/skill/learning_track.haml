@@ -62,7 +62,7 @@
           %table{class: "table table-bordered pagin-table", style:"cursor: pointer"}
             %tbody
               -for lt in student.get_learning_track
-                %tr
+                %tr{onMouseOver:"this.style.background=&#39#C0C0C0&#39", onMouseOut:"this.style.background=&#39white&#39"}
                   %td
                     {{ lt.student_skill.skill.code }} - {{ lt.student_skill.skill.name }}
 
