@@ -15,6 +15,16 @@ import unittest, time, re
 
 
 class TestAdmin(LiveServerTestCase):
+
+    STUDENT_USERNAME = "student.student"
+    STUDENT_PASSWORD = "student"
+
+    PROFESSOR_USERNAME = "prof"
+    PROFESSOR_PASSWORD = "prof"
+
+    ADMIN_USERNAME = "test"
+    ADMIN_PASSWORD = "test"
+
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(300)
@@ -26,9 +36,9 @@ class TestAdmin(LiveServerTestCase):
         driver = self.driver
         driver.get(self.base_url + "/admin/login/?next=/admin/")
         driver.find_element_by_id("id_password").clear()
-        driver.find_element_by_id("id_password").send_keys("test")
+        driver.find_element_by_id("id_password").send_keys(self.ADMIN_PASSWORD)
         driver.find_element_by_id("id_username").clear()
-        driver.find_element_by_id("id_username").send_keys("test")
+        driver.find_element_by_id("id_username").send_keys(self.ADMIN_USERNAME)
         driver.find_element_by_id("djHideToolBarButton").click()
         driver.find_element_by_css_selector("input[type=\"submit\"]").click()
         driver.find_element_by_xpath("(//a[contains(text(),'Modifier')])[10]").click()
@@ -64,10 +74,10 @@ class TestAdmin(LiveServerTestCase):
         driver.get(self.base_url + "/accounts/usernamelogin/")
         driver.find_element_by_id("djHideToolBarButton").click()
         driver.find_element_by_id("id_username").clear()
-        driver.find_element_by_id("id_username").send_keys("roland.bailly")
+        driver.find_element_by_id("id_username").send_keys(self.STUDENT_USERNAME)
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
         driver.find_element_by_id("id_password").clear()
-        driver.find_element_by_id("id_password").send_keys("aqwzsxed")
+        driver.find_element_by_id("id_password").send_keys(self.STUDENT_PASSWORD)
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         driver.find_element_by_link_text(u"Suivant →").click()
@@ -81,10 +91,10 @@ class TestAdmin(LiveServerTestCase):
         driver.get(self.base_url + "/accounts/usernamelogin/")
         driver.find_element_by_id("djHideToolBarButton").click()
         driver.find_element_by_id("id_username").clear()
-        driver.find_element_by_id("id_username").send_keys("prof")
+        driver.find_element_by_id("id_username").send_keys(self.PROFESSOR_USERNAME)
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
         driver.find_element_by_id("id_password").clear()
-        driver.find_element_by_id("id_password").send_keys("prof")
+        driver.find_element_by_id("id_password").send_keys(self.PROFESSOR_PASSWORD)
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
         driver.find_element_by_css_selector("a.icon.logout").click()
 
