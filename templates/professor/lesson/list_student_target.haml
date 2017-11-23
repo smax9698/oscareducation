@@ -144,8 +144,8 @@
                               <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Compétences antérieures</a>
                             </h4>
                           </div>
-                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                          <div class="panel-body">
+                          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
 
                     .form-group
                       %label.control-label= stage.name
@@ -163,6 +163,8 @@
                         Ajouter cette compétence
 
                     -if forloop.last and forloop.counter >= 3
+                      </div>
+                      </div>
                       </div>
                       </div>
             %div#waiting
