@@ -28,7 +28,7 @@
 
 -block content
   %h3
-    Chemin d'apprentissage:
+    Chemin d'apprentissage de
     %br
     {{ student }}
   %hr
@@ -56,8 +56,10 @@
       .ligneorangefine
 
       .container-fluid.boxclasse
+        %p
+          Vous pouvez modifier ce tableau en déplaçant une compétence.
         %div
-          %table{class: "table table-bordered pagin-table"}
+          %table{class: "table table-bordered pagin-table", style:"cursor: pointer"}
             %tbody
               -for lt in student.get_learning_track
                 %tr
