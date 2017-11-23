@@ -9,14 +9,12 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 
 from examinations.models import Context as Question
-from promotions.models import Lesson, Stage
+from promotions.models import Stage
 from promotions.utils import user_is_professor
 from resources.models import KhanAcademy, Sesamath
 from skills.models import Skill
-from users.models import Professor, Student
-from .utils import user_is_superuser
+from users.models import Professor
 
-from stats.StatsObject import get_class_stat, get_student_stat
 from stats.utils import *
 
 @user_is_professor
@@ -151,75 +149,3 @@ def dashboard(request):
         "stages_with_skills_with_questions": questions_per_stage,
         "skills_with_questions": Skill.objects.annotate(Count('exercice')).filter(exercice__count__gt=0),
     })
-
-
-def view_student(request, pk):
-    lesson = get_object_or_404(Lesson, pk=pk)
-    students = Student.objects.filter(lesson=lesson)
-
-    return render(request, "stats/student_list.haml", {
-        "lesson": lesson,
-        "students": students
-    })
-
-
-@user_is_professor
-def viewstats(request, pk):
-    lesson = get_object_or_404(Lesson, pk=pk)
-    students = Student.objects.filter(lesson=lesson)
-
-    # TODO: make automatic detection of timespan instead of hard coding
-    predefined_timespan = {
-        "-----": None,
-        "Septembre 2016 - Decembre 2016": "01/09/2016-31/12/2016",
-        "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
-        "Septembre 2017 - Decembre 2017": "01/09/2017-31/12/2017",
-
-    }
-
-    stats = get_class_stat(lesson)
-
-    return render(request, "stats/viewstats.haml", {
-        "stats": stats,
-        "lesson": lesson,
-        "student_number": len(Student.objects.filter(lesson=lesson)),
-        "students": students,
-        "predefined_timespan": predefined_timespan,
-
-    })
-
-
-def stat_student(request, pk_lesson, pk_student):
-
-    predefined_timespan = {
-        "-----": None,
-        "Septembre 2016 - Decembre 2016": "01/09/2016-31/12/2016",
-        "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
-        "Septembre 2017 - Decembre 2017": "01/09/2017-31/12/2017",
-
-    }
-
-    lesson = get_object_or_404(Lesson, pk=pk_lesson)
-    student = get_object_or_404(Student, pk=pk_student)
-    stats = get_student_stat(student, lesson)
-
-    return render(request, "stats/viewstats.haml", {
-        "lesson": lesson,
-        "student": student,
-        "stats": stats,
-        "predefined_timespan": predefined_timespan,
-
-    })
-
-
-def stat_student_tab(request, pk_lesson, pk_student):
-    lesson = get_object_or_404(Lesson, pk=pk_lesson)
-    student = get_object_or_404(Student, pk=pk_student)
-
-    return render(request, "stats/stat_student.haml", {
-        "lesson": lesson,
-        "student": student
-    })
-
-
-

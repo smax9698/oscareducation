@@ -7,17 +7,6 @@ from skills.models import StudentSkill, Skill, CodeR
 from users.models import Student
 
 
-# TODO: find why ExamsPassed(student) throws an error and add TimeSpentExam(student), ExamPassed(student) to the list
-def get_student_stat(student, lesson):
-    return [NumberOfLogin(student), ResourcesViewed(student), SkillOfStudent(student), TimeBetweenTwoSkills(student),
-            LatestTestSucceeded(student, lesson),
-            NumberOfTestPass(student, lesson), LatestSkillAcquired(student, lesson)]
-
-
-def get_class_stat(lesson):
-    return [AverageSkillAcquired(lesson), LeastMasteredSkill(lesson), MostMasteredSkill(lesson)]
-
-
 def get_all_uaa_for_lesson(lesson):
     """
     Retains all the UAA of the lesson gave at parameter
