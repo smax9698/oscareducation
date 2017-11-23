@@ -50,7 +50,6 @@ function generateGraph(username, data) {
     });
 
     if (count === 0) {
-        console.log('ramin')
         svg.text("text").text("no data");
         svg.append("text").text("Pas de données pour cette UAA")
             .attr("x", margin.left + (width / 3.5) + 8)
