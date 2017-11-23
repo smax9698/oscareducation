@@ -121,7 +121,6 @@
             Sélectionner les compétences cibles
 
           .panel-body
-            %div#waiting
             %div#alerts
             %form.form
               .row
@@ -136,6 +135,7 @@
                       %button.btn.btn-primary.selected-skill{type: "button", title: "{& skill.name &}", ng-click: "removeSkill(skill)", :style => "width: 100%"}
                         {& skill &}
                   .center
+                    %div#waiting
                     %button.btn.btn-primary{ng-click: "setTemporaryTargets({{ lesson.pk }})", id: "setTargetButton", onclick:"this.disabled=true", ng-disabled: "selectedStudent.length==0"}
                       Valider les compétences cibles
 
