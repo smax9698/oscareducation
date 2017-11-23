@@ -165,7 +165,7 @@
                       </div>
                       </div>
             %div#alerts
-            %button.btn.btn-primary{ng-click: "setTemporaryTargets({{ lesson.pk }})", id: "setTargetButton", ng-disabled: "selectedStudent.length==0"}
+            %button.btn.btn-primary{ng-click: "setTemporaryTargets({{ lesson.pk }})", id: "setTargetButton", onclick:"this.disabled=true", ng-disabled: "selectedStudent.length==0"}
               Valider les compétences cibles
 
     -block javascript
