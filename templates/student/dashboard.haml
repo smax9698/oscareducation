@@ -207,7 +207,7 @@
                                                 %div{:class => "main"}
                                                   <h4 class="text-center">Description</h4>
                                                   <p class="text-center"> {{ item.student_skill.skill.name }} </p>
-                                                  -if item.student_skill.acquired
+                                                  -if item.student_skill.tested
                                                     <p class="text-center"> Testé : {{ item.student_skill.tested }} </p>
                                                   -else
                                                     <p class="text-center"> Testé : / </p>
@@ -252,7 +252,7 @@
                                                 %div{:class => "main"}
                                                   <h4 class="text-center">Description</h4>
                                                   <p class="text-center"> {{ student_skill.skill.name }} </p>
-                                                  -if student_skill.acquired
+                                                  -if student_skill.tested
                                                     <p class="text-center"> Testé : {{ student_skill.tested }} </p>
                                                   -else
                                                     <p class="text-center"> Testé : / </p>
