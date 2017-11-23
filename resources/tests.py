@@ -32,7 +32,9 @@ class TestAdmin(LiveServerTestCase):
         self.verificationErrors = []
         self.accept_next_alert = True
 
-    def test_admin(self):
+    def test_admin1(self):
+        """ As an administrator, I want to change the ordering of the criteria used to order the skills.\\
+        """
         driver = self.driver
         driver.get(self.base_url + "/admin/login/?next=/admin/")
         driver.find_element_by_id("id_password").clear()
@@ -68,6 +70,65 @@ class TestAdmin(LiveServerTestCase):
         driver.find_element_by_name("_save").click()
         driver.find_element_by_link_text(u"Déconnexion").click()
 
+    def test_admin2(self):
+        """As an administrator, I want to update the ordering of the criteria
+        """
+        driver = self.driver
+        driver.get(self.base_url + "/admin/login/?next=/admin/")
+        driver.find_element_by_id("id_password").clear()
+        driver.find_element_by_id("id_password").send_keys(self.ADMIN_PASSWORD)
+        driver.find_element_by_id("id_username").clear()
+        driver.find_element_by_id("id_username").send_keys(self.ADMIN_USERNAME)
+        driver.find_element_by_id("djHideToolBarButton").click()
+        driver.find_element_by_css_selector("input[type=\"submit\"]").click()
+        driver.find_element_by_xpath("(//a[contains(text(),'Modifier')])[10]").click()
+        driver.find_element_by_css_selector("tr.row2 > td.action-checkbox > input[name=\"_selected_action\"]").click()
+        driver.find_element_by_xpath("(//input[@name='_selected_action'])[3]").click()
+        Select(driver.find_element_by_name("action")).select_by_visible_text(
+            u"Supprimer les professor criterias sélectionnés")
+        driver.find_element_by_name("index").click()
+        driver.find_element_by_css_selector("input[type=\"submit\"]").click()
+        driver.find_element_by_link_text("Ajouter professor criteria").click()
+        Select(driver.find_element_by_id("id_professor")).select_by_visible_text("prof")
+        Select(driver.find_element_by_id("id_criteria")).select_by_visible_text("Time")
+        driver.find_element_by_id("id_order").clear()
+        driver.find_element_by_id("id_order").send_keys("1")
+        driver.find_element_by_id("id_order").clear()
+        driver.find_element_by_id("id_order").send_keys("2")
+        driver.find_element_by_id("id_order").clear()
+        driver.find_element_by_id("id_order").send_keys("3")
+        driver.find_element_by_name("_save").click()
+        driver.find_element_by_link_text("Ajouter professor criteria").click()
+        Select(driver.find_element_by_id("id_professor")).select_by_visible_text("prof")
+        Select(driver.find_element_by_id("id_criteria")).select_by_visible_text("Level")
+        driver.find_element_by_id("id_order").clear()
+        driver.find_element_by_id("id_order").send_keys("1")
+        driver.find_element_by_id("id_order").clear()
+        driver.find_element_by_id("id_order").send_keys("2")
+        driver.find_element_by_name("_save").click()
+        driver.find_element_by_link_text(u"Déconnexion").click()
+
+    def test_admin3(self):
+        """As an administrator, I want to delete my ordering of the criteria and then have the default ordering criteria
+        """
+        driver = self.driver
+        driver.get(self.base_url + "/admin/login/?next=/admin/")
+        driver.find_element_by_id("id_password").clear()
+        driver.find_element_by_id("id_password").send_keys(self.ADMIN_PASSWORD)
+        driver.find_element_by_id("id_username").clear()
+        driver.find_element_by_id("id_username").send_keys(self.ADMIN_USERNAME)
+        driver.find_element_by_id("djHideToolBarButton").click()
+        driver.find_element_by_css_selector("input[type=\"submit\"]").click()
+        driver.find_element_by_xpath("(//a[contains(text(),'Modifier')])[10]").click()
+        driver.find_element_by_name("_selected_action").click()
+        driver.find_element_by_css_selector("tr.row2 > td.action-checkbox > input[name=\"_selected_action\"]").click()
+        driver.find_element_by_xpath("(//input[@name='_selected_action'])[3]").click()
+        Select(driver.find_element_by_name("action")).select_by_visible_text(
+            u"Supprimer les professor criterias sélectionnés")
+        driver.find_element_by_name("index").click()
+        driver.find_element_by_css_selector("input[type=\"submit\"]").click()
+        driver.find_element_by_link_text(u"Déconnexion").click()
+
     def test_student(self):
         """As a student, I can see a detail view of my learning track. """
         driver = self.driver
@@ -80,9 +141,7 @@ class TestAdmin(LiveServerTestCase):
         driver.find_element_by_id("id_password").send_keys(self.STUDENT_PASSWORD)
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
-        driver.find_element_by_link_text(u"Suivant →").click()
-        driver.find_element_by_link_text(u"Suivant →").click()
-        driver.find_element_by_link_text(u"Suivant →").click()
+        time.sleep(5)
         driver.find_element_by_css_selector("button.close").click()
         driver.find_element_by_css_selector("a.icon.logout").click()
 
