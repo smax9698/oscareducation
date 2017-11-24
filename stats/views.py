@@ -68,15 +68,17 @@ def superuserCSV(request):
     response = HttpResponse(content_type='application/zip')
     response['Content-Disposition'] = 'filename=all_data.zip'
 
+    # get what type of CSV type the user selected
     if request.POST.get("csv_type", None) == "euro":
         csvT = ";"
     else:
         csvT = ","
 
+    # open object to create zip file
     buff = StringIO.StringIO()
     archive = zipfile.ZipFile(buff,'w',zipfile.ZIP_DEFLATED)
 
-    # if statements to check which models where selected to download
+    # if statements for each model to check which model was selected for download
     if request.POST.get("loginStats", None) != None:
         file_like_1 = StringIO.StringIO()
         writer1 = csv.writer(file_like_1, delimiter=csvT)
@@ -88,18 +90,19 @@ def superuserCSV(request):
             temp.append('professor')
         if request.POST.get('admin', None) != None:
             temp.append('admin')
-        #will write the information into its own file and append it to the zip file
-        if request.POST.get("preDefDateLS", None) != 'None':
+        # get date constraints, if no preselected date chosen it will look at the selected date options 
+        if request.POST.get("preDefDateLS", None) != 'None': # gets predefined time span
             dateString  = request.POST.get("preDefDateLS", None).split('-')
             startDate = datetime.datetime.strptime(dateString[0], "%d/%m/%Y").date()
             endDate =  datetime.datetime.strptime(dateString[1], "%d/%m/%Y").date()
-            
-        else:
+        else: # gets selected date options
             startDate = request.POST.get("startDateLS", None)
             endDate = request.POST.get("endDateLS", None)
 
+         #will write the information into its own file and append it to the zip file
         for item in get_login_stats_by_professor(startDate,endDate,temp):
             writer1.writerow(item)
+        # gets written into its own file
         archive.writestr('loginStats.csv',file_like_1.getvalue())
     if request.POST.get("resStudent", None) != None:
         file_like_1 = StringIO.StringIO()
