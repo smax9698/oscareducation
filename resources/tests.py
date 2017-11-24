@@ -171,6 +171,23 @@ class TestAdmin(LiveServerTestCase):
 
         driver.find_element_by_css_selector("a.icon.logout").click()
 
+    def test_prof2(self):
+        driver = self.driver
+        driver.get(self.base_url + "/accounts/usernamelogin/")
+        driver.find_element_by_id("djHideToolBarButton").click()
+        driver.find_element_by_id("id_username").clear()
+        driver.find_element_by_id("id_username").send_keys(self.PROFESSOR_USERNAME)
+        driver.find_element_by_css_selector("input.btn.btn-primary").click()
+        driver.find_element_by_id("id_password").clear()
+        driver.find_element_by_id("id_password").send_keys(self.PROFESSOR_PASSWORD)
+        driver.find_element_by_css_selector("input.btn.btn-primary").click()
+        driver.find_element_by_class_name("list-group-item").click()
+        driver.find_element_by_link_text("Compétences cibles").click()
+        driver.find_element_by_name("checkBox").click()
+        time.sleep(1)
+        driver.find_element_by_id("setTargetButton").click()
+
+        driver.find_element_by_css_selector("a.icon.logout").click()
     def is_element_present(self, how, what):
         try:
             self.driver.find_element(by=how, value=what)
