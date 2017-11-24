@@ -57,6 +57,7 @@ class Lesson(models.Model):
     """The Professors managing this Lesson"""
     stage = models.ForeignKey(Stage, verbose_name=u"Année")
     """This Lesson Stage (its "level" in the education)"""
+    current_uaa = models.CharField("UAA", max_length=255)
 
     def stages_in_unchronological_order(self):
         stage = self.stage

@@ -127,7 +127,7 @@ function generateGraph(username, data) {
         .attr("y", 0 - (margin.top / 2))
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
-        .text("Nombre total de compétences acquises et non acquises sur l'UAA");
+        .text("Nombre total de compétences acquises et non acquises sur " + data_parsed['uaa']);
 
 
     var ord = d3.scaleOrdinal()

@@ -7,6 +7,7 @@ function updateCount(last_student, student, lesson, selected_uaa){
             $('#email').text("Email : " + obj.student.email);
 
             $('svg[graph=graph]').empty();
+            console.log(data);
             $('svg[graph=graph]').text(generateGraph(last_student, data));
             $('#breadcrumb').text(" Statistiques " + obj.student.first_name + " " + obj.student.last_name);
         })
@@ -44,12 +45,12 @@ $(document).ready(function(){
         var lesson  = null;
         var uaa = this.firstElementChild.getAttribute('uaa');
 
-        if (currentStudentSelector.length === 1){
+        if (currentStudentSelector.length === 1) {
             student = currentStudentSelector.get(0).firstElementChild.getAttribute('student');
             lesson = currentStudentSelector.get(0).firstElementChild.getAttribute('lesson');
         }
 
-
+        console.log(uaa);
         updateCount(placeHolder, student, lesson, uaa);
 
     });

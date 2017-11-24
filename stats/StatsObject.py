@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from examinations.models import BaseTest, TestStudent
 from models import ResourceStudent, AuthenticationStudent, ExamStudent, ExamStudentSkill
-from skills.models import StudentSkill, Skill, CodeR
+from skills.models import StudentSkill, Skill, CodeR, Section
 from users.models import Student
 
 
@@ -43,7 +43,11 @@ def get_stat_for_student(student, lesson, current_uaa):
     :param current_uaa: Current UAA of the year for this lesson
     :return: JSON formatted data
     """
-    uaa_skills = get_skills_for_uaa(current_uaa) if current_uaa is not None else None
+    if not isinstance(current_uaa, Section) and current_uaa is not None:
+        sec = Section.objects.filter(name=lesson.current_uaa) if lesson.current_uaa is not None else None
+        uaa_skills = get_skills_for_uaa(sec) if sec is not None else None
+    else:
+        uaa_skills = get_skills_for_uaa(current_uaa) if current_uaa is not None else None
 
     def intersection(tested_skills, section_skills):
         if section_skills is None:
@@ -64,12 +68,17 @@ def get_stat_for_student(student, lesson, current_uaa):
         for skill in skills_acquired:
             if skill.acquired and test.finished_at and skill.acquired - test.finished_at <= timedelta(days=1):
                 number_skill_acquired += 1
+
+
         data['data'].append(
             {'acquired': number_skill_acquired, 'not-acquired': total_skill_tested - number_skill_acquired})
+        count_same = data['xaxis'].count(test.test.name)
+        if count_same != 0:
+            data['xaxis'].append(test.test.name + '(' + str(count_same) + ')')
         data['xaxis'].append(test.test.name)
 
     data['student'] = {}
-
+    data['uaa'] = 'l\'UAA ' + lesson.current_uaa if lesson.current_uaa is not None else 'l\'annee'
     data['student']['first_name'] = student.user.first_name
     data['student']['last_name'] = student.user.last_name
     data['student']['email'] = student.user.email

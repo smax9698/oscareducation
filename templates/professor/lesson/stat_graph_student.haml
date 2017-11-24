@@ -41,15 +41,21 @@
                     %li{:class => "stud"}
                       %a{:id =>"{{ stud.user.username }}",  :href=>"#", :student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
                         {{ stud }}
+            %br
             .dropdown
               .button{:class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
                 Unité d'enseignement
                 %span.caret
               %ul.dropdown-menu
                 -for uaa in uaa_list
-                  %li{:class => "uaaSelector"}
-                    %a{:id => "{{uaa.pk}}", :href => "#", :uaa => "{{uaa.pk}}"}
-                      {{ uaa.name }}
+                  -if uaa.pk == current_uaa
+                    %li{:class => "active uaaSelector"}
+                      %a{:id => "{{uaa.pk}}", :href => "#", :uaa => "{{uaa.pk}}"}
+                        {{ uaa.name }}
+                  -else
+                    %li{:class => "uaaSelector"}
+                      %a{:id => "{{uaa.pk}}", :href => "#", :uaa => "{{uaa.pk}}"}
+                        {{ uaa.name }}
                     /%a{href: "{% url 'professor:show_specific_stat' lesson.pk student.user.username uaa.pk %}"}
                       {{ uaa.name }}
         .col-lg-8
