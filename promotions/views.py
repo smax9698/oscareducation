@@ -139,8 +139,11 @@ def lesson_detail(request, pk):
 
     current_uaa = lesson.current_uaa
     if current_uaa is not None:
-        sec = Section.objects.filter(name=current_uaa)[0]
-        current_uaa_pk = sec.pk
+        sec = Section.objects.filter(name=current_uaa)
+        if len(sec) != 0:
+            current_uaa_pk = sec[0].pk
+        else:
+            current_uaa_pk = -1
     else:
         current_uaa_pk = -1
 
