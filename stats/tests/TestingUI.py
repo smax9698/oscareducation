@@ -34,6 +34,8 @@ class GeneralUITest(StaticLiveServerTestCase):
 
         section = Section.objects.create(name="section")
         section.save()
+        lesson.current_uaa = section.name
+        lesson.save()
 
         skill_list = []
         self.student_list = []

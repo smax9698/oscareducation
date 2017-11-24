@@ -1908,10 +1908,7 @@ def retrieve_stat(request, pk_lesson, username, pk_uaa):
     student = get_object_or_404(Student, user=user)
     lesson = get_object_or_404(Lesson, pk=pk_lesson)
     uaa = get_object_or_404(Section, pk=pk_uaa) if not (pk_uaa == u'-1') else None
-    if request.GET.get('miniature'):
-        return HttpResponse(get_stat_miniature_for_student(student, lesson))
-    else:
-        return HttpResponse(get_stat_for_student(student, lesson, uaa))
+    return HttpResponse(get_stat_for_student(student, lesson, uaa))
 
 
 def show_specific_stat(request, pk_lesson, username, pk_uaa):
