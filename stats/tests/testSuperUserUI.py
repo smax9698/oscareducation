@@ -229,26 +229,6 @@ class SuperUserUI(StaticLiveServerTestCase):
 
         time.sleep(2)
 
-    def check_predefdate_valid(self):
-        # login stats checkbox
-        self.selenium.find_element_by_name("loginStats").click()
-        # check some user types
-        self.selenium.find_element_by_name("professor").click()
-        self.selenium.find_element_by_name("admin").click()
-
-        select = Select(self.selenium.find_element_by_name("preDefDateLS"))
-        for index in range(len(select.options)):
-            select = Select(self.selenium.find_element_by_name('preDefDateLS'))
-            select.select_by_index(index)
-            dateString = select.first_selected_option.get_attribute("value")
-            print(dateString)
-
-
-        time.sleep(2)
-
-        # using the JavaScriptExecutor to scroll down to bottom of window
-        self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
     def go_to_super_user_template(self):
         self.selenium.get("%s%s" % (self.live_server_url, "/accounts/usernamelogin/"))
         self.selenium.find_element_by_id("id_username").click()
