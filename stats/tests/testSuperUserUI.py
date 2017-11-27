@@ -8,7 +8,8 @@ from selenium.webdriver.support.ui import Select
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 import unittest
 import time
-
+import datetime
+from datetime import datetime
 
 class SuperUserUI(StaticLiveServerTestCase):
     def setUp(self):
@@ -86,6 +87,10 @@ class SuperUserUI(StaticLiveServerTestCase):
         self.check_exam_skill_student_stats()
         self.check_exam_student_stats()
         self.selenium.find_element_by_name("csv_export_button").click()
+
+    def test_predefined_dates(self):
+        self.go_to_super_user_template()
+        self.check_predefdate_valid()
 
 ####################################################################################################
 
@@ -172,6 +177,38 @@ class SuperUserUI(StaticLiveServerTestCase):
         time.sleep(2)
 
         # using the JavaScriptExecutor to scroll down to bottom of window
+        self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+    def check_predefdate_valid(self):
+        # login stats checkbox
+        self.selenium.find_element_by_name("loginStats").click()
+        # check some user types
+        self.selenium.find_element_by_name("professor").click()
+        self.selenium.find_element_by_name("admin").click()
+
+        select = Select(self.selenium.find_element_by_name("preDefDateLS"))
+        for index in range(len(select.options)):
+            select = Select(self.selenium.find_element_by_name('preDefDateLS'))
+            select.select_by_index(index)
+            dateString = select.first_selected_option.get_attribute("value")
+            if dateString != 'None':
+                dateString = dateString.split('-')
+                
+                try:
+                    startDate = datetime.strptime(str(dateString[0]), "%d/%m/%Y").date()
+                except ValueError:
+                    self.assertTrue(False, msg="invalid start date")
+
+                try:
+                    endDate =  datetime.strptime(str(dateString[1]), "%d/%m/%Y").date()
+                except ValueError:
+                    self.assertTrue(False, msg="invalid end date")                
+
+                self.assertGreaterEqual(endDate,startDate)
+
+        time.sleep(2)
+
+       # using the JavaScriptExecutor to scroll down to bottom of window
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     def check_exam_student_stats(self):
