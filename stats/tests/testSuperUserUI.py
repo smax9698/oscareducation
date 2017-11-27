@@ -83,14 +83,17 @@ class SuperUserUI(StaticLiveServerTestCase):
 
     def test_exam_and_skill_stats_standard_csv_file(self):
         self.go_to_super_user_template()
-        self.check_exam_skill_student_stats()
         self.check_exam_student_stats()
+        self.check_exam_skill_student_stats()
         self.selenium.find_element_by_name("csv_export_button").click()
+
+    def testpredefined_dates(self):
+        self.go_to_super_user_template()
+        self.check_predefdate_valid()
 
 ####################################################################################################
 
     def check_login_stats_datepicker(self):
-        # login stats checkbox
         self.selenium.find_element_by_name("loginStats").click()
         # check some user types
         self.selenium.find_element_by_name("professor").click()
@@ -105,9 +108,10 @@ class SuperUserUI(StaticLiveServerTestCase):
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     def check_resource_student_stats_datepicker(self):
-        # login stats checkbox
+        # using the JavaScriptExecutor to scroll down to center of window
+        self.selenium.execute_script("window.scroll(0, (document.body.scrollHeight / 2) / 2);")
+
         self.selenium.find_element_by_name("resStudent").click()
-        # check some user types
 
         self.selenium.execute_script("document.getElementById('startDateRS').valueAsDate = new Date('2017-11-01');")
         self.selenium.execute_script("document.getElementById('endDateRS').valueAsDate = new Date('2017-11-22');")
@@ -118,16 +122,18 @@ class SuperUserUI(StaticLiveServerTestCase):
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     def check_authentication_student_stats_datepicker(self):
-        # login stats checkbox
+        # using the JavaScriptExecutor to scroll down to center of window
+        self.selenium.execute_script("window.scroll(0, (document.body.scrollHeight / 2) / 2);")
+
         self.selenium.find_element_by_name("authStudent").click()
-        # check some user types
 
         time.sleep(2)
 
-        # using the JavaScriptExecutor to scroll down to bottom of window
-        self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         self.selenium.execute_script("document.getElementById('startDateAS').valueAsDate = new Date('2017-11-01');")
         self.selenium.execute_script("document.getElementById('endDateAS').valueAsDate = new Date('2017-11-22');")
+
+        # using the JavaScriptExecutor to scroll down to bottom of window
+        self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     def check_login_stats_predefdate(self):
         # login stats checkbox
@@ -145,9 +151,10 @@ class SuperUserUI(StaticLiveServerTestCase):
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     def check_resource_student_stats_predefdate(self):
-        # login stats checkbox
+        # using the JavaScriptExecutor to scroll down to center of window
+        self.selenium.execute_script("window.scroll(0, (document.body.scrollHeight / 2) / 2);")
+
         self.selenium.find_element_by_name("resStudent").click()
-        # check some user types
 
         select = Select(self.selenium.find_element_by_name("preDefDateRS"))
         select.select_by_value('01/09/2016-31/12/2016')
@@ -158,13 +165,12 @@ class SuperUserUI(StaticLiveServerTestCase):
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     def check_authentication_student_stats_predefdate(self):
-        # login stats checkbox
-        self.selenium.find_element_by_name("authStudent").click()
-        # check some user types
-        time.sleep(2)
+        # using the JavaScriptExecutor to scroll down to center of window
+        self.selenium.execute_script("window.scroll(0, (document.body.scrollHeight / 2) / 2);")
 
-        # using the JavaScriptExecutor to scroll down to bottom of window
-        self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        self.selenium.find_element_by_name("authStudent").click()
+
+        time.sleep(2)
 
         select = Select(self.selenium.find_element_by_name("preDefDateAS"))
         select.select_by_value('01/09/2016-31/12/2016')
@@ -175,29 +181,42 @@ class SuperUserUI(StaticLiveServerTestCase):
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     def check_exam_student_stats(self):
-        # login stats checkbox
-        self.selenium.find_element_by_name("examStudent").click()
-        # check some user types
-
-        time.sleep(2)
-
         # using the JavaScriptExecutor to scroll down to bottom of window
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+        self.selenium.find_element_by_name("examStudent").click()
+
+        time.sleep(2)
 
     def check_exam_skill_student_stats(self):
-        # login stats checkbox
+        # using the JavaScriptExecutor to scroll down to bottom of window
+        self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
         self.selenium.find_element_by_name("examStudentSkill").click()
+
+        time.sleep(2)
+
+    def check_predefdate_valid(self):
+        # login stats checkbox
+        self.selenium.find_element_by_name("loginStats").click()
         # check some user types
+        self.selenium.find_element_by_name("professor").click()
+        self.selenium.find_element_by_name("admin").click()
+
+        select = Select(self.selenium.find_element_by_name("preDefDateLS"))
+        for index in range(len(select.options)):
+            select = Select(self.selenium.find_element_by_name('preDefDateLS'))
+            select.select_by_index(index)
+            dateString = select.first_selected_option.get_attribute("value")
+            print(dateString)
+
 
         time.sleep(2)
 
         # using the JavaScriptExecutor to scroll down to bottom of window
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-
     def go_to_super_user_template(self):
-        #it's necessary to login as professor
-        #use a existing login and password
         self.selenium.get("%s%s" % (self.live_server_url, "/accounts/usernamelogin/"))
         self.selenium.find_element_by_id("id_username").click()
         self.selenium.find_element_by_id("id_username").clear()
