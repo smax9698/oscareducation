@@ -6,10 +6,9 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.utils import timezone
 from selenium import webdriver
 
-from examinations.models import Test, TestStudent, BaseTest
+from examinations.models import Test, TestStudent
 from promotions.models import Lesson, Stage
 from skills.models import Skill, StudentSkill, Section, CodeR
-from stats.models import ExamStudent, ExamStudentSkill
 from users.models import Professor, Student
 
 
