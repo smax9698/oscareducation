@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 
 from django.contrib.auth.models import User
 from users.models import Professor
-
+from selenium.webdriver.support.ui import Select
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 import unittest
@@ -136,7 +136,8 @@ class SuperUserUI(StaticLiveServerTestCase):
         self.selenium.find_element_by_name("professor").click()
         self.selenium.find_element_by_name("admin").click()
 
-        self.selenium.execute_script("document.getElementById('preDefDateLS').value = '01/09/2016-31/12/2016';")
+        select = Select(self.selenium.find_element_by_name("preDefDateLS"))
+        select.select_by_value('01/09/2016-31/12/2016')
 
         time.sleep(2)
 
@@ -148,7 +149,8 @@ class SuperUserUI(StaticLiveServerTestCase):
         self.selenium.find_element_by_name("resStudent").click()
         # check some user types
 
-        self.selenium.execute_script("document.getElementById('preDefDateRS').value = '01/09/2016-31/12/2016';")
+        select = Select(self.selenium.find_element_by_name("preDefDateRS"))
+        select.select_by_value('01/09/2016-31/12/2016')
 
         time.sleep(2)
 
@@ -164,7 +166,8 @@ class SuperUserUI(StaticLiveServerTestCase):
         # using the JavaScriptExecutor to scroll down to bottom of window
         self.selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-        self.selenium.execute_script("document.getElementById('preDefDateAS').value = '01/09/2016-31/12/2016';")
+        select = Select(self.selenium.find_element_by_name("preDefDateAS"))
+        select.select_by_value('01/09/2016-31/12/2016')
 
         time.sleep(2)
 
