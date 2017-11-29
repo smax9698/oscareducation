@@ -59,7 +59,7 @@
         %p
           Vous pouvez modifier cette liste en déplaçant une compétence cible.
         %div
-          %table{class: "table table-bordered pagin-table", style:"cursor: pointer"}
+          %table{class: "table table-bordered paging-table", style:"cursor: pointer"}
             %tbody
               -for lt in student.get_learning_track
                 %tr
@@ -72,7 +72,7 @@
 
                       -if lt.student_skill.is_target
                         %div{class:"col-md-1"}
-                          <span class="pull-right"  style="color:#f5801b"><i class="fa fa-dot-circle-o fa-2x" aria-hidden="true"></i></span></div>
+                          <span class="pull-right"  style="color:#f5801b"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></span></div>
 
 
         %div#alerts
