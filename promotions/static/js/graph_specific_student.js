@@ -4,6 +4,7 @@ function generateGraph(username, data) {
     var data_parsed = jQuery.parseJSON(data);
 
     var xz = data_parsed.xaxis,
+        datez = data_parsed.date,
         yz = [[], []];
 
     data_parsed.data.forEach(function (item) {
@@ -21,10 +22,7 @@ function generateGraph(username, data) {
         .style('border-radius', 'none')
         .offset([-12, 0])
         .html(function (d, i, item) {
-            console.log(yz[0][i]);
-            console.log(yz[1][i]);
-            console.log(xz[i]);
-            var test_name = xz[i] + ", organisé le";
+            var test_name = xz[i] + ", organisé le " + datez[i];
             var acq_skill = "Nombre de compétence acquise : " + yz[0][i];
             var not_acq_skill = "Nombre de compétence non acquise : " + yz[1][i];
             return test_name + "<br>" + acq_skill + "<br>" + not_acq_skill

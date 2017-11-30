@@ -58,7 +58,7 @@ def get_stat_for_student(student, lesson, current_uaa):
 
     tests_lesson = BaseTest.objects.filter(lesson=lesson)
     tests = TestStudent.objects.filter(student=student, test__in=tests_lesson)
-    data = {'data': [], 'xaxis': []}
+    data = {'data': [], 'xaxis': [], 'date': []}
     total_skill_tested = 0
     number_skill_acquired = 0
     for test in tests:
@@ -75,7 +75,9 @@ def get_stat_for_student(student, lesson, current_uaa):
         count_same = data['xaxis'].count(test.test.name)
         if count_same != 0:
             data['xaxis'].append(test.test.name + '(' + str(count_same) + ')')
-        data['xaxis'].append(test.test.name)
+        else:
+            data['xaxis'].append(str(test.test.name))
+        data['date'].append(test.finished_at.strftime("%d %B %Y"))
 
     data['student'] = {}
     data['uaa'] = 'l\'UAA ' + lesson.current_uaa if lesson.current_uaa is not None else 'l\'annee'
