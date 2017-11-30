@@ -51,7 +51,7 @@ def superuser_view_stats(request):
     predefined_timespan = {
         "-----": None,
         "Septembre 2016 - Decembre 2016": "01/09/2016-31/12/2016",
-        "Janvier 2017 - Juin 2017": "01/01/2017-31/06/2017",
+        "Janvier 2017 - Juin 2017": "01/01/2017-30/06/2017",
         "Septembre 2017 - Decembre 2017": "01/09/2017-31/12/2017",
 
     }
