@@ -1,0 +1,74 @@
+-extends "base.haml"
+-load static
+
+-load bootstrap3
+
+-block head
+  %script{:src => "https://d3js.org/d3.v4.min.js"}
+  %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"}
+  %script(src="/static/js/d3-tip.js")
+  %script(src="/static/js/d3-legend.js")
+  %link{href: "{% static 'css/tooltip.css' %}", rel: "stylesheet"}
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.pk %}"} Classe {{lesson.name}}
+    %li.active{:id => "breadcrumb"}
+      Statistiques
+      =student
+
+-block content
+
+    / Actual content of the page
+    %div{:id => "page-content-wrapper"}
+      .container-fluid
+        .col-lg-4
+          .container-fluid
+            .dropdown
+              .button{:id => "student_choice", :class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
+                Etudiants de la classe
+                %span.caret
+              %ul.dropdown-menu
+                -for stud in lesson.students.all
+                  -if stud == student
+                    %li{:class => "active stud"}
+                      %a{:id => "{{ stud.user.username }}",:href=>"#",:student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
+                        {{ stud }}
+                  -else
+                    %li{:class => "stud"}
+                      %a{:id =>"{{ stud.user.username }}",  :href=>"#", :student =>"{{ stud.user.username }}", :lesson => "{{ lesson.pk }}"}
+                        {{ stud }}
+            %br
+            .dropdown
+              .button{:class=>"btn btn-default dropdown-toggle", :type=>"button", :data-toggle=>"dropdown"}
+                Unité d'enseignement
+                %span.caret
+              %ul.dropdown-menu
+                -for uaa in uaa_list
+                  -if uaa.pk == current_uaa
+                    %li{:class => "active uaaSelector"}
+                      %a{:id => "{{uaa.pk}}", :href => "#", :uaa => "{{uaa.pk}}"}
+                        {{ uaa.name }}
+                  -else
+                    %li{:class => "uaaSelector"}
+                      %a{:id => "{{uaa.pk}}", :href => "#", :uaa => "{{uaa.pk}}"}
+                        {{ uaa.name }}
+                    /%a{href: "{% url 'professor:show_specific_stat' lesson.pk student.user.username uaa.pk %}"}
+                      {{ uaa.name }}
+        .col-lg-8
+          .container-fluid
+            .jumbotron
+              %p Profil de l'étudiant
+              %h2{:id => "last_name" } Nom : {{student.user.last_name}}
+              %h2{:id => "first_name" } Prénom : {{student.user.first_name}}
+              %h2{:id => "email" } Email : {{ student.user.email}}
+      .container-fluid
+        .jumbotron
+          %svg{:id => "{{student.user.username}}", :graph => "graph", :class => "graph-student", :height => "400", :width => "600", :lesson => "{{lesson.pk}}", :uaa => current_uaa}
+
+  -block javascript
+    %script(src="/static/js/graph_specific_student.js")
+    %script(src="/static/js/reload_graph.js")

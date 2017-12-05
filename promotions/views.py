@@ -1,54 +1,75 @@
 # encoding: utf-8
 
-import os
-import sys
 import json
-import traceback
-import base64
+import os
 import random
-from django.core.files.storage import default_storage
+import sys
 import time
-from django.core.files.base import ContentFile
-from urlparse import urljoin
-from itertools import izip
-
-import yaml
-import ruamel.yaml
-import mechanize
-import yamlordereddictloader
-import pandas as pd
-
-from ruamel.yaml.comments import CommentedMap
-
+import traceback
 from base64 import b64decode
 from collections import OrderedDict
+from itertools import izip
 
+import pandas as pd
+import ruamel.yaml
+import yaml
+import yamlordereddictloader
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
-from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, get_object_or_404, resolve_url
-from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User
 from django.contrib.auth.views import redirect_to_login
-from django.views.decorators.http import require_POST
+from django.core.exceptions import PermissionDenied
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count
+from django.db.models import Q
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.shortcuts import resolve_url
+from django.views.decorators.http import require_POST
+from ruamel.yaml.comments import CommentedMap
 
-from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
-from resources.models import KhanAcademy, Sesamath, Resource
+from examinations.models import Context as Question
 from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
     TestFromClass
-from users.models import Student
 from examinations.validate import validate_exercice_yaml_structure
-
-from .models import Lesson, Stage
-from .forms import LessonForm, StudentAddForm, SyntheseForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
+from promotions.models import Lesson, Stage
+from promotions.utils import user_is_professor
+from resources.models import KhanAcademy, Sesamath
+from resources.models import Resource
+from skills.models import Skill
+from skills.models import StudentSkill, CodeR, Section, Relations, CodeR_relations
+from stats.StatsObject import get_stat_for_student, get_all_uaa_for_lesson
+from users.models import Student
+from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
     TestUpdateForm, SesamathForm, ResourceForm, CSVForm
-from .utils import generate_random_password, user_is_professor, force_encoding
-import csv
-from django.http import JsonResponse
+from .utils import generate_random_password
+
+""""@user_is_professor
+def exportCSV(request, pk):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="users.csv"'
+
+    lesson = get_object_or_404(Lesson, pk=pk)
+    students = Student.objects.filter(lesson=lesson)
+    
+    writer = csv.writer(response)
+    writer.writerow(['Username', 'First name', 'Last name', 'Email address'])
+    # add pk, so be able to get which lesson
+
+
+
+    return response
+"""
+
+"""@user_is_professor
+def viewstats(request):
+    return render(request, "stats/viewstats.haml")
+"""
 
 
 @user_is_professor
@@ -116,10 +137,23 @@ def lesson_detail(request, pk):
             print e
             print "Error: could no calculate heatmap"
 
+    current_uaa = lesson.current_uaa
+    if current_uaa is not None:
+        sec = Section.objects.filter(name=current_uaa)
+        if len(sec) != 0:
+            current_uaa_pk = sec[0].pk
+        else:
+            current_uaa_pk = -1
+    else:
+        current_uaa_pk = -1
+
     return render(request, "professor/lesson/detail.haml", {
         "lesson": lesson,
         "number_of_students": number_of_students,
         "skills_to_heatmap_class": skills_to_heatmap_class,
+        "all_uaa": get_all_uaa_for_lesson(lesson),
+        "current_uaa": current_uaa if current_uaa is not None else "Aucune UAA",
+        "current_uaa_pk": current_uaa_pk,
     })
 
 
@@ -170,7 +204,7 @@ def lesson_update(request, pk):
 @user_is_professor
 def lesson_student_add(request, pk):
     """
-    Add one or more students to a lesson : either with an XLS file (template provided) or manually 
+    Add one or more students to a lesson : either with an XLS file (template provided) or manually
 
     :param request:
     :param pk: primary key of a Lesson
@@ -186,7 +220,7 @@ def lesson_student_add(request, pk):
             form = CSVForm(request.POST, request.FILES)
             if form.is_valid():
                 xls = pd.ExcelFile(form.cleaned_data["csvfile"])
-                sheet = xls.parse(0) # 0 is the sheet number
+                sheet = xls.parse(0)  # 0 is the sheet number
                 try:
                     last_name_column = sheet['NOM']
                     first_name_column = sheet['PRENOM']
@@ -202,7 +236,7 @@ def lesson_student_add(request, pk):
                 names = izip(last_name_column, first_name_column)
 
                 line_number = 2
-                for last_name,first_name in names:
+                for last_name, first_name in names:
                     # We use this form to create at the same time the username
                     newStudent = StudentAddForm({
                         "first_name": last_name,
@@ -307,7 +341,7 @@ def lesson_student_detail(request, lesson_pk, pk):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param pk: primary key of a Student
-    :return: 
+    :return:
     """
     # TODO: a professor can only see one of his students
 
@@ -327,7 +361,7 @@ def lesson_student_update(request, lesson_pk, pk):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param pk: primary key of a Student
-    :return: 
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     student = get_object_or_404(Student, pk=pk)
@@ -357,7 +391,7 @@ def lesson_student_test_detail(request, pk, lesson_pk, test_pk):
     :param pk: primary key of a Student
     :param lesson_pk: primary key of a Lesson
     :param test_pk: primary key of a Test
-    :return: 
+    :return:
     """
     # TODO: a professor can only see one of his students
 
@@ -501,7 +535,7 @@ def professor_test_add_skill(request):
                 data = {
                     "new_test_exercice_id": new_test_exercice.id
                 }
-                #GET OUT
+                # GET OUT
             else:
                 exercice = exercices[random.choice(range(exercices.count()))]
                 with transaction.atomic():
@@ -532,7 +566,7 @@ def professor_test_add_skill(request):
             }
 
 
-    #Otherwise, if it is a TestFromClass, we don't need to add an exercice
+    # Otherwise, if it is a TestFromClass, we don't need to add an exercice
     else:
         TestFromClass.objects.get(id=test_id).skills.add(Skill.objects.get(id=skill_id))
         data = {}
@@ -567,8 +601,8 @@ def lesson_test_list(request, pk):
     Query a Lesson to display its associated tests
 
     :param request:
-    :param pk: primary key of a Lesson 
-    :return: 
+    :param pk: primary key of a Lesson
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=pk)
 
@@ -585,7 +619,7 @@ def lesson_test_add(request, pk):
 
     :param request:
     :param pk: primary key of a Lesson
-    :return: 
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=pk)
 
@@ -602,7 +636,7 @@ def lesson_test_update(request, lesson_pk, pk):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param pk: primary key of a BaseTest
-    :return: 
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(BaseTest, pk=pk)
@@ -630,7 +664,7 @@ def lesson_skill_detail(request, lesson_pk, skill_code):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param skill_code: code of a Skill
-    :return: 
+    :return:
     """
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     skill = get_object_or_404(Skill, code=skill_code)
@@ -659,7 +693,7 @@ def regenerate_student_password(request):
     Regenerate a password for a student
 
     :param request:
-    :return: 
+    :return:
     """
     # TODO : TO DELETE ?
     data = json.load(request)
@@ -688,10 +722,10 @@ def get_encoded_image(encoded_image=None):
 def update_pedagogical_ressources(request, type, id):
     """
     Display a form to update a Resource
-    :param request: 
+    :param request:
     :param id: id of a Skill, Section or CodeR
     :param type: string containing either "skill", "section" or "coder"
-    :return: 
+    :return:
     """
 
     if request.method == "POST" and request.POST["form_type"] == "my_resource":
@@ -1176,13 +1210,13 @@ def update_pedagogical_ressources(request, type, id):
 @user_is_professor
 def remove_pedagogical_ressources(request, type, id_type, kind, id):
     """
-    Remove a Sesamath, KhanAcademy or Resource object 
-    :param request: 
+    Remove a Sesamath, KhanAcademy or Resource object
+    :param request:
     :param type: contains "skill", "section" or "coder"
     :param id_type: id of Skill, Section or CodeR
-    :param kind: value equal either to "sesamath", "khanAcademy" or "resource" 
+    :param kind: value equal either to "sesamath", "khanAcademy" or "resource"
     :param id: id of a Resource
-    :return: 
+    :return:
     """
     if not Resource.objects.filter(id=id):
         print "The resource doesn't exist (kind : %s, id : %s)" % (kind, id)
@@ -1218,7 +1252,7 @@ def validate_student_skill(request, lesson_pk, student_skill):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param student_skill: id of a StudentSkill
-    :return: 
+    :return:
     """
     # TODO: a professor can only do this on one of his students
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
@@ -1244,7 +1278,7 @@ def unvalidate_student_skill(request, lesson_pk, student_skill):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param student_skill: id of a StudentSkill
-    :return: 
+    :return:
     """
     # TODO: a professor can only do this on one of his students
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
@@ -1270,7 +1304,7 @@ def default_student_skill(request, lesson_pk, student_skill):
     :param request:
     :param lesson_pk: primary key of a Lesson
     :param student_skill: id of a StudentSkill
-    :return: 
+    :return:
     """
     # TODO: a professor can only do this on one of his students
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
@@ -1290,10 +1324,10 @@ def default_student_skill(request, lesson_pk, student_skill):
 @user_is_professor
 def lesson_tests_and_skills(request, lesson_id):
     """
-    
-    :param request: 
-    :param lesson_id: id of a Lesson 
-    :return: 
+
+    :param request:
+    :param lesson_id: id of a Lesson
+    :return:
     """
     # TODO: a professor can only see one of his lesson
 
@@ -1333,7 +1367,7 @@ def exercice_to_approve_list(request):
 @user_is_professor
 def students_password_page(request, pk):
     """
-    Regenerate a code for every student of a lesson (to allow him/her to create a new password)    
+    Regenerate a code for every student of a lesson (to allow him/her to create a new password)
     """
     lesson = get_object_or_404(Lesson, pk=pk)
 
@@ -1356,7 +1390,7 @@ def students_password_page(request, pk):
 @user_is_professor
 def single_student_password_page(request, lesson_pk, student_pk):
     """
-    Regenerate a code for a student (to allow him/her to create a new password)    
+    Regenerate a code for a student (to allow him/her to create a new password)
     """
 
     students = []
@@ -1457,7 +1491,6 @@ def exercice_validation_form_submit(request, pk=None):
         exercice = get_object_or_404(Context, pk=pk)
     else:
         exercice = None
-
 
     if data.get("image"):
         exercices_folder = os.path.join(settings.MEDIA_ROOT, "exercices")
@@ -1575,8 +1608,6 @@ def exercice_validation_form_submit(request, pk=None):
                     question_id=new_question.id,
                 )
 
-
-
     return HttpResponse(json.dumps({
         "url": reverse('professor:exercice_detail', args=(exercice.id,)),
         "id": exercice.id,
@@ -1659,10 +1690,10 @@ def exercice_update(request, pk):
 @user_is_professor
 def exercice_update_json(request, pk):
     """
-    
-    :param request: 
-    :param pk: primary key of a Context 
-    :return: 
+
+    :param request:
+    :param pk: primary key of a Context
+    :return:
     """
     context = get_object_or_404(Context, pk=pk)
 
@@ -1705,10 +1736,10 @@ def exercice_update_json(request, pk):
 def exercice_for_test_exercice(request, exercice_pk, test_exercice_pk):
     """
     Add an exercice for a test
-    :param request: 
+    :param request:
     :param exercice_pk: primary key of an exercice
     :param test_exercice_pk: primary key of a TestExercice
-    :return: 
+    :return:
     """
     exercice = get_object_or_404(Context, pk=exercice_pk)
     test_exercice = get_object_or_404(TestExercice, pk=test_exercice_pk)
@@ -1723,16 +1754,16 @@ def exercice_for_test_exercice(request, exercice_pk, test_exercice_pk):
         test_exercice.save()
 
     return HttpResponseRedirect(reverse('professor:lesson_test_online_exercices', args=(
-    test_exercice.test.lesson.pk, test_exercice.test.pk,)) + "#%s" % test_exercice_pk)
+        test_exercice.test.lesson.pk, test_exercice.test.pk,)) + "#%s" % test_exercice_pk)
 
 
 @user_is_professor
 def exercice_adapt_test_exercice(request, test_exercice_pk):
     """
-    
-    :param request: 
+
+    :param request:
     :param test_exercice_pk: primary key of a TestExercice
-    :return: 
+    :return:
     """
     test_exercice = get_object_or_404(TestExercice, pk=test_exercice_pk)
     exercice = test_exercice.exercice
@@ -1741,7 +1772,7 @@ def exercice_adapt_test_exercice(request, test_exercice_pk):
     # user shouldn't end up there in that situation but we never know
     if exercice is None:
         return HttpResponseRedirect(reverse('professor:exercice_validation_form') + "#?for_test_exercice=%s&code=%s" % (
-        test_exercice_pk, test_exercice.skill))
+            test_exercice_pk, test_exercice.skill))
 
     assert test_exercice.test.can_change_exercice(), "Can't change an exercice if the test has started"
 
@@ -1766,7 +1797,7 @@ def exercice_adapt_test_exercice(request, test_exercice_pk):
 
     return HttpResponseRedirect(
         reverse('professor:exercice_update', args=(new_exercice.id,)) + "#?for_test_exercice=%s&code=%s" % (
-        test_exercice_pk, exercice.skill.code))
+            test_exercice_pk, exercice.skill.code))
 
 
 @user_is_professor
@@ -1789,10 +1820,10 @@ def exercice_remove_test_exercice(request, test_exercice_pk):
 @user_is_professor
 def contribute_page(request):
     """
-    Display a ResourceForm or submit it 
+    Display a ResourceForm or submit it
 
     :param request:
-    :return: 
+    :return:
     """
     data = {x.short_name: x for x in Stage.objects.all()}
 
@@ -1820,7 +1851,7 @@ def global_resources_delete(request, pk):
 
     :param request:
     :param pk: primary key of a Resource
-    :return: 
+    :return:
     """
     gr = get_object_or_404(Resource, pk=pk)
 
@@ -1870,3 +1901,38 @@ def enseign_trans(request):
     data["code_r"] = CodeR.objects.all().order_by('id')
     data["section"] = Section.objects.all()
     return render(request, "professor/skill/new-list-trans.haml", data)
+
+
+def retrieve_stat(request, pk_lesson, username, pk_uaa):
+    user = get_object_or_404(User, username=username)
+    student = get_object_or_404(Student, user=user)
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+    uaa = get_object_or_404(Section, pk=pk_uaa) if not (pk_uaa == u'-1') else None
+    return HttpResponse(get_stat_for_student(student, lesson, uaa))
+
+
+def show_specific_stat(request, pk_lesson, username, pk_uaa):
+    user = get_object_or_404(User, username=username)
+    student = get_object_or_404(Student, user=user)
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+
+    #uaa = get_object_or_404(Section, pk=pk_uaa) if not (pk_uaa == u"-1") else None
+
+    uaa = get_object_or_404(Section, name=lesson.current_uaa) if lesson.current_uaa is not None else None
+
+    data = {
+        'graph': get_stat_for_student(student, lesson, uaa),
+        'student': student,
+        'lesson': lesson,
+        'uaa_list': get_all_uaa_for_lesson(lesson),
+        'current_uaa': uaa.pk
+    }
+
+    return render(request, "professor/lesson/stat_graph_student.haml", data)
+
+
+def update_uaa(request, pk_lesson):
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+    lesson.current_uaa = request.POST.get('uaa')
+    lesson.save()
+    return HttpResponse()
