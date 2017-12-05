@@ -43,6 +43,7 @@ from resources.models import KhanAcademy, Sesamath
 from resources.models import Resource
 from skills.models import Skill
 from skills.models import StudentSkill, CodeR, Section, Relations, CodeR_relations
+from stats.StatsObject import get_stat_for_student, get_all_uaa_for_lesson
 from users.models import Student
 from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
     TestUpdateForm, SesamathForm, ResourceForm, CSVForm
@@ -136,10 +137,23 @@ def lesson_detail(request, pk):
             print e
             print "Error: could no calculate heatmap"
 
+    current_uaa = lesson.current_uaa
+    if current_uaa is not None:
+        sec = Section.objects.filter(name=current_uaa)
+        if len(sec) != 0:
+            current_uaa_pk = sec[0].pk
+        else:
+            current_uaa_pk = -1
+    else:
+        current_uaa_pk = -1
+
     return render(request, "professor/lesson/detail.haml", {
         "lesson": lesson,
         "number_of_students": number_of_students,
         "skills_to_heatmap_class": skills_to_heatmap_class,
+        "all_uaa": get_all_uaa_for_lesson(lesson),
+        "current_uaa": current_uaa if current_uaa is not None else "Aucune UAA",
+        "current_uaa_pk": current_uaa_pk,
     })
 
 
@@ -1887,3 +1901,38 @@ def enseign_trans(request):
     data["code_r"] = CodeR.objects.all().order_by('id')
     data["section"] = Section.objects.all()
     return render(request, "professor/skill/new-list-trans.haml", data)
+
+
+def retrieve_stat(request, pk_lesson, username, pk_uaa):
+    user = get_object_or_404(User, username=username)
+    student = get_object_or_404(Student, user=user)
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+    uaa = get_object_or_404(Section, pk=pk_uaa) if not (pk_uaa == u'-1') else None
+    return HttpResponse(get_stat_for_student(student, lesson, uaa))
+
+
+def show_specific_stat(request, pk_lesson, username, pk_uaa):
+    user = get_object_or_404(User, username=username)
+    student = get_object_or_404(Student, user=user)
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+
+    #uaa = get_object_or_404(Section, pk=pk_uaa) if not (pk_uaa == u"-1") else None
+
+    uaa = get_object_or_404(Section, name=lesson.current_uaa) if lesson.current_uaa is not None else None
+
+    data = {
+        'graph': get_stat_for_student(student, lesson, uaa),
+        'student': student,
+        'lesson': lesson,
+        'uaa_list': get_all_uaa_for_lesson(lesson),
+        'current_uaa': uaa.pk
+    }
+
+    return render(request, "professor/lesson/stat_graph_student.haml", data)
+
+
+def update_uaa(request, pk_lesson):
+    lesson = get_object_or_404(Lesson, pk=pk_lesson)
+    lesson.current_uaa = request.POST.get('uaa')
+    lesson.save()
+    return HttpResponse()
