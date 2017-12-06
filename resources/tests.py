@@ -152,7 +152,9 @@ class TestAdmin(LiveServerTestCase):
         """As a student, I can see a detailed view of my learning track. """
         driver = self.driver
         self.access_student_page()
-        driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
+        time.sleep(5)
+        driver.find_element_by_xpath(".//img[contains(@src,'detailed')]/..").click()
+        #driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         time.sleep(5)
         driver.find_element_by_css_selector("button.close").click()
         driver.find_element_by_css_selector("a.icon.logout").click()
@@ -265,10 +267,11 @@ class TestAdmin(LiveServerTestCase):
         dest_element = driver.find_element_by_xpath(".//*[@class = 'ui-sortable-handle' ][3]")
         ActionChains(driver).drag_and_drop(source_element, dest_element).perform()
 
-    def access_studyesent_page(self):
+    def access_student_page(self):
         '''Log in as student'''
         driver = self.driver
         driver.get(self.base_url + "/accounts/usernamelogin/")
+        driver.find_element_by_id("djHideToolBarButton").click()
         name = "%s.%s" % (self.STUDENT_USERNAME, self.STUDENT_PASSWORD)
         driver.find_element_by_id("id_username").clear()
         driver.find_element_by_id("id_username").send_keys(name)
