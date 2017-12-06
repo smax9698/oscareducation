@@ -196,28 +196,6 @@ class LearningTrackTests(TestCase):
 
     # ------------------------------------------------------------------------------------------#
 
-    def test_higher_in_prerequisites_tree_incorrect_params(self):
-        with self.assertRaises(TypeError):
-            LearningTrack._higher_in_prerequisites_tree(None,None)
-
-    def test_higher_in_prerequisites_tree_a_parent_of_b(self):
-        result = LearningTrack._higher_in_prerequisites_tree(self.student_skills[0],self.student_skills[3])
-        self.assertEquals(result,1)
-
-    def test_higher_in_prerequisites_tree_b_parent_of_a(self):
-        result = LearningTrack._higher_in_prerequisites_tree(self.student_skills[3],self.student_skills[0])
-        self.assertEquals(result,-1)
-
-    def test_higher_in_prerequisites_tree_a_equals_b(self):
-        result = LearningTrack._higher_in_prerequisites_tree(self.student_skills[2],self.student_skills[2])
-        self.assertEquals(result,0)
-
-    def test_higher_in_prerequisites_tree_neighbours(self):
-        result = LearningTrack._higher_in_prerequisites_tree(self.student_skills[3],self.student_skills[4])
-        self.assertEquals(result,0)
-
-    # ------------------------------------------------------------------------------------------#
-
     def test_prerequisite_list_incorrect_student_skill(self):
         with self.assertRaises(TypeError):
             LearningTrack._prerequisite_list(None)

@@ -362,6 +362,7 @@ class StudentSkill(models.Model):
             models.Index(fields=['student', 'skill'])
         ]
 
+
 class LearningTrack(models.Model):
     """[FR] Chemin d'apprentissage
 
@@ -429,12 +430,14 @@ class LearningTrack(models.Model):
         criteria_functions = LearningTrack._get_criteria_functions(targets)
 
         learning_track = LearningTrack.sorting(ordered_criteria_names, criteria_functions, student_skills_list)
-        for i in range(0, len(learning_track)):
+        i = 0
+        for student_skill in learning_track:
             LearningTrack.objects.create(
                 student=student,
-                student_skill=learning_track[i],
+                student_skill=student_skill,
                 order=i
             )
+            i += 1
 
     @staticmethod
     def _get_ordered_criteria_names(professor):
@@ -478,28 +481,6 @@ class LearningTrack(models.Model):
         return student_skills
 
     @staticmethod
-    def _higher_in_prerequisites_tree(a, b):
-        """
-        Relation of requirement between two student skills
-        Check whether b is direct or indirect prerequisite (even through a long chain) of a
-        :param a A StudentSkill
-        :param b Another StudentSkill
-        :return 0 if equal or unrelated; 1 if b prerequisite of a, -1 if a prerequisite of b
-        """
-
-        if a is None or b is None or type(a) is not StudentSkill or type(b) is not StudentSkill:
-            raise TypeError
-
-        if a.skill == b.skill:
-            return 0
-        elif b in LearningTrack._prerequisite_list(a):
-            return 1
-        elif a in LearningTrack._prerequisite_list(b):
-            return -1
-        else:  # not related
-            return 0
-
-    @staticmethod
     def sorting(ordered_criteria_names, criteria_functions, student_skills_list):
         """
         Sort skills list to return the learning track
@@ -519,8 +500,40 @@ class LearningTrack(models.Model):
                 raise ValueError("Unknown criteria : " + criteria_name)
             criteria_function = criteria_functions[criteria_name]
             student_skills_list.sort(key=criteria_function)
-        student_skills_list.sort(LearningTrack._higher_in_prerequisites_tree)
-        return student_skills_list
+        return LearningTrack._topological_dependencies_sort(student_skills_list)
+
+    @staticmethod
+    def _topological_dependencies_sort(l):
+        """
+        Ensures there is no dependency after a skill
+        :param l: List of student skills
+        """
+        source = []
+        for student_skill in l:
+            prerequisites = []
+            for prerequisite in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
+                                                            student=student_skill.student):
+                prerequisite.go_down_visitor(prerequisites.append)
+            source.append((student_skill, prerequisites))
+
+        pending = [(student_skill, set(dependencies)) for student_skill, dependencies in source]
+        emitted = []
+        while pending:
+            next_pending = []
+            next_emitted = []
+            for entry in pending:
+                student_skill, dependencies = entry
+                dependencies.difference_update(emitted)
+                if dependencies:
+                    next_pending.append(entry)
+                else:
+                    yield student_skill
+                    emitted.append(student_skill)
+                    next_emitted.append(student_skill)
+            if not next_emitted:
+                raise ValueError("Cyclic or missing dependency : %r" % (next_pending,))
+            pending = next_pending
+            emitted = next_emitted
 
     @staticmethod
     def _get_criteria_functions(targets):
@@ -566,8 +579,9 @@ class LearningTrack(models.Model):
             raise ValueError
 
         LearningTrack._set_skill_depth(student_skill, level, skills_depth_map)
-        for prerequisite_student_skill in StudentSkill.objects.filter(skill__in=student_skill.skill.get_prerequisites_skills(),
-                                                        student=student_skill.student):
+        for prerequisite_student_skill in StudentSkill.objects.filter(
+                skill__in=student_skill.skill.get_prerequisites_skills(),
+                student=student_skill.student):
             LearningTrack._set_level(prerequisite_student_skill, skills_depth_map, level + 1)
 
     @staticmethod
