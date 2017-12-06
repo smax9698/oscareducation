@@ -265,13 +265,13 @@ class TestAdmin(LiveServerTestCase):
         dest_element = driver.find_element_by_xpath(".//*[@class = 'ui-sortable-handle' ][3]")
         ActionChains(driver).drag_and_drop(source_element, dest_element).perform()
 
-    def access_student_page(self):
+    def access_studyesent_page(self):
         '''Log in as student'''
         driver = self.driver
         driver.get(self.base_url + "/accounts/usernamelogin/")
-
+        name = "%s.%s" % (self.STUDENT_USERNAME, self.STUDENT_PASSWORD)
         driver.find_element_by_id("id_username").clear()
-        driver.find_element_by_id("id_username").send_keys(self.STUDENT_USERNAME)
+        driver.find_element_by_id("id_username").send_keys(name)
         driver.find_element_by_css_selector("input.btn.btn-primary").click()
         driver.find_element_by_id("id_password").clear()
         driver.find_element_by_id("id_password").send_keys(self.STUDENT_PASSWORD)
