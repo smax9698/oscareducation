@@ -500,13 +500,14 @@ class LearningTrack(models.Model):
                 raise ValueError("Unknown criteria : " + criteria_name)
             criteria_function = criteria_functions[criteria_name]
             student_skills_list.sort(key=criteria_function)
-        return LearningTrack._topological_dependencies_sort(student_skills_list)
+        return list(LearningTrack._topological_dependencies_sort(student_skills_list))
 
     @staticmethod
     def _topological_dependencies_sort(l):
         """
         Ensures there is no dependency after a skill
         :param l: List of student skills
+        :return: A generator
         """
         source = []
         for student_skill in l:
